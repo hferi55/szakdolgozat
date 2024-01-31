@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Étrendkészítő Weboldal</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <style>
+    body {
+      background-color: #88D498; /* Világos zöld háttérszín */
+      color: black; /* Sötétzöld szövegszín */
+    }
+    .card {
+      background-color: #1A936F; /* Világosabb zöld kártya háttérszín */
+    }
+  </style>
+</head>
+<body>
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <ul class="nav nav-pills">
+        <li class="nav-item">
+          <a class="nav-link active" id="login-tab" data-toggle="pill" href="#login" role="tab" aria-controls="login" aria-selected="true">Bejelentkezés</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="registration-tab" data-toggle="pill" href="#registration" role="tab" aria-controls="registration" aria-selected="false">Regisztráció</a>
+        </li>
+      </ul>
+      <div class="tab-content mt-3">
+        <div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="login-tab">
+          <h3>Bejelentkezés</h3>
+          <!-- Bejelentkezési kártya -->
+          <div class="card mt-2">
+            <div class="card-body">
+              <h5 class="card-title">Bejelentkezés</h5>
+              <form>
+                <div class="form-group">
+                  <label for="loginUsername">Felhasználónév vagy Email</label>
+                  <input type="text" class="form-control" id="loginUsername" placeholder="Adja meg a felhasználónevét vagy email címét">
+                </div>
+                <div class="form-group">
+                  <label for="loginPassword">Jelszó</label>
+                  <input type="password" class="form-control" id="loginPassword" placeholder="Adja meg a jelszavát">
+                </div>
+                <button type="submit" class="btn btn-success">Bejelentkezés</button>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="registration" role="tabpanel" aria-labelledby="registration-tab">
+          <h3>Regisztráció</h3>
+          <!-- Regisztrációs kártya -->
+          <div class="card mt-2">
+            <div class="card-body">
+              <h5 class="card-title">Regisztráció</h5>
+              <form>
+                <div class="form-group">
+                  <label for="registerName">Név</label>
+                  <input type="text" class="form-control" id="registerName" placeholder="Adja meg a nevét">
+                </div>
+                <div class="form-group">
+                  <label for="registerEmail">Email cím</label>
+                  <input type="email" class="form-control" id="registerEmail" placeholder="Adja meg az email címét">
+                </div>
+                <div class="form-group">
+                  <label for="registerPassword">Jelszó</label>
+                  <input type="password" class="form-control" id="registerPassword" placeholder="Adja meg a jelszavát">
+                </div>
+                <button type="submit" class="btn btn-success">Regisztráció</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <!-- Itt jöhet további tartalom vagy más elemek -->
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS, Popper.js, and jQuery -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+</body>
+</html>
