@@ -1,101 +1,50 @@
 <?php
-    include ('sql.php');
+  require('sql.php');
 ?>
+
 <!DOCTYPE html>
 <html lang="hu">
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible"content="IE-edge">;
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Étrendkészítő Weboldal</title>
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <!-- CSS -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <div class="container mt-5">
-      <div class="row justify-content-center">
-          <div class="col-md-6">
-              <ul class="nav nav-pills">
-                  <li class="nav-item">
-                    <a class="nav-link active" id="login-tab" data-toggle="pill" href="#login" role="tab" aria-controls="login" aria-selected="true">Bejelentkezés</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" id="registration-tab" data-toggle="pill" href="#registration" role="tab" aria-controls="registration" aria-selected="false">Regisztráció</a>
-                  </li>
-              </ul>
-              <div class="tab-content mt-3">
-                  <div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="login-tab">
-      
-                    <!-- Bejelentkezési kártya -->
-                    <div class="card mt-2">
-                      <div class="card-body">
-          
-                        <form>
-                          <div class="form-group">
-                            <label for="loginUsername">Felhasználónév vagy Email cím</label>
-                            <input type="text" class="form-control" id="loginUsername" placeholder="Adja meg a felhasználónevét vagy email címét">
-                          </div>
-                          <div class="form-group">
-                            <label for="loginPassword">Jelszó</label>
-                            <input type="password" class="form-control" id="loginPassword" placeholder="Adja meg a jelszavát">
-                          </div>
-                          <button type="submit" class="btn btn-success">Bejelentkezés</button>
-                        </form>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="tab-pane fade" id="registration" role="tabpanel" aria-labelledby="registration-tab">
-              
-                    <!-- Regisztrációs kártya -->
-                    <div class="card mt-2">
-                      <div class="card-body">
-                        
-                        <form>
-                          <div class="form-group">
-                            <label for="registerName">Név</label>
-                            <input type="text" class="form-control" id="registerName" placeholder="Adja meg a nevét">
-                          </div>
-                          <div class="form-group">
-                            <label for="registerEmail">Email cím</label>
-                            <input type="email" class="form-control" id="registerEmail" placeholder="Adja meg az email címét">
-                          </div>
-                          <div class="form-group">
-                            <label for="registerPassword">Jelszó</label>
-                            <input type="password" class="form-control" id="registerPassword" placeholder="Adja meg a jelszavát">
-                          </div>
-                          <button type="submit" class="btn btn-success">Regisztráció</button>
-                        </form>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-          </div>
-              <div class="col-md-6">
-  
-                  <div id="carouselExampleSlidesOnly" class="carousel slide" data-ride="carousel" >
-                    <div class="carousel-inner">
-                      <div class="carousel-item active">
-                        <img class="d-block w-100" src="egészséges étel kép 1.jpg" alt="Első kép">
-                      </div>
-                      <div class="carousel-item">
-                        <img class="d-block w-100" src="egészséges étel kép 2.jpg" alt="Második kép">
-                      </div>
-                      <div class="carousel-item">
-                        <img class="d-block w-100" src="egészséges étel kép 3.jpg" alt="Harmadik kép">
-                      </div>
-                    </div>    
-                  </div>
-  
-              </div>
-          </div>
+<div class="container">
+    <input type="checkbox" id="check">
+    <div class="bejelentkezes kartya">
+      <header>Bejelentkezés</header>
+      <form action="#">
+        <input type="text" placeholder="Adja meg az email címét">
+        <input type="password" placeholder="Adja meg a jelszavát">
+        <input type="button" class="button" value="Bejelentkezés">
+      </form>
+      <div class="signup">
+        <span class="signup">Még nincs fiókja?
+         <label for="check">Regisztráció</label>
+        </span>
       </div>
-  </div>
-    
-  <!-- Bootstrap JS, Popper.js, and jQuery -->
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </div>
+    <div class="regisztracio kartya">
+      <header>Regisztráció</header>
+      <form action="#">
+        <input type="text" placeholder="Adja meg az email címét">
+        <input type="text" placeholder="Adja meg a nevét">
+        <input type="password" placeholder="Adja meg a jelszavát">
+        <input type="password" placeholder="Erősítse meg a jelszavát">
+        <input type="button" class="button" value="Regisztráció">
+      </form>
+      <div class="signup">
+        <span class="signup">Már van fiókja?
+         <label for="check">Bejelentkezés</label>
+        </span>
+      </div>
+    </div>
+</div>
+
 </body>
 </html>
