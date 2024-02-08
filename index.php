@@ -1,3 +1,6 @@
+<?php
+    include ('sql.php');
+?>
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -6,22 +9,7 @@
   <title>Étrendkészítő Weboldal</title>
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-  <style>
-    body {
-      background-color: #88D498; /* háttérszín */
-      color: black; /* szövegszín */
-    }
-    .card {
-      background-color: #1A936F; /* kártya háttérszín */
-    }
-    .carousel-inner {
-            border-style: solid;
-            border-width: 5px;
-            border-color: #1A936F;
-            border-radius: 12px;
-            padding: 0px;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
