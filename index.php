@@ -1,5 +1,6 @@
 <?php
-  require('sql.php');
+  require("sql.php");
+  
 ?>
 
 <!DOCTYPE html>
@@ -15,13 +16,13 @@
 <body>
 
 <div class="container">
-    <input type="checkbox" id="check">
+    <input type="checkbox" id="check"> 
     <div class="bejelentkezes kartya">
       <header>Bejelentkezés</header>
-      <form action="#">
-        <input type="text" placeholder="Adja meg az email címét">
-        <input type="password" placeholder="Adja meg a jelszavát">
-        <input type="button" class="button" value="Bejelentkezés">
+      <form action="bejelentkezes.php" method="post">
+        <input type="text" placeholder="Adja meg az email címét" name="email">
+        <input type="password" placeholder="Adja meg a jelszavát" name="jelszo">
+        <input type="submit" class="button" value="Bejelentkezés" name="submit">
       </form>
       <div class="signup">
         <span class="signup">Még nincs fiókja?
@@ -29,14 +30,15 @@
         </span>
       </div>
     </div>
+
     <div class="regisztracio kartya">
       <header>Regisztráció</header>
-      <form action="#">
-        <input type="text" placeholder="Adja meg az email címét">
-        <input type="text" placeholder="Adja meg a nevét">
-        <input type="password" placeholder="Adja meg a jelszavát">
-        <input type="password" placeholder="Erősítse meg a jelszavát">
-        <input type="button" class="button" value="Regisztráció">
+      <form action="regisztracio.php" method="post">
+          <input type="text" placeholder="Adja meg a nevét" name="nev">
+          <input type="text" placeholder="Adja meg az email címét" name="email">
+          <input type="password" placeholder="Adja meg a jelszavát" name="jelszo">
+          <input type="password" placeholder="Erősítse meg a jelszavát" name="jelszo_megerosit">
+          <input type="button" class="button" value="Regisztráció" name="submit">
       </form>
       <div class="signup">
         <span class="signup">Már van fiókja?

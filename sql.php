@@ -1,28 +1,15 @@
 <?php
 
-class DataBase {
+$servername = "localhost"; 
+$username = "admin"; 
+$password = "qCvE_CfYzgZoMX4t"; 
+$dbname = "szakdolgozat"; 
 
-  private $servername = "localhost";
-  private $username = "phpteszt";
-  private $password = "iyD(VcxgbZ.6Pp]*";
-  private $db = "szakdolgozat";
-  public static $conn;
+$conn = mysqli_connect($servername, $username, $password, $dbname);
 
-  function __construct()
-  {
-      // Create connection
-      self::$conn = new mysqli($this->servername, $this->username, $this->password, $this->db);
-  
-      // Check connection
-      if (self::$conn->connect_error) {
-        die("Connection failed: " . $this->conn->connect_error);
-      }
-      
-      self::$conn->set_charset("utf8");
-  }
-
+if (!$conn) {
+    die("Sikertelen kapcsolódás az adatbázishoz: " . mysqli_connect_error());
 }
 
-
-
-?> 
+   
+   
