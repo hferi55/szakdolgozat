@@ -24,18 +24,6 @@ body {
     border-radius: 7px;
     box-shadow: 0 5px 10px rgba(0,0,0,0.3);
   }
-  .container .bejelentkezes{
-    display: none;
-  }
-  #check:checked ~ .bejelentkezes{
-    display: block;
-  }
-  #check:checked ~ .regisztracio{
-    display: none;
-  }
-#check{
-  display: none;
-}
 .container .kartya{
   padding: 2rem;
 }

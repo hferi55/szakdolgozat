@@ -3,26 +3,23 @@ require('sql.php'); // Adatbázis kapcsolódás
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // A form adatok beolvasása
+    $nev = $_POST['nev'];
     $email = $_POST['email'];
     $jelszo = $_POST['jelszo'];
 
     // Biztonságosabbá tétele az SQL lekérdezéseknek
+    $nev = mysqli_real_escape_string($conn, $nev);
     $email = mysqli_real_escape_string($conn, $email);
     $jelszo = mysqli_real_escape_string($conn, $jelszo);
 
-    // Bejelentkezési ellenőrzés
-    $query = "SELECT * FROM felhasznalo WHERE email_cim='$email' AND jelszo='$jelszo'";
+    // Regisztráció az adatbázisba
+    $query = "INSERT INTO `felhasznalo`(`nev`, `email_cim`, `jelszo`) VALUES ('$nev','$email','$jelszo')";
     $result = mysqli_query($conn, $query);
 
-    /*if ($result && mysqli_num_rows($result) > 0) {
-        // Sikeres bejelentkezés
-        echo "Sikeres bejelentkezés!";
-    } else {
-        // Sikertelen bejelentkezés
-        echo "Hibás felhasználónév vagy jelszó!";
-    }*/
-}
-?>
+    if($result){
+        //Sikeres a regisztráció
+        //Dobjon át a bejelentkező ablakra
+        ?>
 
         <!DOCTYPE html>
         <html lang="hu">
@@ -36,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </head>
         <body>
 
-            <div class="container">
+            <div class="container"> 
                 <div class="bejelentkezes kartya">
                     <header>Bejelentkezés</header>
                     <form action="bejelentkezes.php" method="post">
@@ -46,15 +43,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </form>
                     <div class="signup">
                         <span class="signup">Még nincs fiókja?
-                            <a href="index.php">Regisztráció</a>
+                            <label for="check">Regisztráció</label>
                         </span>
                     </div>
                 </div>
             </div>
         </body>
         </html>
-<?php
-
+        <?php
+    }
+    /*if ($result) {
+        // Sikeres regisztráció
+        echo "Sikeres regisztráció!";
+    } else {
+        // Sikertelen regisztráció
+        echo "Hiba a regisztráció során!";
+    }*/
+    
+}
 // Adatbázis kapcsolat lezárása
 mysqli_close($conn);
-
+?>
