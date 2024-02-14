@@ -16,7 +16,7 @@
 
 <div class="container">
     <div class="regisztracio kartya">
-      <header>Regisztráció</header>
+      <header>Főoldal</header>
       <form action="regisztracio.php" method="post">
           <label>Még nincs fiókja?</label>
           <input type="submit" class="button" value="Regisztráció" name="submit">

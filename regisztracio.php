@@ -1,36 +1,56 @@
 <?php
 require('sql.php'); // Adatbázis kapcsolódás
 
+$errorMessage = ''; // Hibaüzenet inicializálása
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
-  // A form adatok beolvasása
-  $nev = isset($_POST['nev']) ? $_POST['nev'] : '';
-  $email = isset($_POST['email']) ? $_POST['email'] : '';
-  $jelszo = isset($_POST['jelszo']) ? $_POST['jelszo'] : '';
-  $jelszoMegerosit = isset($_POST['jelszo_megerosit']) ? $_POST['jelszo_megerosit'] : '';
-
+    // A form adatok beolvasása
+    $nev = isset($_POST['nev']) ? $_POST['nev'] : '';
+    $email = isset($_POST['email']) ? $_POST['email'] : '';
+    $jelszo = isset($_POST['jelszo']) ? $_POST['jelszo'] : '';
+    $jelszoMegerosit = isset($_POST['jelszo_megerosit']) ? $_POST['jelszo_megerosit'] : '';
 
     // Ellenőrzés, hogy az összes mező ki van-e töltve
     if (!empty($nev) && !empty($email) && !empty($jelszo) && !empty($jelszoMegerosit)) {
-        // Biztonságosabbá tétele az SQL lekérdezéseknek
-        $nev = mysqli_real_escape_string($conn, $nev);
-        $email = mysqli_real_escape_string($conn, $email);
-        $jelszo = mysqli_real_escape_string($conn, $jelszo);
+        // Ellenőrzés, hogy a név megfelelő hosszúságú
+        if (strlen($nev) >= 3) {
+            // Ellenőrzés, hogy a jelszó megfelelő hosszúságú, tartalmaz-e nagybetűt, és nem tartalmaz-e speciális karaktert
+            if (strlen($jelszo) >= 4 && preg_match('/[A-Z]/', $jelszo) && !preg_match('/[^A-Za-z0-9]/', $jelszo)) {
+                // Biztonságosabbá tétele az SQL lekérdezéseknek
+                $nev = mysqli_real_escape_string($conn, $nev);
+                $email = mysqli_real_escape_string($conn, $email);
 
-        // Regisztráció az adatbázisba
-        $query = "INSERT INTO `felhasznalo`(`nev`, `email_cim`, `jelszo`) VALUES ('$nev','$email','$jelszo')";
-        $result = mysqli_query($conn, $query);
+                // Ellenőrzés, hogy az email cím már létezik-e az adatbázisban
+                $ellenorzoQuery = "SELECT * FROM felhasznalo WHERE email_cim='$email'";
+                $ellenorzoResult = mysqli_query($conn, $ellenorzoQuery);
 
-        if ($result) {
-          header("Location: bejelentkezes.php");
-          exit(); // Fontos: Leállítjuk az aktuális kódfuttatást, hogy biztosan csak az átirányítás történjen
-      } else {
-          // Sikertelen regisztráció
-          echo "Hiba a regisztráció során: " . mysqli_error($conn);
-      }
-    } else {
-        // Ha valamelyik mező nincs kitöltve
-        echo "Minden mező kitöltése kötelező!";
+                if ($ellenorzoResult && mysqli_num_rows($ellenorzoResult) > 0) {
+                    // Sikertelen regisztráció - az email cím már foglalt
+                    $errorMessage = "Ez az email cím már regisztrálva van!";
+                } else {
+                    // Jelszó titkosítása
+                    $titkositottJelszo = password_hash($jelszo, PASSWORD_DEFAULT);
+
+                    // Regisztráció az adatbázisba
+                    $query = "INSERT INTO `felhasznalo`(`nev`, `email_cim`, `jelszo`) VALUES ('$nev','$email','$titkositottJelszo')";
+                    $result = mysqli_query($conn, $query);
+
+                    if ($result) {
+                        header("Location: bejelentkezes.php");
+                        exit();
+                    } else {
+                        // Sikertelen regisztráció
+                        $errorMessage = "Hiba a regisztráció során: " . mysqli_error($conn);
+                    }
+                }
+            } else {
+                // Sikertelen regisztráció - a jelszó nem felel meg a követelményeknek
+                $errorMessage = "A jelszónak legalább 4 karakter hosszúnak kell lennie, tartalmaznia kell egy nagybetűt, és nem tartalmazhat speciális karaktereket!";
+            }
+        } else {
+            // Sikertelen regisztráció - a név nem felel meg a követelményeknek
+            $errorMessage = "A névnek legalább 3 karakter hosszúnak kell lennie!";
+        }
     }
 
     // Adatbázis kapcsolat lezárása
@@ -52,12 +72,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="container">
         <div class="regisztracio kartya">
             <header>Regisztráció</header>
+            
+            <?php if ($errorMessage): ?>
+                <p><?php echo $errorMessage; ?></p>
+            <?php endif; ?>
+
             <form action="" method="post">
-                <input type="text" placeholder="Adja meg a nevét" name="nev">
-                <input type="text" placeholder="Adja meg az email címét" name="email">
-                <input type="password" placeholder="Adja meg a jelszavát" name="jelszo">
-                <input type="password" placeholder="Erősítse meg a jelszavát" name="jelszo_megerosit">
-                <input type="submit" class="button" value="Regisztráció" name="submit">
+                <input type="text" placeholder="Adja meg a nevét" name="nev" required>
+                <input type="email" placeholder="Adja meg az email címét" name="email" required>
+                <input type="password" placeholder="Adja meg a jelszavát" name="jelszo" required>
+                <input type="password" placeholder="Erősítse meg a jelszavát" name="jelszo_megerosit" required>
+                <input type="submit" class="button" value="Regisztráció" name="submit" required>
             </form>
             <div class="signup">
                 <span class="signup">Már van fiókja?
