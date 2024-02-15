@@ -17,7 +17,7 @@
     <header class="fooldalheader">
         <h1 class="cim">ÉKW</h1>
             <nav class="navbar">
-                <a href="rolunk.php">Rólunk</a> |
+                <a href="rolunk2.php">Rólunk</a> |
                 <a href="profil.php">Profil</a> |
                 <a href="etrendkeszites.php">Étrendkészítése</a> 
             </nav>

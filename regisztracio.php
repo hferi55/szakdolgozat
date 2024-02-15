@@ -69,7 +69,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    
     <div class="container">
         <div class="regisztracio kartya">
             <header>Regisztráció</header>
