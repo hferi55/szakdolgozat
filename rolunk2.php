@@ -1,5 +1,8 @@
 <?php
   require("sql.php");
+
+  $bejelentkezve = isset($_POST['email']) && !empty($_POST['email']);
+
 ?>
 
 <!DOCTYPE html>
@@ -17,22 +20,17 @@
     <header class="fooldalheader">
         <h1 class="cim">ÉKW</h1>
             <nav class="navbar">
-                <a href="rolunk.php">Rólunk</a> |
+                <a href="#">Rólunk</a> |
                 <a href="profil.php">Profil</a> |
-                <a href="etrendkeszites.php">Étrendkészítése</a> |
-                <a href="bejelentkezes.php">Bejelntkezés</a> |
-                <a href="regisztracio.php">Regisztráció</a> 
+                <a href="etrendkeszitese.php">Étrendkészítése</a> 
             </nav>
     </header>
-
-
 
 <div class="container">
     <div class="kartya">
       <header>Rólunk</header>
       <form action="" method="post">
           <label>Információk</label>
-         
       </form>
     </div>
 </div>
