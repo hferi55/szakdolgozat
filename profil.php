@@ -19,7 +19,7 @@
             <nav class="navbar">
                 <a href="rolunk2.php">Rólunk</a> |
                 <a href="profil.php">Profil</a> |
-                <a href="etrendkeszites.php">Étrendkészítése</a> 
+                <a href="etrendkeszitese.php">Étrendkészítése</a> 
             </nav>
     </header>
 
