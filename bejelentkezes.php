@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Jelszó ellenőrzése
             if (password_verify($jelszo, $titkositottJelszoDB)) {
                 // Sikeres bejelentkezés
-                header("Location: index.php");
+                header("Location: loggedin.php");
                 exit();
             } else {
                 // Sikertelen bejelentkezés - hibás jelszó
@@ -49,6 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
     <div class="container">
         <div class="bejelentkezes kartya">
             <header>Bejelentkezés</header>
