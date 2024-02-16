@@ -69,6 +69,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+<header class="fooldalheader">
+    <h1 class="cim">ÉKW</h1>
+    <nav class="navbar">
+        <a href="index.php">Főoldal</a> 
+    </nav>
+</header>
+
     <div class="container">
         <div class="regisztracio kartya">
             <header>Regisztráció</header>
