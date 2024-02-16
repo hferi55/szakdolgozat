@@ -23,7 +23,7 @@
                 <a href="#">Rólunk</a> |
                 <a href="profil.php">Profil</a> |
                 <a href="etrendkeszitese.php">Étrendkészítése</a> |
-                <a href="index.php">Kijelentkezés</a>
+                <a href="logout.php">Kijelentkezés</a>
             </nav>
     </header>
 
