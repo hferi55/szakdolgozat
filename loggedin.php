@@ -26,7 +26,7 @@
 
 
 
-<div class="container">
+<div class="lap">
     <div class="kartya">
       <form action="" method="post">
           <label>Még nincs fiókja?</label>

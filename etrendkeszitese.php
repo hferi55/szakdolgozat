@@ -26,7 +26,7 @@
 
 
 
-<div class="container">
+<div class="lap">
     <div class="kartya">
       <header>Étrendkészítése</header>
       <form action="" method="post">
