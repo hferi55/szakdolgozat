@@ -64,6 +64,68 @@ header {
     padding: 25px;
 }
 
+.profil_lap{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: 150px;
+  transform: translate(-50%,-50%);
+  max-width: 1000px;
+  width: 100%;
+  background: #fff;
+  border-radius: 7px;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+  padding: 15px;
+}
+
+.profil_lap .kartya {
+  padding: 2rem;
+}
+
+.profil_lap header {
+  font-size: 2rem;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.profil_lap input[type="text"], .profil_lap input[type="password"] {
+  height: 40px;
+  width: 50%;
+  padding: 0 15px;
+  font-size: 16px;
+  margin-bottom: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  outline: none;
+}
+
+.profil_lap input[type="submit"] {
+  color: #fff;
+  background: #009579;
+  font-size: 1.2rem;
+  font-weight: 500;
+  letter-spacing: 1px;
+  margin-top: 1.5rem;
+  cursor: pointer;
+  transition: 0.4s;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+}
+
+.profil_lap input[type="submit"]:hover {
+  background: #006653;
+}
+
+.profilkep {
+  width: 300px; /* Állítsd be a kívánt szélességet */
+  height: auto; /* Az arányok megtartása érdekében */
+  border-radius: 50%; /* Kerekített sarkok */
+  margin-bottom: 1.5rem;
+}
+
 .container{
     position: absolute;
     top: 50%;

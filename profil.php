@@ -25,13 +25,25 @@
     </header>
 
 
-
-<div class="lap">
+<div class="profil_lap">
     <div class="kartya">
-      <header>Profil</header>
+    <header>Profil</header>
       <form action="" method="post">
-          <label>Adatok:</label>
-         
+
+      <h3>Profilkép</h3>
+      <img src="kepek/uresprofilkep.png" alt="Profilkép" class="profilkep">
+
+      <h3>Név</h3>
+      <input type="text" placeholder="Név" name="nev">
+
+      <h3>Email-cím</h3>
+      <input type="text" placeholder="Email cím" name="email">
+
+      <h3>Jelszó</h3>
+      <input type="password" placeholder="Jelszó" name="jelszo">
+
+      <input type="submit" value="Adatok módosítása" class="button">
+
       </form>
     </div>
 </div>
