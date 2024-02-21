@@ -65,6 +65,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <header>Profil</header>
       <form action="profilkep_feltoltes.php" method="post" enctype="multipart/form-data">
 
+      
+    <!-- 
+        Profilkép ötlet újra dolgozása, a profilkép feltöltése helyett, legyen 4-5 profilkép ami közül lehet választani (fiú, férfi, lány, nő, üres profilkép) 
+        A profil oldalon csak a nevet, email-címet, és jelszavat lehessen változtatni, meg persze a profilképet lehessen kiválasztani. 
+        A testsúly, magasság, és cél adatot az etrendkeszitese.php oldalon lehessen megadni.
+    -->
+
       <h3>Profilkép</h3>
       <?php
       
