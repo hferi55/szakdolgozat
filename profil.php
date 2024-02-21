@@ -28,10 +28,14 @@
 <div class="profil_lap">
     <div class="kartya">
     <header>Profil</header>
-      <form action="" method="post">
+    <form action="profilkep_feltoltes.php" method="post" enctype="multipart/form-data">
 
-      <h3>Profilkép</h3>
-      <img src="kepek/uresprofilkep.png" alt="Profilkép" class="profilkep">
+    <h3>Profilkép</h3>
+    <img src="kepek/uresprofilkep.png" alt="Profilkép" class="profilkep">
+    <br>
+    <label for="profilkep_feltoltes">Profilkép kicserélése:</label>
+    <input type="file" id="profilkep_feltoltes" name="profilkep" accept="image/*">
+    <br>
 
       <h3>Név</h3>
       <input type="text" placeholder="Név" name="nev">
@@ -39,8 +43,19 @@
       <h3>Email-cím</h3>
       <input type="text" placeholder="Email cím" name="email">
 
-      <h3>Jelszó</h3>
-      <input type="password" placeholder="Jelszó" name="jelszo">
+      <h3>Testsúly</h3>
+      <input type="text" placeholder="Testsúly" name="testsuly">
+
+      <h3>Magasság</h3>
+      <input type="text" placeholder="Magasság" name="magassag">
+
+      <h3>Cél</h3>
+      <select name="cel" id="cel">
+        <option value="1">Nincs cél</option>
+        <option value="2">Szintentartás</option>
+        <option value="3">Fogyás</option>
+        <option value="4">Tömegelés</option>
+      </select>
 
       <input type="submit" value="Adatok módosítása" class="button">
 

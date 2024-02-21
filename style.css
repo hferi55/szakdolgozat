@@ -68,7 +68,7 @@ header {
   position: absolute;
   top: 50%;
   left: 50%;
-  margin-top: 150px;
+  margin-top: 250px;
   transform: translate(-50%,-50%);
   max-width: 1000px;
   width: 100%;
@@ -76,6 +76,7 @@ header {
   border-radius: 7px;
   box-shadow: 0 5px 10px rgba(0,0,0,0.3);
   padding: 15px;
+  text-align: center;
 }
 
 .profil_lap .kartya {
@@ -89,7 +90,7 @@ header {
   margin-bottom: 1.5rem;
 }
 
-.profil_lap input[type="text"], .profil_lap input[type="password"] {
+.profil_lap input[type="text"], .profil_lap input[type="password"], .profil_lap select, .profil_lap input[type="file"] {
   height: 40px;
   width: 50%;
   padding: 0 15px;
@@ -98,6 +99,7 @@ header {
   border: 1px solid #ddd;
   border-radius: 6px;
   outline: none;
+  text-align: center;
 }
 
 .profil_lap input[type="submit"] {
