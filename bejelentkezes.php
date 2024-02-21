@@ -24,6 +24,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Jelszó ellenőrzése
             if (password_verify($jelszo, $titkositottJelszoDB)) {
                 // Sikeres bejelentkezés
+                // Bejelentkezési folyamat után, valahol a sikeres bejelentkezés után
+                // Példa, ahol $userId a bejelentkezett felhasználó azonosítója
+                $_SESSION['felhasznalo_id'] = $userId;
+
                 header("Location: loggedin.php");
                 exit();
             } else {

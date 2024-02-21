@@ -24,12 +24,11 @@
           </nav>
     </header>
 
-
-
 <div class="lap">
     <div class="kartya">
+      <header>Főoldal</header>
       <form action="" method="post">
-          <label>Még nincs fiókja?</label>
+          <label>Főoldal</label>
          
       </form>
     </div>

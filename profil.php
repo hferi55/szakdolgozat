@@ -1,3 +1,44 @@
+<?php
+require("sql.php");
+session_start();
+
+// Változók inicializálása
+$nev = $email = $testsuly = $magassag = $cel = "";
+
+// Ellenőrzés, hogy a form elküldésre került-e
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Az űrlap adatainak feldolgozása
+
+    // Név
+    $nev = $_POST["nev"];
+
+    // Email-cím
+    $email = $_POST["email"];
+
+    // Testsúly
+    $testsuly = $_POST["testsuly"];
+
+    // Magasság
+    $magassag = $_POST["magassag"];
+
+    // Cél
+    $cel = $_POST["cel"];
+
+    // Az adatok frissítése az adatbázisban
+    $sqlUpdate = "UPDATE users SET nev=?, email=?, testsuly=?, magassag=?, cel=? WHERE felhasznalo_id=?";
+    $stmtUpdate = $conn->prepare($sqlUpdate);
+    $stmtUpdate->bind_param("sssssi", $nev, $email, $testsuly, $magassag, $cel, $_SESSION['felhasznalo_id']);
+
+    if ($stmtUpdate->execute()) {
+        echo "Adataid sikeresen frissítve.";
+    } else {
+        echo "Hiba történt az adatok frissítése során.";
+    }
+}
+?>
+
+
+
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -26,7 +67,6 @@
 
       <h3>Profilkép</h3>
       <?php
-      session_start();
       
       // Profilkép elérési útjának lekérése a session-ből
       $profilkep = isset($_SESSION['profilkep']) ? $_SESSION['profilkep'] : "profilkepek/uresprofilkep.png";
@@ -41,29 +81,29 @@
       <input type="file" id="profilkep_feltoltes" name="profilkep" accept="image/*">
       <br>
 
-      <h3>Név</h3>
-      <input type="text" placeholder="Név" name="nev">
+            <h3>Név</h3>
+            <input type="text" placeholder="Név" name="nev" value="<?php echo htmlspecialchars($nev); ?>">
 
-      <h3>Email-cím</h3>
-      <input type="text" placeholder="Email cím" name="email">
+            <h3>Email-cím</h3>
+            <input type="text" placeholder="Email cím" name="email" value="<?php echo htmlspecialchars($email); ?>">
 
-      <h3>Testsúly</h3>
-      <input type="text" placeholder="Testsúly" name="testsuly">
+            <h3>Testsúly</h3>
+            <input type="text" placeholder="Testsúly" name="testsuly" value="<?php echo htmlspecialchars($testsuly); ?>">
 
-      <h3>Magasság</h3>
-      <input type="text" placeholder="Magasság" name="magassag">
+            <h3>Magasság</h3>
+            <input type="text" placeholder="Magasság" name="magassag" value="<?php echo htmlspecialchars($magassag); ?>">
 
-      <h3>Cél</h3>
-      <select name="cel" id="cel">
-        <option value="1">Nincs cél</option>
-        <option value="2">Szintentartás</option>
-        <option value="3">Fogyás</option>
-        <option value="4">Tömegelés</option>
-      </select>
+            <h3>Cél</h3>
+            <select name="cel" id="cel">
+                <option value="1" <?php if ($cel == 1) echo "selected"; ?>>Nincs cél</option>
+                <option value="2" <?php if ($cel == 2) echo "selected"; ?>>Szintentartás</option>
+                <option value="3" <?php if ($cel == 3) echo "selected"; ?>>Fogyás</option>
+                <option value="4" <?php if ($cel == 4) echo "selected"; ?>>Tömegelés</option>
+            </select>
 
-      <input type="submit" value="Adatok módosítása" class="button">
+            <input type="submit" value="Adatok módosítása" class="button">
 
-      </form>
+        </form>
     </div>
 </div>
 
