@@ -3,7 +3,8 @@ require("sql.php");
 session_start();
 
 // Változók inicializálása
-$nev = $email = $testsuly = $magassag = $cel = "";
+$nev = $email = $jelszo = ""; // Alapértelmezett értékek
+$profilkep_id = 1; // Alapértelmezett profilkép azonosító
 
 // Ellenőrzés, hogy a form elküldésre került-e
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -15,19 +16,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Email-cím
     $email = $_POST["email"];
 
-    // Testsúly
-    $testsuly = $_POST["testsuly"];
+    // Jelszó
+    $jelszo = $_POST["jelszo"];
 
-    // Magasság
-    $magassag = $_POST["magassag"];
+    // Jelszó hashelése
+    $hashelt_jelszo = password_hash($jelszo, PASSWORD_DEFAULT);
 
-    // Cél
-    $cel = $_POST["cel"];
+    // Profilkép azonosító
+    $profilkep_id = $_POST["profilkep_id"];
+
+    // Az adatok frissítése a session-ben
+    $_SESSION['nev'] = $nev;
+    $_SESSION['email'] = $email;
+    $_SESSION['jelszo'] = $jelszo;
+    $_SESSION['profilkep_id'] = $profilkep_id;
 
     // Az adatok frissítése az adatbázisban
-    $sqlUpdate = "UPDATE users SET nev=?, email=?, testsuly=?, magassag=?, cel=? WHERE felhasznalo_id=?";
+    $sqlUpdate = "UPDATE felhasznalo SET nev=?, email_cim=?, jelszo=? WHERE felhasznalo_id=?";
     $stmtUpdate = $conn->prepare($sqlUpdate);
-    $stmtUpdate->bind_param("sssssi", $nev, $email, $testsuly, $magassag, $cel, $_SESSION['felhasznalo_id']);
+    $stmtUpdate->bind_param("sssi", $nev, $email, $hashelt_jelszo, $_SESSION['felhasznalo_id']);
 
     if ($stmtUpdate->execute()) {
         echo "Adataid sikeresen frissítve.";
@@ -35,8 +42,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "Hiba történt az adatok frissítése során.";
     }
 }
-?>
 
+// A kiválasztott profilkép elérési útvonala
+switch ($profilkep_id) {
+    case 1:
+        $profilkep = "profilkepek/ferfi.jpg";
+        break;
+    case 2:
+        $profilkep = "profilkepek/no.jpg";
+        break;
+    case 3:
+        $profilkep = "profilkepek/uresprofilkep.png";
+        break;
+    default:
+        $profilkep = "profilkepek/uresprofilkep.png";
+        break;
+}
+?>
 
 
 <!DOCTYPE html>
@@ -63,54 +85,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <div class="profil_lap">
     <div class="kartya">
     <header>Profil</header>
-      <form action="profilkep_feltoltes.php" method="post" enctype="multipart/form-data">
+      <form action="" method="post">
 
-      
-    <!-- 
-        Profilkép ötlet újra dolgozása, a profilkép feltöltése helyett, legyen 4-5 profilkép ami közül lehet választani (fiú, férfi, lány, nő, üres profilkép) 
-        A profil oldalon csak a nevet, email-címet, és jelszavat lehessen változtatni, meg persze a profilképet lehessen kiválasztani. 
-        A testsúly, magasság, és cél adatot az etrendkeszitese.php oldalon lehessen megadni.
-    -->
-
-      <h3>Profilkép</h3>
-      <?php
-      
-      // Profilkép elérési útjának lekérése a session-ből
-      $profilkep = isset($_SESSION['profilkep']) ? $_SESSION['profilkep'] : "profilkepek/uresprofilkep.png";
-      ?>
-      
-      <!-- A profilkep változó használata a profilkép megjelenítéséhez -->
+      <!-- Profilkép megjelenítése -->
       <img src="<?php echo htmlspecialchars($profilkep); ?>" alt="Profilkép" class="profilkep">
-
       <br>
-      <!-- Fájlfeltöltő input elem hozzáadása -->
-      <label for="profilkep_feltoltes">Profilkép kicserélése:</label>
-      <input type="file" id="profilkep_feltoltes" name="profilkep" accept="image/*">
+      <!-- Profilkép kiválasztása -->
+      <label for="profilkep_id">Profilkép kiválasztása:</label>
       <br>
+      <select name="profilkep_id" id="profilkep_id">
+          <option value="1" <?php if ($profilkep_id == 1) echo "selected"; ?>>Ferfi</option>
+          <option value="2" <?php if ($profilkep_id == 2) echo "selected"; ?>>No</option>
+          <option value="3" <?php if ($profilkep_id == 3) echo "selected"; ?>>Üres profilkép</option>
+      </select>
 
-            <h3>Név</h3>
-            <input type="text" placeholder="Név" name="nev" value="<?php echo htmlspecialchars($nev); ?>">
+        <!-- Név -->
+        <h3>Név</h3>
+        <input type="text" placeholder="<?php echo htmlspecialchars($nev !== "" ? $nev : 'Név'); ?>" name="nev" value="<?php echo htmlspecialchars($nev); ?>">
 
-            <h3>Email-cím</h3>
-            <input type="text" placeholder="Email cím" name="email" value="<?php echo htmlspecialchars($email); ?>">
+        <!-- Email-cím -->
+        <h3>Email-cím</h3>
+        <input type="text" placeholder="<?php echo htmlspecialchars($email !== "" ? $email : 'Email cím'); ?>" name="email" value="<?php echo htmlspecialchars($email); ?>">
 
-            <h3>Testsúly</h3>
-            <input type="text" placeholder="Testsúly" name="testsuly" value="<?php echo htmlspecialchars($testsuly); ?>">
+        <!-- Jelszó -->
+        <h3>Jelszó</h3>
+        <input type="text" placeholder="<?php echo htmlspecialchars($jelszo !== "" ? $jelszo : 'Jelszó'); ?>" name="jelszo" value="<?php echo htmlspecialchars($jelszo); ?>">
 
-            <h3>Magasság</h3>
-            <input type="text" placeholder="Magasság" name="magassag" value="<?php echo htmlspecialchars($magassag); ?>">
-
-            <h3>Cél</h3>
-            <select name="cel" id="cel">
-                <option value="1" <?php if ($cel == 1) echo "selected"; ?>>Nincs cél</option>
-                <option value="2" <?php if ($cel == 2) echo "selected"; ?>>Szintentartás</option>
-                <option value="3" <?php if ($cel == 3) echo "selected"; ?>>Fogyás</option>
-                <option value="4" <?php if ($cel == 4) echo "selected"; ?>>Tömegelés</option>
-            </select>
-
-            <input type="submit" value="Adatok módosítása" class="button">
-
-        </form>
+      <input type="submit" value="Adatok módosítása" class="button">
+      </form>
     </div>
 </div>
 
