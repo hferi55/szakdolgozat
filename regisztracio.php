@@ -2,6 +2,8 @@
 require('sql.php'); // Adatbázis kapcsolódás
 
 $errorMessage = ''; // Hibaüzenet inicializálása
+$testsuly = $magassag = 0; // Alapértelmezett értékek
+$cel = 0;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // A form adatok beolvasása
@@ -32,7 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $titkositottJelszo = password_hash($jelszo, PASSWORD_DEFAULT);
 
                     // Regisztráció az adatbázisba
-                    $query = "INSERT INTO `felhasznalo`(`nev`, `email_cim`, `jelszo`) VALUES ('$nev','$email','$titkositottJelszo')";
+                    $query = "INSERT INTO `felhasznalo`(`nev`, `email_cim`, `jelszo`, `testsuly`, `magassag`, `cel`) VALUES ('$nev','$email','$titkositottJelszo','$testsuly','$magassag','$cel')";
                     $result = mysqli_query($conn, $query);
 
                     if ($result) {
