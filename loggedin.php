@@ -1,5 +1,12 @@
 <?php
   require("sql.php");
+  session_start();
+  
+  // Ellenőrzés, hogy a felhasználó be van-e jelentkezve
+  if (!isset($_SESSION['felhasznalo_id'])) {
+      header("Location: bejelentkezes.php"); // Változtasd meg a céloldalt a bejelentkezési oldalra
+      exit();
+  }
 ?>
 
 <!DOCTYPE html>

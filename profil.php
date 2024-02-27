@@ -2,6 +2,12 @@
 require("sql.php");
 session_start();
 
+// Ellenőrzés, hogy a felhasználó be van-e jelentkezve
+if (!isset($_SESSION['felhasznalo_id'])) {
+    header("Location: bejelentkezes.php"); // Változtasd meg a céloldalt a bejelentkezési oldalra
+    exit();
+}
+
 // Változók inicializálása
 $nev = $email = $jelszo = ""; // Alapértelmezett értékek
 $profilkep_id = 1; // Alapértelmezett profilkép azonosító
@@ -31,9 +37,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $_SESSION['profilkep_id'] = $profilkep_id;
 
     // Az adatok frissítése az adatbázisban
+    $felhasznalo_id = $_SESSION['felhasznalo_id']; // Hozzuk létre a felhasználó azonosítóját
     $sqlUpdate = "UPDATE felhasznalo SET nev=?, email_cim=?, jelszo=? WHERE felhasznalo_id=?";
     $stmtUpdate = $conn->prepare($sqlUpdate);
-    $stmtUpdate->bind_param("sssi", $nev, $email, $hashelt_jelszo, $_SESSION['felhasznalo_id']);
+    $stmtUpdate->bind_param("sssi", $nev, $email, $hashelt_jelszo, $felhasznalo_id);
 
     if ($stmtUpdate->execute()) {
         echo "Adataid sikeresen frissítve.";

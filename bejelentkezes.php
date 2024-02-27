@@ -1,44 +1,48 @@
 <?php
-require('sql.php'); // Adatbázis kapcsolódás
+require("sql.php");
+session_start();
 
-$errorMessage = ''; // Hibaüzenet inicializálása
+$errorMessage = ""; // Itt inicializáljuk a változót
+
+// Felhasználó bejelentkezése
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // A form adatok beolvasása
-    $email = isset($_POST['email']) ? $_POST['email'] : '';
-    $jelszo = isset($_POST['jelszo']) ? $_POST['jelszo'] : '';
+    $email = $_POST["email"]; 
+    $password = $_POST["jelszo"]; 
 
-    // Biztonságosabbá tétele az SQL lekérdezéseknek
-    $email = mysqli_real_escape_string($conn, $email);
-    $jelszo = mysqli_real_escape_string($conn, $jelszo);
+    // Ellenőrzés a felhasználónév és jelszó alapján az adatbázisban
+    $sql = "SELECT felhasznalo_id, jelszo FROM felhasznalo WHERE email_cim=?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $email);
 
-    // Bejelentkezési ellenőrzés
-    if (!empty($email) && !empty($jelszo)) {
-        $query = "SELECT * FROM felhasznalo WHERE email_cim='$email'";
-        $result = mysqli_query($conn, $query);
+    try {
+        if ($stmt->execute()) {
+            $stmt->store_result();
+            
+            if ($stmt->num_rows > 0) {
+                $stmt->bind_result($user_id, $hashed_password);
+                $stmt->fetch();
 
-        if ($result && mysqli_num_rows($result) > 0) {
-            $row = mysqli_fetch_assoc($result);
-            $titkositottJelszoDB = $row['jelszo'];
-
-            // Jelszó ellenőrzése
-            if (password_verify($jelszo, $titkositottJelszoDB)) {
-                // Sikeres bejelentkezés
-                // Bejelentkezési folyamat után, valahol a sikeres bejelentkezés után
-                // Példa, ahol $userId a bejelentkezett felhasználó azonosítója
-                $_SESSION['felhasznalo_id'] = $userId;
-
-                header("Location: loggedin.php");
-                exit();
+                // Ellenőrzés a hashelt jelszó alapján
+                if (password_verify($password, $hashed_password)) {
+                    // Sikeres bejelentkezés
+                    $_SESSION['felhasznalo_id'] = $user_id; // Felhasználó azonosítója a session-be
+                    header("Location: loggedin.php"); // Változtasd meg a céloldalt a profil oldalra
+                    exit();
+                } else {
+                    $errorMessage = "Hibás email cím vagy jelszó.";
+                }
             } else {
-                // Sikertelen bejelentkezés - hibás jelszó
-                $errorMessage = "Hibás felhasználónév vagy jelszó!";
+                $errorMessage = "Hibás email cím vagy jelszó.";
             }
         } else {
-            // Sikertelen bejelentkezés - felhasználó nem található
-            $errorMessage = "Hibás felhasználónév vagy jelszó!";
+            $errorMessage = "Hiba történt a bejelentkezés során.";
         }
+    } catch (Exception $e) {
+        $errorMessage = "Hiba: " . $e->getMessage();
     }
+
+    $stmt->close();
 }
 ?>
 
@@ -84,7 +88,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </body>
 </html>
 <?php
-
 // Adatbázis kapcsolat lezárása
 mysqli_close($conn);
 ?>
