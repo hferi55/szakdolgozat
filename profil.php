@@ -17,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST["email"];
 
     // Jelszó
-    $jelszo = $_POST["jelszo"];
+    $jelszo = isset($_POST["jelszo"]) ? $_POST["jelszo"] : "";
 
     // Jelszó hashelése
     $hashelt_jelszo = password_hash($jelszo, PASSWORD_DEFAULT);
@@ -28,7 +28,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Az adatok frissítése a session-ben
     $_SESSION['nev'] = $nev;
     $_SESSION['email'] = $email;
-    $_SESSION['jelszo'] = $jelszo;
     $_SESSION['profilkep_id'] = $profilkep_id;
 
     // Az adatok frissítése az adatbázisban
