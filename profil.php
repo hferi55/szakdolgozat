@@ -115,7 +115,7 @@ switch ($profilkep_id) {
 
         <!-- Jelszó -->
         <h3>Jelszó</h3>
-        <input type="text" placeholder="<?php echo htmlspecialchars($jelszo !== "" ? $jelszo : 'Jelszó'); ?>" name="jelszo" value="<?php echo htmlspecialchars($jelszo); ?>">
+        <input type="password" placeholder="<?php echo htmlspecialchars($jelszo !== "" ? $jelszo : 'Jelszó'); ?>" name="jelszo" value="<?php echo htmlspecialchars($jelszo); ?>">
 
       <input type="submit" value="Adatok módosítása" class="button">
       </form>
