@@ -10,7 +10,10 @@ if (!isset($_SESSION['felhasznalo_id'])) {
 
 // Változók inicializálása
 $nev = $email = $jelszo = $jelszoMegerosit = ""; // Alapértelmezett értékek
-$profilkep_id = 1; // Alapértelmezett profilkép azonosító
+$profilkep_id = isset($_POST['profilkep_id']) ? $_POST['profilkep_id'] : $_SESSION['profilkep_id']; // Profilkép azonosító
+
+// Hibaüzenetek tárolására használt tömb
+$errors = array();
 
 // Ellenőrzés, hogy a form elküldésre került-e
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -20,54 +23,55 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nev = $_POST["nev"];
 
     // Név ellenőrzése
-    if (empty($nev) && strlen($nev) <= 3 && preg_match("/[^a-zA-Z0-9]/", $nev) && strlen($nev) <= 8) {
-        echo "A névnek legalább 3 karakter hosszúnak, maximum 8 karakter lehet, és nem tartalmazhat speciális karaktert.";
-        exit();
+    if (empty($nev) || strlen($nev) < 3 || strlen($nev) > 8 || preg_match("/[^a-zA-Z0-9]/", $nev)) {
+        $errors[] = "A névnek legalább 3 karakter hosszúnak, maximum 8 karakter lehet, és nem tartalmazhat speciális karaktert.";
     }
-
 
     // Email-cím
     $email = $_POST["email"];
 
+    // Email-cím ellenőrzése
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = "Érvénytelen email cím formátum.";
+    }
+
     // Jelszó
     $jelszo = isset($_POST["jelszo"]) ? $_POST["jelszo"] : "";
 
-    // Jelszó megerősitése
+    // Jelszó megerősítése
     $jelszoMegerosit = isset($_POST['jelszo_megerosit']) ? $_POST['jelszo_megerosit'] : '';
 
     // Jelszó erősítés ellenőrzése
     if ($jelszo !== $jelszoMegerosit) {
-        echo "A jelszó és a jelszó megerősítése nem egyezik meg.";
-        exit();
+        $errors[] = "A jelszó és a jelszó megerősítése nem egyezik meg.";
     }
 
     // Jelszó erősségének ellenőrzése 
-    if (empty($jelszo) && strlen($jelszo) <= 4 && !preg_match("/[A-Z]/", $jelszo) && preg_match("/[^a-zA-Z0-9]/", $jelszo)) {
-        echo "A jelszónak legalább 4 karakter hosszúnak, tartalmaznia kell legalább 1 nagybetűt, és nem tartalmazhat speciális karaktert.";
-        exit();
+    if (empty($jelszo) || strlen($jelszo) < 4 || !preg_match("/[A-Z]/", $jelszo) || preg_match("/[^a-zA-Z0-9]/", $jelszo)) {
+        $errors[] = "A jelszónak legalább 4 karakter hosszúnak, tartalmaznia kell legalább 1 nagybetűt, és nem tartalmazhat speciális karaktert.";
     }
 
-    // Jelszó hashelése
-    $hashelt_jelszo = password_hash($jelszo, PASSWORD_DEFAULT);
+    // Csak akkor frissítjük az adatokat, ha nincsenek hibaüzenetek
+    if (empty($errors)) {
+        // Jelszó hashelése
+        $hashelt_jelszo = password_hash($jelszo, PASSWORD_DEFAULT);
 
-    // Profilkép azonosító
-    $profilkep_id = $_POST["profilkep_id"];
+        // Az adatok frissítése a session-ben
+        $_SESSION['nev'] = $nev;
+        $_SESSION['email'] = $email;
+        $_SESSION['profilkep_id'] = $profilkep_id;
 
-    // Az adatok frissítése a session-ben
-    $_SESSION['nev'] = $nev;
-    $_SESSION['email'] = $email;
-    $_SESSION['profilkep_id'] = $profilkep_id;
+        // Az adatok frissítése az adatbázisban
+        $felhasznalo_id = $_SESSION['felhasznalo_id']; // Hozzuk létre a felhasználó azonosítóját  
+        $sqlUpdate = "UPDATE felhasznalo SET nev=?, email_cim=?, jelszo=? WHERE felhasznalo_id=?";
+        $stmtUpdate = $conn->prepare($sqlUpdate);
+        $stmtUpdate->bind_param("sssi", $nev, $email, $hashelt_jelszo, $felhasznalo_id);
 
-    // Az adatok frissítése az adatbázisban
-    $felhasznalo_id = $_SESSION['felhasznalo_id']; // Hozzuk létre a felhasználó azonosítóját
-    $sqlUpdate = "UPDATE felhasznalo SET nev=?, email_cim=?, jelszo=? WHERE felhasznalo_id=?";
-    $stmtUpdate = $conn->prepare($sqlUpdate);
-    $stmtUpdate->bind_param("sssi", $nev, $email, $hashelt_jelszo, $felhasznalo_id);
+        if ($stmtUpdate->execute()) {
 
-    if ($stmtUpdate->execute()) {
-        echo "Adataid sikeresen frissítve.";
-    } else {
-        echo "Hiba történt az adatok frissítése során.";
+        } else {
+            $errors[] = "Hiba történt az adatok frissítése során.";
+        }
     }
 }
 
@@ -87,7 +91,6 @@ switch ($profilkep_id) {
         break;
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="hu">
@@ -113,19 +116,40 @@ switch ($profilkep_id) {
 <div class="profil_lap">
     <div class="kartya">
     <header>Profil</header>
-      <form action="" method="post">
 
-      <!-- Profilkép megjelenítése -->
-      <img src="<?php echo htmlspecialchars($profilkep); ?>" alt="Profilkép" class="profilkep">
-      <br>
-      <!-- Profilkép kiválasztása -->
-      <label for="profilkep_id">Profilkép kiválasztása:</label>
-      <br>
-      <select name="profilkep_id" id="profilkep_id">
-          <option value="1" <?php if ($profilkep_id == 1) echo "selected"; ?>>Üres profilkép</option>
-          <option value="2" <?php if ($profilkep_id == 2) echo "selected"; ?>>Nő</option>
-          <option value="3" <?php if ($profilkep_id == 3) echo "selected"; ?>>Férfi</option>
-      </select>
+    <?php
+    // Hibaüzenetek megjelenítése
+    if (!empty($errors)) {
+        echo '<div class="hiba-uzenetek">';
+        echo '<ul>';
+        foreach ($errors as $error) {
+            echo '<li>' . $error . '</li>';
+        }
+        echo '</ul>';
+        echo '</div>';
+    }
+
+    // Megjelenítés csak akkor, ha nincsenek hibaüzenetek és POST kérésből érkezett adatok
+    if(empty($errors) && $_SERVER["REQUEST_METHOD"] == "POST"){
+        // Sikeres adatmódosítás esetén üzenet
+        echo '<div class="sikeres-uzenet">';
+            echo "Adataid sikeresen frissítve.";
+        echo '</div>';
+    }
+    ?>
+
+    <form action="" method="post">
+        <!-- Profilkép megjelenítése -->
+        <img src="<?php echo htmlspecialchars($profilkep); ?>" alt="Profilkép" class="profilkep">
+        <br>
+        <!-- Profilkép kiválasztása -->
+        <label for="profilkep_id">Profilkép kiválasztása:</label>
+        <br>
+        <select name="profilkep_id" id="profilkep_id">
+            <option value="1" <?php if ($profilkep_id == 1) echo "selected"; ?>>Üres profilkép</option>
+            <option value="2" <?php if ($profilkep_id == 2) echo "selected"; ?>>Nő</option>
+            <option value="3" <?php if ($profilkep_id == 3) echo "selected"; ?>>Férfi</option>
+        </select>
 
         <!-- Név -->
         <h3>Név</h3>
@@ -141,7 +165,7 @@ switch ($profilkep_id) {
 
         <!-- Jelszó -->
         <h3>Jelszó</h3>
-        <input type="password" placeholder="<?php echo htmlspecialchars($jelszo !== "" ? $jelszo : 'Jelszó'); ?>" name="jelszo" value="<?php echo htmlspecialchars($jelszo); ?>">
+        <input type="password" placeholder="jelszó" name="jelszo" value="<?php echo htmlspecialchars($jelszo); ?>">
         <br>
         <label>A jelszó minimum 4 karakter lehet, nem tartalmazhat speciális karaktert, <br>
                 minimum 1 nagy karaktert kell tartalmaznia.</label>
@@ -149,10 +173,10 @@ switch ($profilkep_id) {
 
         <!-- Jelszó Megerősítése-->
         <h3>Jelszó megerősítése</h3>
-        <input type="password" placeholder="<?php echo htmlspecialchars($jelszo !== "" ? $jelszo : 'Jelszó'); ?>" name="jelszo_megerosit" value="<?php echo htmlspecialchars($jelszo); ?>">
+        <input type="password" placeholder="jelszó megerősítése" name="jelszo_megerosit" value="<?php echo htmlspecialchars($jelszo); ?>">
 
-      <input type="submit" value="Adatok módosítása" class="button">
-      </form>
+        <input type="submit" value="Adatok módosítása" class="button">
+    </form>
     </div>
 </div>
 

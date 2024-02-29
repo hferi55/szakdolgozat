@@ -68,7 +68,7 @@ header {
   position: absolute;
   top: 50%;
   left: 50%;
-  margin-top: 275px;
+  margin-top: 350px;
   transform: translate(-50%,-50%);
   max-width: 1000px;
   width: 100%;
@@ -192,4 +192,25 @@ header {
 }
 .signup label:hover{
   text-decoration: underline;
+}
+
+.hiba-uzenetek{
+  border: 1px solid;
+	margin: 10px 0px;
+	padding: 15px 10px 15px 50px;
+	background-repeat: no-repeat;
+	background-position: 10px center;
+  color: #D8000C;
+	background-color: #FFBABA;
+}
+
+.sikeres-uzenet{
+  border: 1px solid;
+	margin: 10px 0px;
+	padding: 15px 10px 15px 50px;
+	background-repeat: no-repeat;
+	background-position: 10px center;
+  color: #4F8A10;
+	background-color: #DFF2BF;
+	background-image: url('https://i.imgur.com/Q9BGTuy.png');
 }
