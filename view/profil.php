@@ -4,12 +4,13 @@ session_start();
 
 // Ellenőrzés, hogy a felhasználó be van-e jelentkezve
 if (!isset($_SESSION['felhasznalo_id'])) {
-    header("Location: ../view/bejelentkezes.php"); // Változtasd meg a céloldalt a bejelentkezési oldalra
+    header("Location: ../view/bejelentkezes.php");
     exit();
 }
 
 // Változók inicializálása
-$nev = $email = $jelszo = $jelszoMegerosit = $profilkep_id = ""; // Alapértelmezett értékek
+$nev = $email = $jelszo = $jelszoMegerosit = ""; // Alapértelmezett értékek
+$profilkep_id = isset($_POST['profilkep_id']) ? $_POST['profilkep_id'] : (isset($_SESSION['profilkep_id']) ? $_SESSION['profilkep_id'] : 1); // Alapértelmezett profilkép
 
 // Hibaüzenetek tárolására használt tömb
 $errors = array();
@@ -18,8 +19,8 @@ $errors = array();
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Az űrlap adatainak feldolgozása
 
-      // Profilkép azonosító
-      $profilkep_id = isset($_POST['profilkep_id']) ? $_POST['profilkep_id'] : $_SESSION['profilkep_id'];
+    // Profilkép azonosító
+    $profilkep_id = isset($_POST['profilkep_id']) ? $_POST['profilkep_id'] : 1;
 
     // Név
     $nev = $_POST["nev"];
@@ -70,7 +71,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmtUpdate->bind_param("sssi", $nev, $email, $hashelt_jelszo, $felhasznalo_id);
 
         if ($stmtUpdate->execute()) {
-
+            // Sikeres adatmódosítás esetén egyéb teendők
         } else {
             $errors[] = "Hiba történt az adatok frissítése során.";
         }
