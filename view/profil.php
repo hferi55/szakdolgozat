@@ -4,13 +4,12 @@ session_start();
 
 // Ellenőrzés, hogy a felhasználó be van-e jelentkezve
 if (!isset($_SESSION['felhasznalo_id'])) {
-    header("Location: bejelentkezes.php"); // Változtasd meg a céloldalt a bejelentkezési oldalra
+    header("Location: ../view/bejelentkezes.php"); // Változtasd meg a céloldalt a bejelentkezési oldalra
     exit();
 }
 
 // Változók inicializálása
-$nev = $email = $jelszo = $jelszoMegerosit = ""; // Alapértelmezett értékek
-$profilkep_id = isset($_POST['profilkep_id']) ? $_POST['profilkep_id'] : $_SESSION['profilkep_id']; // Profilkép azonosító
+$nev = $email = $jelszo = $jelszoMegerosit = $profilkep_id = ""; // Alapértelmezett értékek
 
 // Hibaüzenetek tárolására használt tömb
 $errors = array();
@@ -18,6 +17,9 @@ $errors = array();
 // Ellenőrzés, hogy a form elküldésre került-e
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Az űrlap adatainak feldolgozása
+
+      // Profilkép azonosító
+      $profilkep_id = isset($_POST['profilkep_id']) ? $_POST['profilkep_id'] : $_SESSION['profilkep_id'];
 
     // Név
     $nev = $_POST["nev"];
@@ -78,16 +80,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 // A kiválasztott profilkép elérési útvonala
 switch ($profilkep_id) {
     case 1:
-        $profilkep = "profilkepek/uresprofilkep.png";
+        $profilkep = "../profilkepek/uresprofilkep.png";
         break;
     case 2:
-        $profilkep = "profilkepek/no.jpg";
+        $profilkep = "../profilkepek/no.jpg";
         break;
     case 3:
-        $profilkep = "profilkepek/ferfi.jpg";
+        $profilkep = "../profilkepek/ferfi.jpg";
         break;
     default:
-        $profilkep = "profilkepek/uresprofilkep.png";
+        $profilkep = "../profilkepek/uresprofilkep.png";
         break;
 }
 ?>

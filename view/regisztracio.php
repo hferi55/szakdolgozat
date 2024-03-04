@@ -79,7 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </nav>
 </header>
 
-    <div class="container">
+    <div class="regisztracio_container">
         <div class="regisztracio kartya">
             <header>Regisztráció</header>
             
