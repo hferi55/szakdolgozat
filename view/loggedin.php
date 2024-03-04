@@ -1,5 +1,5 @@
 <?php
-  require("sql.php");
+  require("../sql/sql.php");
   session_start();
   
   // Ellenőrzés, hogy a felhasználó be van-e jelentkezve
@@ -17,17 +17,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Étrendkészítő Weboldal</title>
   <!-- CSS -->
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
 
     <header class="fooldalheader">
       <h1 class="cim">ÉKW</h1>
           <nav class="navbar">
-              <a href="rolunk2.php">Rólunk</a> |
-              <a href="profil.php">Profil</a> |
-              <a href="etrendkeszitese.php">Étrendkészítése</a> |
-              <a href="logout.php">Kijelentkezés</a>
+              <a href="../view/rolunk2.php">Rólunk</a> |
+              <a href="../view/profil.php">Profil</a> |
+              <a href="../view/etrendkeszitese.php">Étrendkészítése</a> |
+              <a href="../logout.php">Kijelentkezés</a>
           </nav>
     </header>
 

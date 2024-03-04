@@ -1,5 +1,5 @@
 <?php
-require('sql.php'); // Adatbázis kapcsolódás
+require('../sql/sql.php'); // Adatbázis kapcsolódás
 
 $errorMessage = ''; // Hibaüzenet inicializálása
 $testsuly = $magassag = 0; // Alapértelmezett értékek
@@ -68,14 +68,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Étrendkészítő Weboldal Regisztráció</title>
     <!-- CSS -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
 
 <header class="fooldalheader">
     <h1 class="cim">ÉKW</h1>
     <nav class="navbar">
-        <a href="index.php">Főoldal</a> 
+        <a href="../index.php">Főoldal</a> 
     </nav>
 </header>
 
@@ -102,7 +102,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </form>
             <div class="signup">
                 <span class="signup">Már van fiókja?
-                    <a href="bejelentkezes.php">Bejelentkezés</a>
+                    <a href="../view/bejelentkezes.php">Bejelentkezés</a>
                 </span>
             </div>
         </div>

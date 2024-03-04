@@ -19,7 +19,7 @@ if(isset($_FILES['profilkep']) && $_FILES['profilkep']['error'] === UPLOAD_ERR_O
             $_SESSION['profilkep'] = $target_file;
 
             // Átirányítás a profil oldalra
-            header("Location: profil.php?upload=success");
+            header("Location: ../view/profil.php?upload=success");
         } else {
             echo "Hiba történt a fájl feltöltése közben.";
         }

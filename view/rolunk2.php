@@ -1,5 +1,5 @@
 <?php
-  require("sql.php");
+  require("../sql/sql.php");
 
   $bejelentkezve = isset($_POST['email']) && !empty($_POST['email']);
 
@@ -13,7 +13,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Étrendkészítő Weboldal</title>
   <!-- CSS -->
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
 
@@ -21,9 +21,9 @@
         <h1 class="cim">ÉKW</h1>
             <nav class="navbar">
                 <a href="#">Rólunk</a> |
-                <a href="profil.php">Profil</a> |
-                <a href="etrendkeszitese.php">Étrendkészítése</a> |
-                <a href="logout.php">Kijelentkezés</a>
+                <a href="../view/profil.php">Profil</a> |
+                <a href="../view/etrendkeszitese.php">Étrendkészítése</a> |
+                <a href="../logout.php">Kijelentkezés</a>
             </nav>
     </header>
 

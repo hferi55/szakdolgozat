@@ -11,7 +11,7 @@ body {
     min-height: 100vh;
     width: 100%;
     color: black; /* szövegszín */
-    background-image: url("kepek/háttérkép.jpg"); 
+    background-image: url("../kepek/háttérkép.jpg"); 
     margin: 0;
     padding: 0;
     box-sizing: border-box;

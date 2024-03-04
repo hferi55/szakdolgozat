@@ -1,5 +1,5 @@
 <?php
-require("sql.php");
+require("../sql/sql.php");
 session_start();
 
 $errorMessage = ""; // Itt inicializáljuk a változót
@@ -54,14 +54,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Étrendkészítő Weboldal Bejelentkezés</title>
     <!-- CSS -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
 
 <header class="fooldalheader">
     <h1 class="cim">ÉKW</h1>
     <nav class="navbar">
-        <a href="index.php">Főoldal</a> 
+        <a href="../index.php">Főoldal</a> 
     </nav>
 </header>
 
@@ -80,7 +80,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </form>
             <div class="signup">
                 <span class="signup">Még nincs fiókja?
-                    <a href="regisztracio.php">Regisztráció</a>
+                    <a href="../view/regisztracio.php">Regisztráció</a>
                 </span>
             </div>
         </div>
