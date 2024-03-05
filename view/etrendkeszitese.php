@@ -30,7 +30,15 @@
     <div class="kartya">
       <header>Étrendkészítése</header>
       <form action="" method="post">
-          <label>Étrendek</label>
+        <!-- Testsúly -->
+        <h3>Testsúly:</h3>
+        <input type="number" placeholder="Adja meg a testsúlyát" name="testsuly">
+        <br>
+
+        <!-- Életkor -->
+        <h3>Életkor:</h3>
+        <input type="number" placeholder="Adja meg az életkorát" name="eletkor">
+        <br>
          
       </form>
     </div>
