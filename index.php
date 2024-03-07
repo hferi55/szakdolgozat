@@ -17,7 +17,7 @@
     <h1 class="cim">ÉKW</h1>
     <nav class="navbar">
         <a href="view/rolunk1.php">Rólunk</a> |
-        <a href="view/bejelentkezes.php">Bejelntkezés</a> |
+        <a href="view/bejelentkezes.php">Bejelentkezés</a> |
         <a href="view/regisztracio.php">Regisztráció</a> 
 </nav>
 </header>
