@@ -10,7 +10,6 @@ if (!isset($_SESSION['felhasznalo_id'])) {
 
 // Változók inicializálása
 $nev = $email = $jelszo = $jelszoMegerosit = ""; // Alapértelmezett értékek
-$profilkep_id = isset($_POST['profilkep_id']) ? $_POST['profilkep_id'] : (isset($_SESSION['profilkep_id']) ? $_SESSION['profilkep_id'] : 1); // Alapértelmezett profilkép
 
 // Hibaüzenetek tárolására használt tömb
 $errors = array();
@@ -18,9 +17,6 @@ $errors = array();
 // Ellenőrzés, hogy a form elküldésre került-e
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Az űrlap adatainak feldolgozása
-
-    // Profilkép azonosító
-    $profilkep_id = isset($_POST['profilkep_id']) ? $_POST['profilkep_id'] : 1;
 
     // Név
     $nev = $_POST["nev"];
@@ -62,7 +58,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Az adatok frissítése a session-ben
         $_SESSION['nev'] = $nev;
         $_SESSION['email'] = $email;
-        $_SESSION['profilkep_id'] = $profilkep_id;
 
         // Az adatok frissítése az adatbázisban
         $felhasznalo_id = $_SESSION['felhasznalo_id']; // Hozzuk létre a felhasználó azonosítóját  
@@ -78,21 +73,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-// A kiválasztott profilkép elérési útvonala
-switch ($profilkep_id) {
-    case 1:
-        $profilkep = "../profilkepek/uresprofilkep.png";
-        break;
-    case 2:
-        $profilkep = "../profilkepek/no.jpg";
-        break;
-    case 3:
-        $profilkep = "../profilkepek/ferfi.jpg";
-        break;
-    default:
-        $profilkep = "../profilkepek/uresprofilkep.png";
-        break;
-}
 ?>
 
 <!DOCTYPE html>
@@ -142,18 +122,7 @@ switch ($profilkep_id) {
     ?>
 
     <form action="" method="post">
-        <!-- Profilkép megjelenítése -->
-        <img src="<?php echo htmlspecialchars($profilkep); ?>" alt="Profilkép" class="profilkep">
-        <br>
-        <!-- Profilkép kiválasztása -->
-        <label for="profilkep_id">Profilkép kiválasztása:</label>
-        <br>
-        <select name="profilkep_id" id="profilkep_id">
-            <option value="1" <?php if ($profilkep_id == 1) echo "selected"; ?>>Üres profilkép</option>
-            <option value="2" <?php if ($profilkep_id == 2) echo "selected"; ?>>Nő</option>
-            <option value="3" <?php if ($profilkep_id == 3) echo "selected"; ?>>Férfi</option>
-        </select>
-
+        
         <!-- Név -->
         <h3>Név</h3>
         <input type="text" placeholder="<?php echo htmlspecialchars($nev !== "" ? $nev : 'Név'); ?>" name="nev" value="<?php echo htmlspecialchars($nev); ?>">
