@@ -134,11 +134,10 @@ header {
   background: #006653;
 }
 
-.profilkep {
-  width: 300px; /* Állítsd be a kívánt szélességet */
+.kepek {
+  width: 150px; /* Állítsd be a kívánt szélességet */
   height: auto; /* Az arányok megtartása érdekében */
-  border-radius: 50%; /* Kerekített sarkok */
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.5rem; 
 }
 
 .regisztracio_container{
