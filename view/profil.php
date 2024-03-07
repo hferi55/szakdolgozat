@@ -71,6 +71,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $errors[] = "Hiba történt az adatok frissítése során.";
         }
     }
+} else {
+    // Lekérdezés a jelenlegi név és email-cím megjelenítéséhez
+    $felhasznalo_id = $_SESSION['felhasznalo_id'];
+    $sqlQuery = "SELECT nev, email_cim FROM felhasznalo WHERE felhasznalo_id=?";
+    $stmtQuery = $conn->prepare($sqlQuery);
+    $stmtQuery->bind_param("i", $felhasznalo_id);
+    $stmtQuery->execute();
+    $stmtQuery->store_result();
+    $stmtQuery->bind_result($nev, $email);
+
+    if (!$stmtQuery->fetch()) {
+        $errors[] = "Hiba történt az adatok lekérdezése során.";
+    }
+
+    $stmtQuery->close();
 }
 
 ?>
@@ -122,10 +137,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     ?>
 
     <form action="" method="post">
-        
+
         <!-- Név -->
-        <h3>Név</h3>
-        <input type="text" placeholder="<?php echo htmlspecialchars($nev !== "" ? $nev : 'Név'); ?>" name="nev" value="<?php echo htmlspecialchars($nev); ?>">
+        <h3>Név:</h3>
+        <label>Jelenlegi név: <?php echo htmlspecialchars($nev); ?></label>
+        <br>
+        <input type="text" placeholder="Név" name="nev" value="">
         <br>
         <label>A név minimum 3, maximum 8 karakter lehet, <br>
                 nem tartalmazhat speciális karaktert.</label>
@@ -133,11 +150,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <!-- Email-cím -->
         <h3>Email-cím</h3>
-        <input type="text" placeholder="<?php echo htmlspecialchars($email !== "" ? $email : 'Email cím'); ?>" name="email" value="<?php echo htmlspecialchars($email); ?>">
+        <label>Jelenlegi email-cím: <?php echo htmlspecialchars($email); ?></label>
+        <br>
+        <input type="text" placeholder="Email cím" name="email" value="">
 
         <!-- Jelszó -->
         <h3>Jelszó</h3>
-        <input type="password" placeholder="jelszó" name="jelszo" value="<?php echo htmlspecialchars($jelszo); ?>">
+        <input type="password" placeholder="Jelszó" name="jelszo" value="">
         <br>
         <label>A jelszó minimum 4 karakter lehet, nem tartalmazhat speciális karaktert, <br>
                 minimum 1 nagy karaktert kell tartalmaznia.</label>
@@ -145,7 +164,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <!-- Jelszó Megerősítése-->
         <h3>Jelszó megerősítése</h3>
-        <input type="password" placeholder="jelszó megerősítése" name="jelszo_megerosit" value="<?php echo htmlspecialchars($jelszo); ?>">
+        <input type="password" placeholder="Jelszó megerősítése" name="jelszo_megerosit" value="">
 
         <input type="submit" value="Adatok módosítása" class="button">
     </form>
