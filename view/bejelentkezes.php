@@ -20,14 +20,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt->store_result();
             
             if ($stmt->num_rows > 0) {
-                $stmt->bind_result($user_id, $hashed_password);
+                $stmt->bind_result($felhasznalo_id, $hashed_password);
                 $stmt->fetch();
 
                 // Ellenőrzés a hashelt jelszó alapján
                 if (password_verify($password, $hashed_password)) {
                     // Sikeres bejelentkezés
-                    $_SESSION['felhasznalo_id'] = $user_id; // Felhasználó azonosítója a session-be
-                    header("Location: loggedin.php"); // Változtasd meg a céloldalt a profil oldalra
+                    $_SESSION['felhasznalo_id'] = $felhasznalo_id; // Felhasználó azonosítója a session-be
+                    header("Location: loggedin.php"); 
                     exit();
                 } else {
                     $errorMessage = "Hibás email cím vagy jelszó.";
