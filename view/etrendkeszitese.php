@@ -1,5 +1,43 @@
 <?php
+session_start(); // Munkamenet inicializálása
+
 require("../sql/sql.php");
+
+
+if(isset($_POST['submit'])) {
+    // Ellenőrizzük, hogy a felhasználó be van-e jelentkezve
+    if (isset($_SESSION['felhasznalo_id'])) {
+        $felhasznalo_id = $_SESSION['felhasznalo_id'];
+        $eletkor = $_POST['eletkor'];
+        $testsuly = $_POST['testsuly'];
+        $magassag = $_POST['magassag'];
+        $nem = $_POST['nem'];
+        $aktivitas = $_POST['aktivitas'];
+        $cel = $_POST['cel'];
+
+        // Ellenőrizze, hogy minden mező kitöltve van-e
+        if(empty($eletkor) || empty($testsuly) || empty($magassag) || empty($nem) || empty($aktivitas) || empty($cel)) {
+            echo "<script>alert('Kérjük, töltse ki az összes mezőt!');</script>";
+        } else {
+            // Az SQL lekérdezés összeállítása és végrehajtása
+            $query = "UPDATE `felhasznalo` SET `eletkor`='$eletkor', `testsuly`='$testsuly', `magassag`='$magassag', `nem`='$nem', `aktivitas`='$aktivitas', `cel`='$cel' WHERE `felhasznalo_id`='$felhasznalo_id'";                  
+            mysqli_query($conn, $query);
+
+            // Ellenőrizzük, hogy sikeresen frissítettük-e az adatokat
+            if(mysqli_affected_rows($conn) > 0) {
+                //Ha sikeresen frissítetük az adatokat át dob az etrend.php oldalra
+                $_SESSION['etrend_keszites_sikeres'] = true;
+                header("Location: etrend.php");
+                exit();
+            } else {
+                echo "<script>alert('Hiba történt az adatok frissítése közben. Kérjük, próbálja újra.');</script>";
+            }
+        }
+    } else {
+        header("Location: bejelentkezes.php");
+        exit();
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -44,12 +82,43 @@ require("../sql/sql.php");
 <header class="fooldalheader">
     <h1 class="cim">ÉKW</h1>
     <nav class="navbar">
-        <a href="../view/rolunk2.php">Rólunk</a> |
-        <a href="../view/profil.php">Profil</a> |
-        <a href="../view/etrendkeszitese.php">Étrendkészítése</a> |
-        <a href="../logout.php">Kijelentkezés</a>
+        <?php
+        // Ha a felhasználó nincs bejelentkezve
+        if (!isset($_SESSION['felhasznalo_id'])) {
+            echo '
+            <a href="../view/rolunk.php">Rólunk</a> |
+            <a href="../view/bejelentkezes.php">Bejelentkezés</a> |
+            <a href="../view/regisztracio.php">Regisztráció</a>
+            ';
+        } else { // Ha a felhasználó be van jelentkezve
+            require("../sql/sql.php");
+            $felhasznalo_id = $_SESSION['felhasznalo_id'];
+            // Ellenőrizzük, hogy van-e már étrendje
+            $query = "SELECT COUNT(*) FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id AND magassag IS NOT NULL AND testsuly IS NOT NULL AND cel IS NOT NULL AND nem IS NOT NULL AND eletkor IS NOT NULL AND aktivitas IS NOT NULL";
+            $result = mysqli_query($conn, $query);
+            $row = mysqli_fetch_row($result);
+            $etrendVan = $row[0] > 0;
+
+            if ($etrendVan) {
+                echo '
+                <a href="../view/rolunk.php">Rólunk</a> |
+                <a href="../view/profil.php">Profil</a> |
+                <a href="../view/etrend.php">Étrendem</a> |
+                <a href="../logout.php">Kijelentkezés</a>
+                ';
+            } else {
+                echo '
+                <a href="../view/rolunk.php">Rólunk</a> |
+                <a href="../view/profil.php">Profil</a> |
+                <a href="../view/etrendkeszitese.php">Étrendkészítés</a> |
+                <a href="../logout.php">Kijelentkezés</a>
+                ';
+            }
+        }
+        ?>
     </nav>
 </header>
+
 
 <div class="lap">
     <div class="kartya">
@@ -102,10 +171,14 @@ require("../sql/sql.php");
                     <option value="4">Tömegelés</option>
                 </select>
 
+                <!-- Gomb -->
+                <input type="submit" class="button" value="Étrendkészítése" name="submit">
+
             </div>
 
-            <div class="etelek">
-                <!-- Reggeli -->
+    <!--
+                <div class="etelek">
+                 Reggeli 
                 <h3>Reggeli:</h3>
                 <img src="../kepek/reggeli1.jpg" class="kepek" alt="Zabkása gyümölccsel és mandulával">
                 <img src="../kepek/reggeli2.jpg" class="kepek" alt="Görög joghurt gyümölcsökkel és mézzel">
@@ -118,7 +191,7 @@ require("../sql/sql.php");
                 <img src="../kepek/reggeli9.jpg" class="kepek" alt="Avokádó és paradicsom omlett">
                 <img src="../kepek/reggeli10.jpg" class="kepek" alt="Gyors smoothie tál">
 
-              <!-- Ebéd -->
+                 Ebéd 
               <h3>Ebéd:</h3>
                 <img src="../kepek/ebed1.jpg" class="kepek" alt="Sült csirke salátával">
                 <img src="../kepek/ebed2.jpg" class="kepek" alt="Quinoa zöldségekkel">
@@ -131,7 +204,7 @@ require("../sql/sql.php");
                 <img src="../kepek/ebed9.jpg" class="kepek" alt="Zöldséges tojás wrap">
                 <img src="../kepek/ebed10.jpg" class="kepek" alt="Sütőben sült lazac spárgával">
 
-              <!-- Vacsora -->
+               Vacsora 
               <h3>Vacsora:</h3>
                 <img src="../kepek/vacsora1.jpg" class="kepek" alt="Vegetáriánus csicseriborsó curry">
                 <img src="../kepek/vacsora2.jpg" class="kepek" alt="Grillezett zöldségek tofuval">
@@ -145,7 +218,7 @@ require("../sql/sql.php");
                 <img src="../kepek/vacsora10.jpg" class="kepek" alt="Grillezett hal filé édesburgonya pürével">
 
 
-              <!-- Uzsonna -->
+               Uzsonna 
               <h3>Uzsonna:</h3>
                 <img src="../kepek/uzsonna1.jpg" class="kepek" alt="Mandula és mazsola mix">
                 <img src="../kepek/uzsonna2.jpg" class="kepek" alt="Görög joghurt gyümölcssaláttal">
@@ -159,7 +232,7 @@ require("../sql/sql.php");
                 <img src="../kepek/uzsonna10.jpg" class="kepek" alt="Céklás és répás smoothie">
         
         </div>
-
+    -->
       </form>
     </div>
 </div>
