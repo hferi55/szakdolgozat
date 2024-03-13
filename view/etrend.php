@@ -39,10 +39,10 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
             require("../sql/sql.php");
             $felhasznalo_id = $_SESSION['felhasznalo_id'];
             // Ellenőrizzük, hogy van-e már étrendje
-            $query = "SELECT COUNT(*) FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id AND magassag IS NOT NULL AND testsuly IS NOT NULL AND cel IS NOT NULL AND nem IS NOT NULL AND eletkor IS NOT NULL AND aktivitas IS NOT NULL";
+            $query = "SELECT COUNT(*) FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id AND (magassag IS NULL OR testsuly IS NULL OR eletkor IS NULL OR cel = '' OR nem = '' OR aktivitas = '')";
             $result = mysqli_query($conn, $query);
             $row = mysqli_fetch_row($result);
-            $etrendVan = $row[0] > 0;
+            $etrendVan = $row[0] == 0;
 
             if ($etrendVan) {
                 echo '
@@ -63,6 +63,7 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
         ?>
     </nav>
 </header>
+
 
 
 <div class="lap">
