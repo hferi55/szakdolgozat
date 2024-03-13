@@ -103,7 +103,7 @@ header {
   margin-bottom: 1.5rem;
 }
 
-.profil_lap input[type="text"], .profil_lap input[type="password"], .profil_lap select, .profil_lap input[type="file"] {
+.profil_lap input[type="text"], .profil_lap input[type="password"], .profil_lap select, .profil_lap input[type="file"], .profil_lap input[type="number"] {
   height: 40px;
   width: 50%;
   padding: 0 15px;
