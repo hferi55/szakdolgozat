@@ -240,3 +240,18 @@ header {
 	background-color: #DFF2BF;
 	background-image: url('https://i.imgur.com/Q9BGTuy.png');
 }
+
+/* Étrend oldalon levő adatok megjelenítése baloldalon */
+.etrend_lap{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: 200px;
+  transform: translate(-50%,-50%);
+  max-width: 1500px;
+  width: 100%;
+  background: #fff;
+  border-radius: 7px;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+  padding: 25px;
+}
