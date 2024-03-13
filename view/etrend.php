@@ -4,7 +4,7 @@ session_start();
 require("../sql/sql.php");
 
 if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_sikeres'] === true) {
-    echo "<script>alert('Az étrend sikeresen elkészült!');</script>";
+    
     // További műveletek az étrend sikeres elkészítése esetén
 
     // Ne felejtsük el törölni a munkamenet változót, hogy ne jelenjen meg újra az üzenet frissítéskor
@@ -66,13 +66,35 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
 
 
 
-<div class="lap">
+<div class="etrend_lap">
     <div class="kartya">
-      <header>Főoldal</header>
-      <form action="" method="post">
-          <label>Főoldal</label>
-         
-      </form>
+      <header>Étrendem</header>
+
+      <?php
+        // Lekérdezés az adatok megjelenítéséhez
+        $felhasznalo_id = $_SESSION['felhasznalo_id'];
+        $sqlQuery = "SELECT `testsuly`, `magassag`, `cel`, `nem`, `eletkor`, `aktivitas` FROM felhasznalo WHERE felhasznalo_id=?";
+        $stmtQuery = $conn->prepare($sqlQuery);
+        $stmtQuery->bind_param("i", $felhasznalo_id);
+        $stmtQuery->execute();
+        $stmtQuery->store_result();
+        $stmtQuery->bind_result($testsuly, $magassag, $cel, $nem, $eletkor, $aktivitas);
+
+        if (!$stmtQuery->fetch()) {
+            $errors[] = "Hiba történt az adatok lekérdezése során.";
+        }
+
+        $stmtQuery->close();
+
+    ?>
+
+        <p><b>Életkor: </b><?php echo htmlspecialchars($eletkor); ?> éves</p>
+        <p><b>Testsúly: </b><?php echo htmlspecialchars($testsuly); ?> kg</p>
+        <p><b>Magasság: </b><?php echo htmlspecialchars($magassag); ?> cm</p>
+        <p><b>Nem: </b><?php echo htmlspecialchars($nem); ?> </p>
+        <p><b>Aktivitási szint: </b><?php echo htmlspecialchars($aktivitas); ?> </p>
+        <p><b>Cél: </b><?php echo htmlspecialchars($cel); ?> </p>
+
     </div>
 </div>
 
