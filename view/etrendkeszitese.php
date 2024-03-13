@@ -3,6 +3,8 @@ session_start(); // Munkamenet inicializálása
 
 require("../sql/sql.php");
 
+// Hibaüzenet
+$error_message = '';
 
 if(isset($_POST['submit'])) {
     // Ellenőrizzük, hogy a felhasználó be van-e jelentkezve
@@ -17,7 +19,7 @@ if(isset($_POST['submit'])) {
 
         // Ellenőrizze, hogy minden mező kitöltve van-e
         if(empty($eletkor) || empty($testsuly) || empty($magassag) || empty($nem) || empty($aktivitas) || empty($cel)) {
-            echo "<script>alert('Kérjük, töltse ki az összes mezőt!');</script>";
+            $error_message = 'Kérjük, töltse ki az összes mezőt!';
         } else {
             // Az SQL lekérdezés összeállítása és végrehajtása
             $query = "UPDATE `felhasznalo` SET `eletkor`='$eletkor', `testsuly`='$testsuly', `magassag`='$magassag', `nem`='$nem', `aktivitas`='$aktivitas', `cel`='$cel' WHERE `felhasznalo_id`='$felhasznalo_id'";                  
@@ -30,7 +32,7 @@ if(isset($_POST['submit'])) {
                 header("Location: etrend.php");
                 exit();
             } else {
-                echo "<script>alert('Hiba történt az adatok frissítése közben. Kérjük, próbálja újra.');</script>";
+                $error_message = 'Hiba történt az adatok frissítése közben. Kérjük, próbálja újra.';
             }
         }
     } else {
@@ -50,32 +52,6 @@ if(isset($_POST['submit'])) {
     <!-- CSS -->
     <link rel="stylesheet" href="../css/style.css">
 
-    <style>
-        .lap {
-            overflow: auto;
-        }
-
-        .adatok {
-            float: left;
-            width: 40%;
-        }
-
-        .etelek {
-            overflow-x: auto;
-            white-space: nowrap;
-            margin-top: 10px;
-        }
-
-        .kepek {
-            width: 200px; /* Kép szélessége */
-            height: auto;
-            margin: 5px; /* Képek közötti margó */
-            display: inline-block;
-            vertical-align: top;
-            border-radius: 50px; /* Itt állítsd be a kívánt sugárt */
-        }
-
-    </style>
 </head>
 <body>
 
@@ -94,7 +70,7 @@ if(isset($_POST['submit'])) {
             require("../sql/sql.php");
             $felhasznalo_id = $_SESSION['felhasznalo_id'];
             // Ellenőrizzük, hogy van-e már étrendje
-            $query = "SELECT COUNT(*) FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id AND (magassag IS NULL OR testsuly IS NULL OR eletkor IS NULL OR cel = '' OR nem = '' OR aktivitas = '')";
+            $query = "SELECT COUNT(*) FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id AND (magassag IS NULL OR testsuly IS NULL OR eletkor IS NULL OR cel = '' OR nem = '' OR aktivitas = '' OR cel = 'nincs cel' OR nem = 'valasszon' OR aktivitas = 'valasszon')";
             $result = mysqli_query($conn, $query);
             $row = mysqli_fetch_row($result);
             $etrendVan = $row[0] == 0;
@@ -120,11 +96,22 @@ if(isset($_POST['submit'])) {
 </header>
 
 
-<div class="lap">
+<div class="profil_lap">
     <div class="kartya">
         <header>Étrendkészítése</header>
+
+        <?php
+            // Hibaüzenet megjelenítése
+            if (!empty($error_message)) {
+                echo '<div class="hiba-uzenetek">';
+                echo '<ul>';
+                echo '<li>' . $error_message . '</li>';
+                echo '</ul>';
+                echo '</div>';
+            }
+        ?>
+
         <form action="" method="post">
-            <div class="adatok">
 
                 <!-- Életkor -->
                 <h3>Életkor:</h3>
@@ -173,8 +160,6 @@ if(isset($_POST['submit'])) {
 
                 <!-- Gomb -->
                 <input type="submit" class="button" value="Étrendkészítése" name="submit">
-
-            </div>
 
     <!--
                 <div class="etelek">
