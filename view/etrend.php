@@ -69,7 +69,7 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
 <div class="etrend_lap">
     <div class="kartya">
       <header>Étrendem</header>
-
+      <form action="" method="post">
       <?php
         // Lekérdezés az adatok megjelenítéséhez
         $felhasznalo_id = $_SESSION['felhasznalo_id'];
@@ -86,6 +86,38 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
 
         $stmtQuery->close();
 
+        if($nem == 'Férfi'){
+        $bmr = 10 * $testsuly + 6.25 * $magassag - 5 * $eletkor + 5; //Férfi BMR kiszámítás Mifflin-St. Jeor képlettel
+        } elseif($nem == 'Nő'){
+        $bmr = 10 * $testsuly + 6.25 * $magassag - 5 * $eletkor - 161; //Női BMR kiszámítás Mifflin-St. Jeor képlettel
+        }
+
+        if($aktivitas == 'Inaktív'){
+            $fogyasztando = $bmr * 1.2;
+        } elseif ($aktivitas == 'Kevésbé aktív'){
+            $fogyasztando = $bmr * 1.375;
+        } elseif ($aktivitas == 'Mérsékelten aktív'){
+            $fogyasztando = $bmr * 1.55;
+        } elseif ($aktivitas == 'Aktív'){
+            $fogyasztando = $bmr * 1.725;
+        } elseif ($aktivitas == 'Nagyon aktív'){
+            $fogyasztando = $bmr * 1.9;
+        }
+
+        if($cel == 'Szintentartás'){
+            $fogyasztando = $fogyasztando * 1;
+        } elseif ($cel == 'Fogyás'){
+            $fogyasztando = $fogyasztando-500;
+        } elseif ($cel == 'Tömegelés'){
+            $fogyasztando = $fogyasztando+500;
+        }
+
+
+        if(isset($_POST['adatmodositas'])) {
+            header("Location: etrendkeszitese.php");
+            exit();
+        }
+
     ?>
 
         <p><b>Életkor: </b><?php echo htmlspecialchars($eletkor); ?> éves</p>
@@ -94,7 +126,12 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
         <p><b>Nem: </b><?php echo htmlspecialchars($nem); ?> </p>
         <p><b>Aktivitási szint: </b><?php echo htmlspecialchars($aktivitas); ?> </p>
         <p><b>Cél: </b><?php echo htmlspecialchars($cel); ?> </p>
+        <p><b>BMR (alapmetabolikus ráta): </b> <?php echo htmlspecialchars($bmr); ?> kcal</p>
+        <p><b>Fogyasztandó kalória száma: </b> <?php echo htmlspecialchars($fogyasztando); ?> kcal</p>
 
+        <input type="submit" class="button" value="Adatok módosítása" name="adatmodositas">
+
+        </form>
     </div>
 </div>
 
