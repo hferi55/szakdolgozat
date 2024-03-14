@@ -135,9 +135,11 @@ header {
 }
 
 .kepek {
-  width: 150px; /* Állítsd be a kívánt szélességet */
+  display: inline-block; /* A képek egymás mellett jelenjenek meg */
+  width: 100px; /* Állítsd be a kívánt szélességet */
   height: auto; /* Az arányok megtartása érdekében */
-  margin-bottom: 1.5rem; 
+  margin-right: 10px; /* Opcionális: jobb oldali margó hozzáadása az elemek közötti tér létrehozásához */
+  border-radius: 100px; /* A kép sarkainak lekerekítése */
 }
 
 .regisztracio_container{
@@ -255,3 +257,76 @@ header {
   box-shadow: 0 5px 10px rgba(0,0,0,0.3);
   padding: 25px;
 }
+
+.etrend_lap .adatok{
+  float: left;
+  margin-right: 10%;
+  height: 600px;
+  display: flex; /* Flexbox használata */
+  justify-content: center; /* Vízszintes középre igazítás */
+  align-items: center; /* Függőleges középre igazítás */
+}
+
+.etrend_lap header{
+  font-size: 2rem;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.adatok header{
+  font-size: 2rem;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  
+}
+
+.adatok input.button{
+  color: #fff;
+  background: #009579;
+  font-size: 1.2rem;
+  font-weight: 500;
+  letter-spacing: 1px;
+  margin-top: 1.7rem;
+  cursor: pointer;
+  transition: 0.4s;
+}
+.adatok input.button:hover{
+  background: #006653;
+}
+
+.adatok input{
+  height: 60px;
+  width: 100%;
+  padding: 0 15px;
+  font-size: 17px;
+  margin-bottom: 1.3rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  outline: none;
+}
+.adatok input:focus{
+  box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+}
+
+.reggeli{
+  overflow-x: auto; /* Oldalra görgetés, ha a tartalom túllépi a konténer szélességét */
+  white-space: nowrap; /* A tartalom egy sorban marad */
+}
+
+.ebed{
+  overflow-x: auto; /* Oldalra görgetés, ha a tartalom túllépi a konténer szélességét */
+  white-space: nowrap; /* A tartalom egy sorban marad */
+}
+
+.vacsora{
+  overflow-x: auto; /* Oldalra görgetés, ha a tartalom túllépi a konténer szélességét */
+  white-space: nowrap; /* A tartalom egy sorban marad */
+}
+
+.uzsonna{
+  overflow-x: auto; /* Oldalra görgetés, ha a tartalom túllépi a konténer szélességét */
+  white-space: nowrap; /* A tartalom egy sorban marad */
+}
+
