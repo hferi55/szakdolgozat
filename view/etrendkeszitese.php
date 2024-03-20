@@ -165,16 +165,16 @@ if(isset($_POST['submit'])) {
                 <div class="etelek">
                  Reggeli 
                 <h3>Reggeli:</h3>
-                <img src="../kepek/reggeli1.jpg" class="kepek" alt="Zabkása gyümölccsel és mandulával">
-                <img src="../kepek/reggeli2.jpg" class="kepek" alt="Görög joghurt gyümölcsökkel és mézzel">
-                <img src="../kepek/reggeli3.jpg" class="kepek" alt="Tojásrántotta zöldségekkel">
-                <img src="../kepek/reggeli4.jpg" class="kepek" alt="Avokádós teljes kiőrlésű pirítós">
-                <img src="../kepek/reggeli5.jpg" class="kepek" alt="Banános zabkeksz">
-                <img src="../kepek/reggeli6.jpg" class="kepek" alt="Chia-puding gyümölcsökkel">
-                <img src="../kepek/reggeli7.jpg" class="kepek" alt="Túrós zabkeksz">
-                <img src="../kepek/reggeli8.jpg" class="kepek" alt="Birsalma és fahéjas zabkása">
-                <img src="../kepek/reggeli9.jpg" class="kepek" alt="Avokádó és paradicsom omlett">
-                <img src="../kepek/reggeli10.jpg" class="kepek" alt="Gyors smoothie tál">
+                <img src="../kepek/reggeli1.jpg" class="kepek" alt="Zabkása gyümölccsel és mandulával">  https://diet.hu/dietas-zabkasa-recept/
+                <img src="../kepek/reggeli2.jpg" class="kepek" alt="Görög joghurt gyümölcsökkel és mézzel"> https://cookpad.com/hu/receptek/16746502-afonyamalnagorogjoghurt?ref=search&search_term=g%C3%B6r%C3%B6g%20joghurt%20reggeli
+                <img src="../kepek/reggeli3.jpg" class="kepek" alt="Tojásrántotta zöldségekkel"> https://tojas.info.hu/zoldseges-rantotta/
+                <img src="../kepek/reggeli4.jpg" class="kepek" alt="Avokádós teljes kiőrlésű pirítós"> https://cookpad.com/hu/receptek/6942934-villamgyors-avokados-piritos
+                <img src="../kepek/reggeli5.jpg" class="kepek" alt="Banános zabkeksz"> https://babamamaegyutteszik.hu/recept/bananos-zabkeksz/
+                <img src="../kepek/reggeli6.jpg" class="kepek" alt="Chia-puding gyümölcsökkel"> https://femina.hu/recept/chia-puding-bogyos-gyumolcsokkel/
+                <img src="../kepek/reggeli7.jpg" class="kepek" alt="Túrós zabkeksz"> https://www.nosalty.hu/recept/zabpelyhes-turos-keksz
+                <img src="../kepek/reggeli8.jpg" class="kepek" alt="Birsalma és fahéjas zabkása"> https://streetkitchen.hu/instant/almas-fahejas-zabkasa/
+                <img src="../kepek/reggeli9.jpg" class="kepek" alt="Avokádó és paradicsom omlett"> https://zest.hu/omlett-avokadoval-es-paradicsommal/
+                <img src="../kepek/reggeli10.jpg" class="kepek" alt="Gyors smoothie tál"> https://sobors.hu/receptek/smoothie-tal-recept/
 
                  Ebéd 
               <h3>Ebéd:</h3>
