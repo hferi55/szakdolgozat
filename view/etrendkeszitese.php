@@ -162,62 +162,41 @@ if(isset($_POST['submit'])) {
                 <input type="submit" class="button" value="Étrendkészítése" name="submit">
 
     <!--
-                <div class="etelek">
-                 Reggeli 
-                <h3>Reggeli:</h3>
-                <img src="../kepek/reggeli1.jpg" class="kepek" alt="Zabkása gyümölccsel és mandulával">  https://diet.hu/dietas-zabkasa-recept/
-                <img src="../kepek/reggeli2.jpg" class="kepek" alt="Görög joghurt gyümölcsökkel és mézzel"> https://cookpad.com/hu/receptek/16746502-afonyamalnagorogjoghurt?ref=search&search_term=g%C3%B6r%C3%B6g%20joghurt%20reggeli
-                <img src="../kepek/reggeli3.jpg" class="kepek" alt="Tojásrántotta zöldségekkel"> https://tojas.info.hu/zoldseges-rantotta/
-                <img src="../kepek/reggeli4.jpg" class="kepek" alt="Avokádós teljes kiőrlésű pirítós"> https://cookpad.com/hu/receptek/6942934-villamgyors-avokados-piritos
-                <img src="../kepek/reggeli5.jpg" class="kepek" alt="Banános zabkeksz"> https://babamamaegyutteszik.hu/recept/bananos-zabkeksz/
-                <img src="../kepek/reggeli6.jpg" class="kepek" alt="Chia-puding gyümölcsökkel"> https://femina.hu/recept/chia-puding-bogyos-gyumolcsokkel/
-                <img src="../kepek/reggeli7.jpg" class="kepek" alt="Túrós zabkeksz"> https://www.nosalty.hu/recept/zabpelyhes-turos-keksz
-                <img src="../kepek/reggeli8.jpg" class="kepek" alt="Birsalma és fahéjas zabkása"> https://streetkitchen.hu/instant/almas-fahejas-zabkasa/
-                <img src="../kepek/reggeli9.jpg" class="kepek" alt="Avokádó és paradicsom omlett"> https://zest.hu/omlett-avokadoval-es-paradicsommal/
-                <img src="../kepek/reggeli10.jpg" class="kepek" alt="Gyors smoothie tál"> https://sobors.hu/receptek/smoothie-tal-recept/
-
-                 Ebéd 
-              <h3>Ebéd:</h3>
-                <img src="../kepek/ebed1.jpg" class="kepek" alt="Sült csirke salátával">
-                <img src="../kepek/ebed2.jpg" class="kepek" alt="Quinoa zöldségekkel">
-                <img src="../kepek/ebed3.jpg" class="kepek" alt="Lencseleves spenóttal">
-                <img src="../kepek/ebed4.jpg" class="kepek" alt="Tonhalas teljes kiőrlésű wrap">
-                <img src="../kepek/ebed5.jpg" class="kepek" alt="Sült lazac édesburgonyával">
-                <img src="../kepek/ebed6.jpg" class="kepek" alt="Színes borsókrémleves">
-                <img src="../kepek/ebed7.jpg" class="kepek" alt="Szezámmagos csirke saláta">
-                <img src="../kepek/ebed8.jpg" class="kepek" alt="Quinoa saláta fetával és görög olívával">
-                <img src="../kepek/ebed9.jpg" class="kepek" alt="Zöldséges tojás wrap">
-                <img src="../kepek/ebed10.jpg" class="kepek" alt="Sütőben sült lazac spárgával">
-
-               Vacsora 
-              <h3>Vacsora:</h3>
-                <img src="../kepek/vacsora1.jpg" class="kepek" alt="Vegetáriánus csicseriborsó curry">
-                <img src="../kepek/vacsora2.jpg" class="kepek" alt="Grillezett zöldségek tofuval">
-                <img src="../kepek/vacsora3.jpg" class="kepek" alt="Sült csirkecomb sült zöldségekkel">
-                <img src="../kepek/vacsora4.jpg" class="kepek" alt="Brokkoli spagetti fokhagymás olívaolajjal">
-                <img src="../kepek/vacsora5.jpg" class="kepek" alt="Sushi tál lazaccal és zöldségekkel">
-                <img src="../kepek/vacsora6.jpg" class="kepek" alt="Vegetáriánus lencsédal">
-                <img src="../kepek/vacsora7.jpg" class="kepek" alt="Fűszeres csirke curry">
-                <img src="../kepek/vacsora8.jpg" class="kepek" alt="Brokkoli-karfiol pite">
-                <img src="../kepek/vacsora9.jpg" class="kepek" alt="Mexikói csirke quinoa-val">
-                <img src="../kepek/vacsora10.jpg" class="kepek" alt="Grillezett hal filé édesburgonya pürével">
-
-
-               Uzsonna 
-              <h3>Uzsonna:</h3>
-                <img src="../kepek/uzsonna1.jpg" class="kepek" alt="Mandula és mazsola mix">
-                <img src="../kepek/uzsonna2.jpg" class="kepek" alt="Görög joghurt gyümölcssaláttal">
-                <img src="../kepek/uzsonna3.jpg" class="kepek" alt="Almás mogyoróvaj szendvics">
-                <img src="../kepek/uzsonna4.jpg" class="kepek" alt="Zöldségek hummusszal">
-                <img src="../kepek/uzsonna5.jpg" class="kepek" alt="Banános és epres smoothie">
-                <img src="../kepek/uzsonna6.jpg" class="kepek" alt="Szezámmagos alma szeletek">
-                <img src="../kepek/uzsonna7.jpg" class="kepek" alt="Gyümölcsös joghurt pohárban">
-                <img src="../kepek/uzsonna8.jpg" class="kepek" alt="Teljes kiőrlésű kenyér paradicsomsalátával">
-                <img src="../kepek/uzsonna9.jpg" class="kepek" alt="Avokádó toast tojással">
-                <img src="../kepek/uzsonna10.jpg" class="kepek" alt="Céklás és répás smoothie">
-        
-        </div>
+            Reggeli és Uzsonna:
+                Zabkása gyümölccsel és mandulával recept: https://diet.hu/dietas-zabkasa-recept/
+                Görög joghurt gyümölcsökkel és mézzel recept: https://cookpad.com/hu/receptek/16746502-afonyamalnagorogjoghurt?ref=search&search_term=g%C3%B6r%C3%B6g%20joghurt%20reggeli
+                Tojásrántotta zöldségekkel recept: https://tojas.info.hu/zoldseges-rantotta/
+                Avokádós teljes kiőrlésű pirítós recept: https://cookpad.com/hu/receptek/6942934-villamgyors-avokados-piritos
+                Banános zabkeksz recept: https://babamamaegyutteszik.hu/recept/bananos-zabkeksz/
+                Chia-puding gyümölcsökkel recept: https://femina.hu/recept/chia-puding-bogyos-gyumolcsokkel/
+                Túrós zabkeksz recept: https://www.nosalty.hu/recept/zabpelyhes-turos-keksz
+                Birsalma és fahéjas zabkása recept: https://streetkitchen.hu/instant/almas-fahejas-zabkasa/
+                Avokádó és paradicsom omlett recept: https://zest.hu/omlett-avokadoval-es-paradicsommal/
+                Gyors smoothie tál recept: https://sobors.hu/receptek/smoothie-tal-recept/
+                Zöldségek hummusszal recept: https://adriskitchen.hu/receptek/olvasas/szines-zoldseges-humusz-variaciok
+                Almás mogyoróvaj szendvics recept: https://www.origo.hu/tafelspicc/2012/09/almasmogyorovajas-szendvics
+                Banános és epres smoothie recept: https://www.mindmegette.hu/epres-bananos-turmix.recept/
+                Gyümölcsös joghurt pohárban recept: https://cookpad.com/hu/receptek/16211932-afonyas-joghurtos-poharkrem?ref=search&search_term=joghurtos%20poh%C3%A1rkr%C3%A9m
+                Céklás és répás smoothie recept: https://cookpad.com/hu/receptek/16768339-ceklas-smoothie-turmix?ref=search&search_term=c%C3%A9kla%20smoothie
+                
+            Ebéd és Vacsora:
+                Rántott csirkemell recept: https://www.mindmegette.hu/rantott-csirkemell-vajas-burgonyapurevel.recept/
+                Natúr csirkemell recept: https://www.mindmegette.hu/gyors-fuszeres-csirkemell.recept/
+                Rántott sertésszelet recept: https://www.nosalty.hu/recept/tokeletes-rantott-hus
+                Rántott marhaszelet recept: https://cookpad.com/hu/receptek/15415552-forditott-marhaszelet
+                Steak recept: https://femina.hu/recept/igy_susd_meg_a_tokeletes_steaket/
+                Rizs recept: https://www.nosalty.hu/recept/elronthatatlan-rizs
+                Barna rizs recept: https://www.nosalty.hu/recept/lime-os-barna-rizs
+                Saláta recept: https://www.mindmegette.hu/ecetes-fejes-salata.recept/
+                Sütőben sült lazac spárgával recept: https://magazin.klarstein.hu/receptek/lazac-zoeld-spargaval/
+                Sült édesburgonya recept: https://www.mindmegette.hu/sult-edesburgonya.recept/
+                Sült hasábburgonya recept: https://www.mindmegette.hu/hasabburgonya-sutoben-sutve.recept/
+                Krumplipüré recept: https://www.mindmegette.hu/krumplipure-alaprecept.recept/
+                Rántott tofu recept: https://streetkitchen.hu/green-kitchen/vegan/vegan-csirkemellcsikok/
+                Bolognai spagetti recept: https://www.mindmegette.hu/az-en-bolognai-spagettim.recept/
+                Karfiolfasírt recept: https://streetkitchen.hu/green-kitchen/szezon/karfiol-receptek/karfiol-fasirt/
     -->
+    
       </form>
     </div>
 </div>
