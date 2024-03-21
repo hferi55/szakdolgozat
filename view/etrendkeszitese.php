@@ -173,6 +173,7 @@ if(isset($_POST['submit'])) {
                 Birsalma és fahéjas zabkása recept: https://streetkitchen.hu/instant/almas-fahejas-zabkasa/
                 Avokádó és paradicsom omlett recept: https://zest.hu/omlett-avokadoval-es-paradicsommal/
                 Gyors smoothie tál recept: https://sobors.hu/receptek/smoothie-tal-recept/
+                
                 Zöldségek hummusszal recept: https://adriskitchen.hu/receptek/olvasas/szines-zoldseges-humusz-variaciok
                 Almás mogyoróvaj szendvics recept: https://www.origo.hu/tafelspicc/2012/09/almasmogyorovajas-szendvics
                 Banános és epres smoothie recept: https://www.mindmegette.hu/epres-bananos-turmix.recept/
@@ -196,7 +197,7 @@ if(isset($_POST['submit'])) {
                 Bolognai spagetti recept: https://www.mindmegette.hu/az-en-bolognai-spagettim.recept/
                 Karfiolfasírt recept: https://streetkitchen.hu/green-kitchen/szezon/karfiol-receptek/karfiol-fasirt/
     -->
-    
+
       </form>
     </div>
 </div>
