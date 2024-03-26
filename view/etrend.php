@@ -212,16 +212,32 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
             <a onclick="showGallery('uzsonna')">Uzsonna</a>
         </nav>
         
+        <?php
+            // Adatok lekérdezése
+            $sql = "SELECT `kep` FROM etelek WHERE etel_id=1";
+            $result = $conn->query($sql);
+
+            // Kép elérési útvonalának lekérése
+            if ($result->num_rows > 0) {
+                $row = $result->fetch_assoc();
+                $kep = $row['kep'];
+            } else {
+                $kep = ''; // Alapértelmezett érték, ha nincs kép
+            }
+        
+            // Adatbázis kapcsolat bezárása
+            $conn->close();
+        ?>
+
         <div id="reggeli" class="gallery">
             <!-- Reggeli --> 
-        
             <h3>Reggeli:</h3>
 
             <div class="image-container">
                 <label>
                     <figure>
                         <input type="checkbox">
-                        <img src="../kepek/reggeli1.jpg" class="kepek" alt="Zabkása gyümölccsel és mandulával">
+                        <img src="<?php echo htmlspecialchars($kep); ?>" class="kepek" alt="Zabkása gyümölccsel és mandulával">
                         <figcaption>Zabkása gyümölccsel és mandulával</figcaption>
                     </figure>
                 </label>
@@ -229,7 +245,7 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
                 <label>
                     <figure>
                         <input type="checkbox">
-                        <img src="../kepek/reggeli2.jpg" class="kepek" alt="Görög joghurt gyümölcsökkel és mézzel">
+                        <img src="<?php echo htmlspecialchars($kep); ?>" class="kepek" alt="Görög joghurt gyümölcsökkel és mézzel">
                         <figcaption>Görög joghurt gyümölcsökkel és mézzel</figcaption>
                     </figure>
                 </label>
