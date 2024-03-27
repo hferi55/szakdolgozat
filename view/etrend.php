@@ -165,10 +165,13 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
                     flex: 0 0 auto;
                     margin-right: 20px;
                     text-align: center;
+                    padding: 10px;
+                    border: 1px solid #ccc;
+                    margin-bottom: 10px;
                 }
                 .image-item img {
-                    width: 200px;
-                    height: auto;
+                    width: 200px; /* Állítsd be itt az általad kívánt méretet */
+                    height: 200px;
                     border-radius: 100px; /* A kép sarkainak lekerekítése */
                     margin-bottom: 5px; /* Képek közötti tér */
                 }
@@ -181,49 +184,145 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
                     word-wrap: break-word; /* A hosszú szavak tördelése */
                 }
                 
+                .image-item > div {
+                    background-color: transparent;
+                }
+            
+                .image-item.selected {
+                    background-color: #006653;
+                }
+            
+                .image-item.selected > div {
+                    color: white;
+                }
             </style>
 
+        <form action="" method="post" id="image-selection-form">
             <!-- Reggeli -->
             <h3>Reggeli:</h3>
 
             <div class="image-container">
                 <?php
-                // Első 10 kép és cím lekérdezése
-                $stmt1 = $conn->prepare("SELECT nev, kep FROM etelek LIMIT 10");
+                // Reggeli képek és címek lekérdezése
+                $stmt1 = $conn->prepare("SELECT nev, kep, etel_id FROM etelek WHERE reggeli = 1");
                 $stmt1->execute();
                 $images1 = $stmt1->fetchAll();
                 ?>
                 <?php foreach ($images1 as $image): ?>
-                    <div class="image-item">
-                        <img src="<?php echo $image['kep']; ?>" alt="<?php echo $image['nev']; ?>">
-                        <div class="image-title-container">
-                            <div class="image-title"><?php echo $image['nev']; ?></div>
+                    <div class="image-item <?php if(isset($_POST['selected_images']) && in_array($image['etel_id'], $_POST['selected_images'])) echo 'selected'; ?>">
+                        <div>
+                            <img src="<?php echo $image['kep']; ?>" alt="<?php echo $image['nev']; ?>"><br>
+                            <label>
+                                <input type="checkbox" name="selected_images[]" value="<?php echo $image['etel_id']; ?>" <?php if(isset($_POST['selected_images']) && in_array($image['etel_id'], $_POST['selected_images'])) echo 'checked="checked"'; ?>>
+                                <?php echo $image['nev']; ?>
+                            </label>
                         </div>
                     </div>
                 <?php endforeach; ?>
             </div>
 
-            <!-- Ebéd -->
-            <h3>Ebéd:</h3>
+            <!-- Hús -->
+            <h3>Hús:</h3>
             
             <div class="image-container">
                 <?php
-                // 11. és 25. sor közötti képek és címek lekérdezése
-                $stmt2 = $conn->prepare("SELECT nev, kep FROM etelek LIMIT 10, 15");
+                // Hús képek és címek lekérdezése
+                $stmt2 = $conn->prepare("SELECT nev, kep, etel_id FROM etelek WHERE milyenetel = 'hús'");
                 $stmt2->execute();
                 $images2 = $stmt2->fetchAll();
                 ?>
                 <?php foreach ($images2 as $image): ?>
-                    <div class="image-item">
-                        <img src="<?php echo $image['kep']; ?>" alt="<?php echo $image['nev']; ?>">
-                        <div class="image-title-container">
-                            <div class="image-title"><?php echo $image['nev']; ?></div>
+                    <div class="image-item <?php if(isset($_POST['selected_images']) && in_array($image['etel_id'], $_POST['selected_images'])) echo 'selected'; ?>">
+                        <div>
+                            <img src="<?php echo $image['kep']; ?>" alt="<?php echo $image['nev']; ?>"><br>
+                            <label>
+                                <input type="checkbox" name="selected_images[]" value="<?php echo $image['etel_id']; ?>" <?php if(isset($_POST['selected_images']) && in_array($image['etel_id'], $_POST['selected_images'])) echo 'checked="checked"'; ?>>
+                                <?php echo $image['nev']; ?>
+                            </label>
                         </div>
                     </div>
                 <?php endforeach; ?>
             </div>
 
 
+            <!-- Köret -->
+            <h3>Köret:</h3>
+
+            <div class="image-container">
+                <?php
+                // Köret képek és címek lekérdezése
+                $stmt3 = $conn->prepare("SELECT nev, kep, etel_id FROM etelek WHERE milyenetel = 'köret'");
+                $stmt3->execute();
+                $images3 = $stmt3->fetchAll();
+                ?>
+                <?php foreach ($images3 as $image): ?>
+                    <div class="image-item <?php if(isset($_POST['selected_images']) && in_array($image['etel_id'], $_POST['selected_images'])) echo 'selected'; ?>">
+                        <div>
+                            <img src="<?php echo $image['kep']; ?>" alt="<?php echo $image['nev']; ?>"><br>
+                            <label>
+                                <input type="checkbox" name="selected_images[]" value="<?php echo $image['etel_id']; ?>" <?php if(isset($_POST['selected_images']) && in_array($image['etel_id'], $_POST['selected_images'])) echo 'checked="checked"'; ?>>
+                                <?php echo $image['nev']; ?>
+                            </label>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+
+            <!-- Uzsonna -->
+            <h3>Uzsonna:</h3>
+            
+            <div class="image-container">
+                <?php
+                // Uzsonna képek és címek lekérdezése
+                $stmt4 = $conn->prepare("SELECT nev, kep, etel_id FROM etelek WHERE uzsonna = 1");
+                $stmt4->execute();
+                $images4 = $stmt4->fetchAll();
+                ?>
+                <?php foreach ($images4 as $image): ?>
+                    <div class="image-item <?php if(isset($_POST['selected_images']) && in_array($image['etel_id'], $_POST['selected_images'])) echo 'selected'; ?>">
+                        <div>
+                            <img src="<?php echo $image['kep']; ?>" alt="<?php echo $image['nev']; ?>"><br>
+                            <label>
+                                <input type="checkbox" name="selected_images[]" value="<?php echo $image['etel_id']; ?>" <?php if(isset($_POST['selected_images']) && in_array($image['etel_id'], $_POST['selected_images'])) echo 'checked="checked"'; ?>>
+                                <?php echo $image['nev']; ?>
+                            </label>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+            <button type="submit">Kiválasztottak feldolgozása</button>
+            </form>
+            <?php
+            if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                if(isset($_POST["selected_images"]) && is_array($_POST["selected_images"])) {
+                    echo '<div id="selected-images">';
+                    echo "<h3>Kiválasztott ételek:</h3>";
+                    foreach ($_POST["selected_images"] as $selected_image_id) {
+                        // Itt megteheted a kiválasztott ételek feldolgozását
+                        // Például kiírhatod az etel_id-kat
+                        echo "<p>Etel ID: " . htmlspecialchars($selected_image_id) . "</p>";
+                    }
+                    echo '</div>';
+                } else {
+                    echo '<div id="selected-images"><p>Nincs kiválasztott étel.</p></div>';
+                }
+            }
+            ?>
+            <script>
+                // JavaScript kód a kijelölés megvalósításához
+                var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+                checkboxes.forEach(function(checkbox) {
+                    checkbox.addEventListener('change', function() {
+                        var parentDiv = checkbox.closest('.image-item');
+                        if (checkbox.checked) {
+                            parentDiv.classList.add('selected');
+                        } else {
+                            parentDiv.classList.remove('selected');
+                        }
+                    });
+                });
+            </script>
+            
     
 </div>
 
