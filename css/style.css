@@ -134,14 +134,6 @@ header {
   background: #006653;
 }
 
-.kepek {
-  display: inline-block; /* A képek egymás mellett jelenjenek meg */
-  width: 100px; /* Állítsd be a kívánt szélességet */
-  height: auto; /* Az arányok megtartása érdekében */
-  margin-right: 10px; /* Opcionális: jobb oldali margó hozzáadása az elemek közötti tér létrehozásához */
-  border-radius: 100px; /* A kép sarkainak lekerekítése */
-}
-
 .regisztracio_container{
     position: absolute;
     top: 50%;
@@ -248,7 +240,7 @@ header {
   position: absolute;
   top: 50%;
   left: 50%;
-  margin-top: 200px;
+  margin-top: 600px;
   transform: translate(-50%,-50%);
   max-width: 1500px;
   width: 100%;
@@ -261,10 +253,9 @@ header {
 .etrend_lap .adatok{
   float: left;
   margin-right: 10%;
-  height: 600px;
+  height: 1400px;
   display: flex; /* Flexbox használata */
   justify-content: center; /* Vízszintes középre igazítás */
-  align-items: center; /* Függőleges középre igazítás */
 }
 
 .etrend_lap header{
