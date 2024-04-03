@@ -155,49 +155,8 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
             echo "Hiba: " . $e->getMessage();
         }
     ?>
-            <<style>
-                .image-container {
-                    display: flex;
-                    flex-wrap: nowrap;
-                    overflow-x: auto;
-                }
-                .image-item {
-                    flex: 0 0 auto;
-                    margin-right: 20px;
-                    text-align: center;
-                    padding: 10px;
-                    border: 1px solid #ccc;
-                    margin-bottom: 10px;
-                }
-                .image-item img {
-                    width: 200px; /* Állítsd be itt az általad kívánt méretet */
-                    height: 200px;
-                    border-radius: 100px; /* A kép sarkainak lekerekítése */
-                    margin-bottom: 5px; /* Képek közötti tér */
-                }
-                .image-title-container {
-                    display: flex;
-                    justify-content: center;
-                    max-width: 200px; /* Minimális szélesség a több soros elrendezéshez */
-                }
-                .image-title {
-                    word-wrap: break-word; /* A hosszú szavak tördelése */
-                }
-                
-                .image-item > div {
-                    background-color: transparent;
-                }
-            
-                .image-item.selected {
-                    background-color: #006653;
-                }
-            
-                .image-item.selected > div {
-                    color: white;
-                }
-            </style>
-
-        <form action="" method="post" id="image-selection-form">
+        
+        <form action="etrendem.php" method="post" id="image-selection-form">
             <!-- Reggeli -->
             <h3>Reggeli:</h3>
 
@@ -290,7 +249,11 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
                     </div>
                 <?php endforeach; ?>
             </div>
-            <button type="submit">Kiválasztottak feldolgozása</button>
+
+            <div class="kivalaszt_gomb">
+            <input type="submit" class="button" value="Kiválasztottam az ételeket">
+            </div>
+            
             </form>
             <?php
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
