@@ -140,7 +140,7 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
             A jobb oldalon található képekből kérem jelöljön 
         </b></p>
         <p><b>
-            meg legalább kettő olyan ételt amit kedvel
+            meg kettő ételt soronként
         </b></p>
         </form>
     </div>
