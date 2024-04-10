@@ -138,245 +138,62 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
     </div>
     
     <header>Étrendem</header>
-
-    <?php
-
-    // Számoljuk ki a reggelihez szükséges kalóriát (25%-át a fogyasztandónak)
-    $reggeli_kaloria = $fogyasztando * 0.25;
-    
-    // Számoljuk ki az ebédhez szükséges kalóriát (35%-át a fogyasztandónak)
-    $ebed_kaloria = $fogyasztando * 0.35;
-   
-    // Számoljuk ki a vacsorahez szükséges kalóriát (25%-át a fogyasztandónak)
-    $vacsora_kaloria = $fogyasztando * 0.25;
-    
-    // Számoljuk ki az uzsonnához szükséges kalóriát (15%-át a fogyasztandónak)
-    $uzsonna_kaloria = $fogyasztando * 0.15;
-
-    //Reggeli:
-
-    // Ellenőrizzük, hogy van-e POST kérés
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        // Ellenőrizzük, hogy a felhasználó kiválasztott-e ételeket
-        if(isset($_POST["selected_images"]) && is_array($_POST["selected_images"])) {
-            // Összegyűjtjük a kiválasztott ételek azonosítóit
-            $selected_images = $_POST["selected_images"];
-            $total_selected_calories = 0;
-
-            // Lekérdezzük a kiválasztott reggeli ételek kalóriáját az adatbázisból
-            foreach ($selected_images as $selected_image_id) {
-                $sqlQuery = "SELECT kaloria FROM etelek WHERE etel_id = ? AND reggeli = 1";
-                $stmtQuery = $conn->prepare($sqlQuery);
-                $stmtQuery->bind_param("i", $selected_image_id);
-                $stmtQuery->execute();
-                $stmtQuery->store_result();
-                $stmtQuery->bind_result($kaloria);
-
-                // Ellenőrizzük, hogy van-e eredmény
-                if ($result->num_rows > 0) {
-                    // Összegzük az összes kiválasztott élelmiszer kalóriáját
-                    $total_selected_calories = 0;
-                    while ($row = $result->fetch_assoc()) {
-                        $total_selected_calories += $row["kaloria"];
-                    }
-                
-                    // Vonjuk ki a kiválasztott élelmiszerek kalóriáját a reggeli_kaloria értékéből
-                    $reggeli_kaloria -= $total_selected_calories;
-                
-                    // Ha a reggeli_kaloria értéke nem 0, akkor kiválasztjuk a legnagyobb kalóriájú kiválasztott ételt
-                    if ($reggeli_kaloria != 0) {
-                        $sqlQuery = "SELECT nev, kaloria FROM etelek WHERE etel_id = $selected_image_id AND reggeli = 1 ORDER BY kaloria DESC LIMIT 1";
-                        $result = $conn->query($sqlQuery);
-                    
-                        // Ellenőrizzük, hogy van-e eredmény
-                        if ($result->num_rows > 0) {
-                            // Kiválasztjuk a legnagyobb kalóriájú ételt és kiszámoljuk, mennyivel kell megszorozni, hogy a reggeli_kaloria értéke 0 legyen
-                            $row = $result->fetch_assoc();
-                            $legnagyobb_kaloriaju_etel_kaloria = $row["kaloria"];
-                            $multiplication_factor = $reggeli_kaloria / $legnagyobb_kaloriaju_etel_kaloria;
-                            $legnagyobb_kaloriaju_etel_kaloria *= $multiplication_factor;
-                            // Vonjuk ki a legnagyobb kalóriájú étel kalóriáját a reggeli_kaloria értékéből
-                            $reggeli_kaloria -= $legnagyobb_kaloriaju_etel_kaloria;
-                        }
-                    }
-                }
-
-                
-
-                // Bezárjuk a lekérdezést
-                $stmtQuery->close();
-            }
-
-            //Ebéd:
-
-            // Kiválasztott "hús" és "köret" ételek kalóriájának inicializálása
-            $hussal_kaloria = 0;
-            $korettel_kaloria = 0;
-                    
-            // Ellenőrizzük, hogy már választott-e húst és köretet
-            $hussal_valasztva = false;
-            $korettel_valasztva = false;
-                    
-            // Lekérdezzük a kiválasztott ebed ételek kalóriáját az adatbázisból
-            foreach ($selected_images as $selected_image_id) {
-                $sqlQuery = "SELECT nev, kaloria, milyenetel FROM etelek WHERE etel_id = ? AND ebed = 1";
-                $stmtQuery = $conn->prepare($sqlQuery);
-                $stmtQuery->bind_param("i", $selected_image_id);
-                $stmtQuery->execute();
-                $stmtQuery->store_result();
-                $stmtQuery->bind_result($nev, $kaloria, $milyenetel);
-            
-                // Ellenőrizzük, hogy van-e eredmény
-                if ($stmtQuery->fetch()) {
-                    // Ha még nem választottunk "húst"
-                    if (!$hussal_valasztva && $milyenetel === "hús") {
-                        $hussal_kaloria += $kaloria;
-                        $hussal_nev = $nev;
-                        $hussal_valasztva = true;
-                    }
-                    // Ha még nem választottunk "köretet"
-                    elseif (!$korettel_valasztva && $milyenetel === "köret") {
-                        $korettel_kaloria += $kaloria;
-                        $korettel_nev = $nev;
-                        $korettel_valasztva = true;
-                    }
-                }
-            
-                // Ellenőrizzük, hogy már választottunk-e mindkettőt
-                if ($hussal_valasztva && $korettel_valasztva) {
-                    break;
-                }
-            
-                // Bezárjuk a lekérdezést
-                $stmtQuery->close();
-            }
-            
-            // Az étel kalóriáinak összege
-            $total_selected_calories = $hussal_kaloria + $korettel_kaloria;
-            
-            // Szorozzuk az összegzett kalóriákat, hogy az ebed_kaloria értéke 0 legyen
-            if ($ebed_kaloria != 0) {
-                $multiplication_factor = $ebed_kaloria / $total_selected_calories;
-                $hussal_kaloria *= $multiplication_factor;
-                $korettel_kaloria *= $multiplication_factor;
-                $ebed_kaloria = 0;
-            }
-
-            //Vacsora:
-
-            // Kiválasztott "hús" és "köret" ételek kalóriájának inicializálása
-            $hussal_kaloria = 0;
-            $korettel_kaloria = 0;
-                    
-            // Ellenőrizzük, hogy már választott-e húst és köretet
-            $hussal_valasztva = false;
-            $korettel_valasztva = false;
-                    
-            // Lekérdezzük a kiválasztott vacsora ételek kalóriáját az adatbázisból
-            foreach ($selected_images as $selected_image_id) {
-                $sqlQuery = "SELECT nev, kaloria, milyenetel FROM etelek WHERE etel_id = ? AND vacsora = 1";
-                $stmtQuery = $conn->prepare($sqlQuery);
-                $stmtQuery->bind_param("i", $selected_image_id);
-                $stmtQuery->execute();
-                $stmtQuery->store_result();
-                $stmtQuery->bind_result($nev, $kaloria, $milyenetel);
-            
-                // Ellenőrizzük, hogy van-e eredmény
-                if ($stmtQuery->fetch()) {
-                    // Ha még nem választottunk "húst"
-                    if (!$hussal_valasztva && $milyenetel === "hús") {
-                        $hussal_kaloria += $kaloria;
-                        $hussal_nev = $nev;
-                        $hussal_valasztva = true;
-                    }
-                    // Ha még nem választottunk "köretet"
-                    elseif (!$korettel_valasztva && $milyenetel === "köret") {
-                        $korettel_kaloria += $kaloria;
-                        $korettel_nev = $nev;
-                        $korettel_valasztva = true;
-                    }
-                }
-            
-                // Ellenőrizzük, hogy már választottunk-e mindkettőt
-                if ($hussal_valasztva && $korettel_valasztva) {
-                    break;
-                }
-            
-                // Bezárjuk a lekérdezést
-                $stmtQuery->close();
-            }
-            
-            // Az étel kalóriáinak összege
-            $total_selected_calories = $hussal_kaloria + $korettel_kaloria;
-            
-            // Szorozzuk az összegzett kalóriákat, hogy az ebed_kaloria értéke 0 legyen
-            if ($vacsora_kaloria != 0) {
-                $multiplication_factor = $vacsora_kaloria / $total_selected_calories;
-                $hussal_kaloria *= $multiplication_factor;
-                $korettel_kaloria *= $multiplication_factor;
-                $vacsora_kaloria = 0;
-            }
-
-            //Uzsonna:
-
-            $total_selected_calories = 0;
-
-            // Lekérdezzük a kiválasztott uzsonna ételek kalóriáját az adatbázisból
-            foreach ($selected_images as $selected_image_id) {
-                $sqlQuery = "SELECT kaloria FROM etelek WHERE etel_id = ? AND uzsonna = 1";
-                $stmtQuery = $conn->prepare($sqlQuery);
-                $stmtQuery->bind_param("i", $selected_image_id);
-                $stmtQuery->execute();
-                $stmtQuery->store_result();
-                $stmtQuery->bind_result($kaloria);
-
-                // Ellenőrizzük, hogy van-e eredmény
-                if ($result->num_rows > 0) {
-                    // Összegzük az összes kiválasztott élelmiszer kalóriáját
-                    $total_selected_calories = 0;
-                    while ($row = $result->fetch_assoc()) {
-                        $total_selected_calories += $row["kaloria"];
-                    }
-                
-                    // Vonjuk ki a kiválasztott élelmiszerek kalóriáját a uzsonna_kaloria értékéből
-                    $uzsonna_kaloria -= $total_selected_calories;
-                
-                    // Ha a uzsonna_kaloria értéke nem 0, akkor kiválasztjuk a legnagyobb kalóriájú kiválasztott ételt
-                    if ($uzsonna_kaloria != 0) {
-                        $sqlQuery = "SELECT nev, kaloria FROM etelek WHERE etel_id = $selected_image_id AND uzsonna = 1 ORDER BY kaloria DESC LIMIT 1";
-                        $result = $conn->query($sqlQuery);
-                    
-                        // Ellenőrizzük, hogy van-e eredmény
-                        if ($result->num_rows > 0) {
-                            // Kiválasztjuk a legnagyobb kalóriájú ételt és kiszámoljuk, mennyivel kell megszorozni, hogy az uzsonna_kaloria értéke 0 legyen
-                            $row = $result->fetch_assoc();
-                            $legnagyobb_kaloriaju_etel_kaloria = $row["kaloria"];
-                            $multiplication_factor = $uzsonna_kaloria / $legnagyobb_kaloriaju_etel_kaloria;
-                            $legnagyobb_kaloriaju_etel_kaloria *= $multiplication_factor;
-                            // Vonjuk ki a legnagyobb kalóriájú étel kalóriáját a uzsonna_kaloria értékéből
-                            $uzsonna_kaloria -= $legnagyobb_kaloriaju_etel_kaloria;
-                        }
-                    }
-                }
-
-                // Bezárjuk a lekérdezést
-                $stmtQuery->close();
-            }
-            
-        }
-    }
-            
-    ?>
         
     <!-- Reggeli -->
     <h3>Reggeli:</h3>
-            
-    <div class="image-container">
-        <?php
-        // Ellenőrizzük, hogy van-e POST kérés
+    <?php
+
+        // Számoljuk ki a reggelihez szükséges kalóriát (25%-át a fogyasztandónak)
+        $reggeli_kaloria = $fogyasztando * 0.25;
+
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Ellenőrizzük, hogy a felhasználó kiválasztott-e ételeket
             if(isset($_POST["selected_images"]) && is_array($_POST["selected_images"])) {
+                // Összegyűjtjük a kiválasztott ételek azonosítóit
+                $selected_images = $_POST["selected_images"];
+                $total_selected_calories = 0;
+
+                // Lekérdezzük az reggeli ételek kalóriáját és összesítjük azokat
+                foreach ($selected_images as $selected_image_id) {
+                    $sqlQuery = "SELECT kaloria FROM etelek WHERE etel_id = ? AND reggeli = 1";
+                    $stmtQuery = $conn->prepare($sqlQuery);
+                    $stmtQuery->bind_param("i", $selected_image_id);
+                    $stmtQuery->execute();
+                    $stmtQuery->store_result();
+                    $stmtQuery->bind_result($kaloria);
+                
+                    if ($stmtQuery->fetch()) {
+                        $total_selected_calories += $kaloria;
+                    }
+                
+                    $stmtQuery->close();
+                }
+
+                // Csökkentjük az reggeli_kaloria értékét a kiválasztott ételek kalóriáival
+                $reggeli_kaloria -= $total_selected_calories;
+
+                // Megkeressük a legnagyobb kalóriájú kiválasztott reggeli ételt az adatbázisból
+                $sqlQuery = "SELECT nev, kaloria FROM etelek WHERE reggeli = 1 AND etel_id IN (" . implode(",", $selected_images) . ") ORDER BY kaloria DESC LIMIT 1";
+                $stmtQuery = $conn->prepare($sqlQuery);
+                $stmtQuery->execute();
+                $stmtQuery->store_result();
+                $stmtQuery->bind_result($legnagyobb_kaloria_nev, $legnagyobb_kaloria);
+
+                if ($stmtQuery->fetch()) {
+                    // Kiszámítjuk a szorzó faktort
+                    $multiplication_factor = $reggeli_kaloria / $legnagyobb_kaloria;
+
+                    // Szorozzuk meg a legnagyobb kalóriájú étel kalóriáját a szorzó faktorral
+                    // és vonjuk ki az reggeli_kaloria értékéből
+                    $reggeli_kaloria -= ($legnagyobb_kaloria * $multiplication_factor);
+                }
+
+            
+    ?>
+
+    <div class="image-container">
+        <?php
+
                 // Lekérdezzük a kiválasztott reggeli ételek képeit és címeiket az adatbázisból
                 foreach ($selected_images as $selected_image_id) {
                     $sqlQuery = "SELECT nev, kep FROM etelek WHERE etel_id = ? AND reggeli = 1";
@@ -394,7 +211,13 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
                             <div>
                                 <img src="<?php echo htmlspecialchars($kep); ?>" alt="<?php echo htmlspecialchars($nev); ?>"><br>
                                 <label>
-                                    <?php echo htmlspecialchars($nev); ?>
+                                    <?php echo htmlspecialchars($nev); ?><br>
+                                    <?php if($nev == $legnagyobb_kaloria_nev){?>
+                                        <?php echo number_format($multiplication_factor + 1, 2); ?> <!-- Hozzáadva egy szóköz a HTML formázáshoz -->
+                                    <?php } else { ?>
+                                        1
+                                    <?php } ?>
+                                        Adag
                                 </label>
                             </div>
                         </div>
@@ -410,13 +233,235 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
 
 
     <!-- Ebéd -->
-<h3>Ebéd:</h3>
-<div class="image-container">
+    <h3>Ebéd:</h3>
     <?php
+
+        // Számoljuk ki az ebédhez szükséges kalóriát (35%-át a fogyasztandónak)
+        $ebed_kaloria = $fogyasztando * 0.35;
+
+        // Ellenőrizzük, hogy van-e POST kérés
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            // Ellenőrizzük, hogy a felhasználó kiválasztott-e ételeket
+            if(isset($_POST["selected_images"]) && is_array($_POST["selected_images"])) {
+                // Összegyűjtjük a kiválasztott ételek azonosítóit
+                $selected_images = $_POST["selected_images"];
+                $total_selected_calories = 0;
+
+                //Ebéd:
+
+                // Kiválasztott "hús" és "köret" ételek kalóriájának inicializálása
+                $hussal_kaloria = 0;
+                $korettel_kaloria = 0;
+
+                // Ellenőrizzük, hogy már választott-e húst és köretet
+                $hussal_valasztva = false;
+                $korettel_valasztva = false;
+
+                // Lekérdezzük a kiválasztott ebed ételek kalóriáját az adatbázisból
+                foreach ($selected_images as $selected_image_id) {
+                    $sqlQuery = "SELECT nev, kaloria, milyenetel FROM etelek WHERE etel_id = ? AND ebed = 1";
+                    $stmtQuery = $conn->prepare($sqlQuery);
+                    $stmtQuery->bind_param("i", $selected_image_id);
+                    $stmtQuery->execute();
+                    $stmtQuery->store_result();
+                    $stmtQuery->bind_result($nev, $kaloria, $milyenetel);
+                
+                    // Ellenőrizzük, hogy van-e eredmény
+                    if ($stmtQuery->fetch()) {
+                        // Ha még nem választottunk "húst"
+                        if (!$hussal_valasztva && $milyenetel === "hús") {
+                            $hussal_kaloria += $kaloria;
+                            $hussal_nev = $nev;
+                            $hussal_valasztva = true;
+                        }
+                        // Ha még nem választottunk "köretet"
+                        elseif (!$korettel_valasztva && $milyenetel === "köret") {
+                            $korettel_kaloria += $kaloria;
+                            $korettel_nev = $nev;
+                            $korettel_valasztva = true;
+                        }
+                    }
+                
+                    // Ellenőrizzük, hogy már választottunk-e mindkettőt
+                    if ($hussal_valasztva && $korettel_valasztva) {
+                        break;
+                    }
+                
+                    // Bezárjuk a lekérdezést
+                    $stmtQuery->close();
+                }
+
+                // Az étel kalóriáinak összege
+                $total_selected_calories = $hussal_kaloria + $korettel_kaloria;
+
+                // Szorozzuk az összegzett kalóriákat, hogy az ebed_kaloria értéke 0 legyen
+                if ($ebed_kaloria != 0) {
+                    $multiplication_factor = $ebed_kaloria / $total_selected_calories;
+                    $hussal_kaloria *= $multiplication_factor;
+                    $korettel_kaloria *= $multiplication_factor;
+                }
+
+                $total_selected_calories = $hussal_kaloria + $korettel_kaloria;
+                $ebed_kaloria -= $total_selected_calories;
+
+
+    ?>
+
+    <div class="image-container">
+        <?php
+        
+                $selected_hus = [];
+                $selected_koret = [];
+
+                // Lekérdezzük a kiválasztott ebéd ételek képeit és címeiket az adatbázisból
+                foreach ($selected_images as $selected_image_id) {
+                    $sqlQuery = "SELECT nev, kep, milyenetel FROM etelek WHERE etel_id = ? AND ebed = 1";
+                    $stmtQuery = $conn->prepare($sqlQuery);
+                    $stmtQuery->bind_param("i", $selected_image_id);
+                    $stmtQuery->execute();
+                    $stmtQuery->store_result();
+                    $stmtQuery->bind_result($nev, $kep, $milyenetel);
+
+                    // Ellenőrizzük, hogy van-e eredmény
+                    if ($stmtQuery->fetch()) {
+                        // Tároljuk az összes "hús" és "köret" ételt
+                        if ($milyenetel === "hús") {
+                            $selected_hus[] = ["nev" => $nev, "kep" => $kep];
+                        } elseif ($milyenetel === "köret") {
+                            $selected_koret[] = ["nev" => $nev, "kep" => $kep];
+                        }
+                    }
+                }
+                // Bezárjuk a lekérdezést
+                $stmtQuery->close();
+
+                // Megjelenítjük az első talált "hús" ételt
+                if (!empty($selected_hus)) {
+                    $hus = $selected_hus[0];
+                    ?>
+                    <div class="image-item">
+                        <div>
+                            <img src="<?php echo htmlspecialchars($hus['kep']); ?>" alt="<?php echo htmlspecialchars($hus['nev']); ?>"><br>
+                            <label>
+                                <?php echo htmlspecialchars($hus['nev']); ?> <br>
+                                <?php echo number_format($multiplication_factor, 2); ?> <!-- Hozzáadva egy szóköz a HTML formázáshoz -->
+                                    Adag
+                            </label>
+                        </div>
+                    </div>
+                    <?php
+                }
+
+                // Megjelenítjük az első talált "köret" ételt
+                if (!empty($selected_koret)) {
+                    $koret = $selected_koret[0];
+                    ?>
+                    <div class="image-item">
+                        <div>
+                            <img src="<?php echo htmlspecialchars($koret['kep']); ?>" alt="<?php echo htmlspecialchars($koret['nev']); ?>"><br>
+                            <label>
+                                <?php echo htmlspecialchars($koret['nev']); ?> <br>
+                                    <?php echo number_format($multiplication_factor, 2); ?> <!-- Hozzáadva egy szóköz a HTML formázáshoz -->
+                                    Adag
+                            </label>
+                        </div>
+                    </div>
+                    <?php
+                }
+            }
+        }
+        ?>
+
+    </div>
+
+<!-- Vacsora -->
+<h3>Vacsora:</h3>
+<?php
+
+    // Számoljuk ki a vacsorahez szükséges kalóriát (25%-át a fogyasztandónak)
+    $vacsora_kaloria = $fogyasztando * 0.25;
+
     // Ellenőrizzük, hogy van-e POST kérés
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Ellenőrizzük, hogy a felhasználó kiválasztott-e ételeket
         if(isset($_POST["selected_images"]) && is_array($_POST["selected_images"])) {
+            // Összegyűjtjük a kiválasztott ételek azonosítóit
+            $selected_images = $_POST["selected_images"];
+            $total_selected_calories = 0;
+
+            //Vacsora:
+
+            // Kiválasztott "hús" és "köret" ételek kalóriájának inicializálása
+            $hussal_kaloria = 0;
+            $korettel_kaloria = 0;
+                    
+            // Ellenőrizzük, hogy már választott-e húst és köretet
+            $hussal_valasztva = false;
+            $korettel_valasztva = false;
+
+            $selected_hus = [];
+            $selected_koret = [];
+
+            // Lekérdezzük a kiválasztott vacsora ételek kalóriáját az adatbázisból
+            foreach ($selected_images as $selected_image_id) {
+                $sqlQuery = "SELECT nev, kaloria, milyenetel FROM etelek WHERE etel_id = ? AND vacsora = 1";
+                $stmtQuery = $conn->prepare($sqlQuery);
+                $stmtQuery->bind_param("i", $selected_image_id);
+                $stmtQuery->execute();
+                $stmtQuery->store_result();
+                $stmtQuery->bind_result($nev, $kaloria, $milyenetel);
+            
+                // Ellenőrizzük, hogy van-e eredmény
+                if ($stmtQuery->fetch()) {
+                    // Tároljuk az összes "hús" és "köret" ételt
+                    if ($milyenetel === "hús") {
+                        $selected_hus[] = ['nev' => $nev, 'kaloria' => $kaloria];
+                    } else if ($milyenetel === "köret") {
+                        $selected_koret[] = ['nev' => $nev, 'kaloria' => $kaloria];
+                    }
+                }
+            
+                // Bezárjuk a lekérdezést
+                $stmtQuery->close();
+            }
+
+
+            // Ha még nem választottunk "húst" és van elég elem a tömbben
+            if (!$hussal_valasztva) {
+                $hus = $selected_hus[1]; // A második hús ételt választjuk
+                $hussal_kaloria += $hus['kaloria'];
+                $hussal_nev = $hus['nev'];
+                $hussal_valasztva = true;
+            }
+
+            // Ha még nem választottunk "köretet" és van elég elem a tömbben
+            if (!$korettel_valasztva) {
+                $koret = $selected_koret[1]; // A második köretet választjuk
+                $korettel_kaloria += ($koret['kaloria']);
+                $korettel_nev = ($koret['nev']);
+                $korettel_valasztva = true;
+            }
+
+            // Az étel kalóriáinak összege
+            $total_selected_calories = $hussal_kaloria + $korettel_kaloria;
+
+            // Szorozzuk az összegzett kalóriákat, hogy az ebed_kaloria értéke 0 legyen
+            if ($vacsora_kaloria != 0) {
+                $multiplication_factor = $vacsora_kaloria / $total_selected_calories;
+                $hussal_kaloria *= $multiplication_factor;
+                $korettel_kaloria *= $multiplication_factor;
+            }
+
+
+            //$total_selected_calories = $hussal_kaloria + $korettel_kaloria;
+            //$vacsora_kaloria -= $total_selected_calories;
+
+
+?>
+
+<div class="image-container">
+    <?php
+
             $selected_hus = [];
             $selected_koret = [];
 
@@ -442,99 +487,38 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
             // Bezárjuk a lekérdezést
             $stmtQuery->close();
 
-            // Megjelenítjük az első talált "hús" ételt
+            // Megjelenítjük a második talált "hús" ételt
             if (!empty($selected_hus)) {
-                $hus = $selected_hus[0];
+                $hus = $selected_hus[1];
                 ?>
                 <div class="image-item">
                     <div>
                         <img src="<?php echo htmlspecialchars($hus['kep']); ?>" alt="<?php echo htmlspecialchars($hus['nev']); ?>"><br>
                         <label>
-                            <?php echo htmlspecialchars($hus['nev']); ?>
+                            <?php echo htmlspecialchars($hus['nev']); ?> <br>
+                            <?php echo number_format($multiplication_factor, 2); ?> <!-- Hozzáadva egy szóköz a HTML formázáshoz -->
+                                Adag
                         </label>
                     </div>
                 </div>
                 <?php
             }
 
-            // Megjelenítjük az első talált "köret" ételt
+            // Megjelenítjük a második talált "köret" ételt
             if (!empty($selected_koret)) {
-                $koret = $selected_koret[0];
+                $koret = $selected_koret[1];
                 ?>
                 <div class="image-item">
                     <div>
                         <img src="<?php echo htmlspecialchars($koret['kep']); ?>" alt="<?php echo htmlspecialchars($koret['nev']); ?>"><br>
                         <label>
-                            <?php echo htmlspecialchars($koret['nev']); ?>
+                            <?php echo htmlspecialchars($koret['nev']); ?> <br>
+                            <?php echo number_format($multiplication_factor, 2); ?> <!-- Hozzáadva egy szóköz a HTML formázáshoz -->
+                                Adag
                         </label>
                     </div>
                 </div>
                 <?php
-            }
-        }
-    }
-    ?>
-</div>
-
-<!-- Vacsora -->
-<h3>Vacsora:</h3>
-<div class="image-container">
-    <?php
-    // Ellenőrizzük, hogy van-e POST kérés
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        // Ellenőrizzük, hogy a felhasználó kiválasztott-e ételeket
-        if(isset($_POST["selected_images"]) && is_array($_POST["selected_images"])) {
-            $hussal_talalt = 0;
-            $korettel_talalt = 0;
-
-            // Lekérdezzük a kiválasztott vacsora ételek képeit és címeiket az adatbázisból
-            foreach ($selected_images as $selected_image_id) {
-                $sqlQuery = "SELECT nev, kep, milyenetel FROM etelek WHERE etel_id = ? AND vacsora = 1";
-                $stmtQuery = $conn->prepare($sqlQuery);
-                $stmtQuery->bind_param("i", $selected_image_id);
-                $stmtQuery->execute();
-                $stmtQuery->store_result();
-                $stmtQuery->bind_result($nev, $kep, $milyenetel);
-
-                // Ellenőrizzük, hogy van-e eredmény
-                if ($stmtQuery->fetch()) {
-                    // Ellenőrizzük, hogy már találtunk-e "hús" ételt és az ebédnél sem szerepel
-                    if ($hussal_talalt > 0 && $milyenetel === "hús") {
-                        // Megjelenítjük az étel nevét és képét
-                        ?>
-                        <div class="image-item">
-                            <div>
-                                <img src="<?php echo htmlspecialchars($kep); ?>" alt="<?php echo htmlspecialchars($nev); ?>"><br>
-                                <label>
-                                    <?php echo htmlspecialchars($nev); ?>
-                                </label>
-                            </div>
-                        </div>
-                        <?php
-                    }
-                    // Ellenőrizzük, hogy már találtunk-e "köret" ételt és az ebédnél sem szerepel
-                    elseif ($korettel_talalt > 0 && $milyenetel === "köret") {
-                        // Megjelenítjük az étel nevét és képét
-                        ?>
-                        <div class="image-item">
-                            <div>
-                                <img src="<?php echo htmlspecialchars($kep); ?>" alt="<?php echo htmlspecialchars($nev); ?>"><br>
-                                <label>
-                                    <?php echo htmlspecialchars($nev); ?>
-                                </label>
-                            </div>
-                        </div>
-                        <?php
-                    }
-                    // Növeljük a talált "hús" és "köret" étel számát
-                    if ($milyenetel === "hús") {
-                        $hussal_talalt++;
-                    } elseif ($milyenetel === "köret") {
-                        $korettel_talalt++;
-                    }
-                }
-                // Bezárjuk a lekérdezést
-                $stmtQuery->close();
             }
         }
     }
@@ -543,46 +527,98 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
 
     <!-- Uzsonna -->
     <h3>Uzsonna:</h3>
-    <p><b>Uzsonnához szükséges kalória: </b> <?php echo htmlspecialchars($uzsonna_kaloria); ?> kcal</p>
-    <div class="image-container">
-        <?php
-        // Ellenőrizzük, hogy van-e POST kérés
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            // Ellenőrizzük, hogy a felhasználó kiválasztott-e ételeket
-            if(isset($_POST["selected_images"]) && is_array($_POST["selected_images"])) {
-                // Lekérdezzük a kiválasztott uzsonna ételek képeit és címeiket az adatbázisból
-                foreach ($selected_images as $selected_image_id) {
-                    $sqlQuery = "SELECT nev, kep FROM etelek WHERE etel_id = ? AND uzsonna = 1";
-                    $stmtQuery = $conn->prepare($sqlQuery);
-                    $stmtQuery->bind_param("i", $selected_image_id);
-                    $stmtQuery->execute();
-                    $stmtQuery->store_result();
-                    $stmtQuery->bind_result($nev, $kep);
+    <?php
 
-                    // Ellenőrizzük, hogy van-e eredmény
-                    if ($stmtQuery->fetch()) {
-                        // Megjelenítjük az étel nevét és képét
-                        ?>
-                        <div class="image-item">
-                            <div>
-                                <img src="<?php echo htmlspecialchars($kep); ?>" alt="<?php echo htmlspecialchars($nev); ?>"><br>
-                                <label>
-                                    <?php echo htmlspecialchars($nev); ?>
-                                </label>
-                            </div>
-                        </div>
-                        <?php
-                    }
-                    // Bezárjuk a lekérdezést
-                    $stmtQuery->close();
+    // Számoljuk ki az uzsonnához szükséges kalóriát (15%-át a fogyasztandónak)
+    $uzsonna_kaloria = $fogyasztando * 0.15;
+
+    // Ellenőrizzük, hogy van-e POST kérés
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        // Ellenőrizzük, hogy a felhasználó kiválasztott-e ételeket
+        if(isset($_POST["selected_images"]) && is_array($_POST["selected_images"])) {
+            // Összegyűjtjük a kiválasztott ételek azonosítóit
+            $selected_images = $_POST["selected_images"];
+            $total_selected_calories = 0;
+
+            // Lekérdezzük az uzsonna ételek kalóriáját és összesítjük azokat
+            $total_selected_calories = 0;
+            foreach ($selected_images as $selected_image_id) {
+                $sqlQuery = "SELECT kaloria FROM etelek WHERE etel_id = ? AND uzsonna = 1";
+                $stmtQuery = $conn->prepare($sqlQuery);
+                $stmtQuery->bind_param("i", $selected_image_id);
+                $stmtQuery->execute();
+                $stmtQuery->store_result();
+                $stmtQuery->bind_result($kaloria);
+            
+                if ($stmtQuery->fetch()) {
+                    $total_selected_calories += $kaloria;
                 }
+            
+                $stmtQuery->close();
             }
+
+            // Csökkentjük az uzsonna_kaloria értékét a kiválasztott ételek kalóriáival
+            $uzsonna_kaloria -= $total_selected_calories;
+
+            // Megkeressük a legnagyobb kalóriájú kiválasztott uzsonna ételt az adatbázisból
+            $sqlQuery = "SELECT nev, kaloria FROM etelek WHERE uzsonna = 1 AND etel_id IN (" . implode(",", $selected_images) . ") ORDER BY kaloria DESC LIMIT 1";
+            $stmtQuery = $conn->prepare($sqlQuery);
+            $stmtQuery->execute();
+            $stmtQuery->store_result();
+            $stmtQuery->bind_result($legnagyobb_kaloria_nev, $legnagyobb_kaloria);
+                    
+            if ($stmtQuery->fetch()) {
+                // Kiszámítjuk a szorzó faktort
+                $multiplication_factor = $uzsonna_kaloria / $legnagyobb_kaloria;
+                
+                // Szorozzuk meg a legnagyobb kalóriájú étel kalóriáját a szorzó faktorral
+                // és vonjuk ki az uzsonna_kaloria értékéből
+                $uzsonna_kaloria -= ($legnagyobb_kaloria * $multiplication_factor);
+            }
+
+            
+
+    ?>
+<div class="image-container">
+    <?php
+            // Lekérdezzük a kiválasztott uzsonna ételek képeit és címeiket az adatbázisból
+            foreach ($selected_images as $selected_image_id) {
+                $sqlQuery = "SELECT nev, kep FROM etelek WHERE etel_id = ? AND uzsonna = 1";
+                $stmtQuery = $conn->prepare($sqlQuery);
+                $stmtQuery->bind_param("i", $selected_image_id);
+                $stmtQuery->execute();
+                $stmtQuery->store_result();
+                $stmtQuery->bind_result($nev, $kep);
+                
+                // Ellenőrizzük, hogy van-e eredmény
+                if ($stmtQuery->fetch()) {
+                    // Megjelenítjük az étel nevét és képét
+                    ?>
+                    <div class="image-item">
+                        <div>
+                            <img src="<?php echo htmlspecialchars($kep); ?>" alt="<?php echo htmlspecialchars($nev); ?>"><br>
+                            <label>
+                                <?php echo htmlspecialchars($nev); ?><br>
+                                <?php if($nev == $legnagyobb_kaloria_nev){?>
+                                    <?php echo number_format($multiplication_factor + 1, 2); ?> <!-- Hozzáadva egy szóköz a HTML formázáshoz -->
+                                <?php } else { ?>
+                                    1
+                                <?php } ?>
+                                    Adag
+                            </label>
+
+                        </div>
+                    </div>
+                    <?php
+                }
+                
+            }
+            // Bezárjuk a lekérdezést
+            $stmtQuery->close();
         }
-        ?>
-    </div>
-
-
-
+    }
+    ?>
+</div>
 
     <?php
 
