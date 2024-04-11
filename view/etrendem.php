@@ -10,6 +10,13 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
     // Ne felejtsük el törölni a munkamenet változót, hogy ne jelenjen meg újra az üzenet frissítéskor
     unset($_SESSION['etrend_keszites_sikeres']);
 }
+
+// Ellenőrizzük, hogy van-e POST kérés
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["selected_images"]) && is_array($_POST["selected_images"])) {
+    // Tároljuk el az étrendet a POST kérésben küldött adatokban
+    $_SESSION["selected_images"] = $_POST["selected_images"];
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -37,15 +44,8 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
             <a href="../view/regisztracio.php">Regisztráció</a>
             ';
         } else { // Ha a felhasználó be van jelentkezve
-            require("../sql/sql.php");
-            $felhasznalo_id = $_SESSION['felhasznalo_id'];
-            // Ellenőrizzük, hogy van-e már étrendje
-            $query = "SELECT COUNT(*) FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id AND (magassag IS NULL OR testsuly IS NULL OR eletkor IS NULL OR cel = '' OR nem = '' OR aktivitas = '' OR cel = 'nincs cel' OR nem = 'valasszon' OR aktivitas = 'valasszon')";
-            $result = mysqli_query($conn, $query);
-            $row = mysqli_fetch_row($result);
-            $etrendVan = $row[0] == 0;
-
-            if ($etrendVan) {
+            // Ellenőrizzük, hogy vannak-e kiválasztott képek a SESSION-ben
+            if (isset($_SESSION['selected_images']) && !empty($_SESSION['selected_images'])) {
                 echo '
                 <a href="../view/rolunk.php">Rólunk</a> |
                 <a href="../view/profil.php">Profil</a> |
@@ -53,17 +53,36 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
                 <a href="../logout.php">Kijelentkezés</a>
                 ';
             } else {
-                echo '
-                <a href="../view/rolunk.php">Rólunk</a> |
-                <a href="../view/profil.php">Profil</a> |
-                <a href="../view/etrendkeszitese.php">Étrendkészítés</a> |
-                <a href="../logout.php">Kijelentkezés</a>
-                ';
+                require("../sql/sql.php");
+                $felhasznalo_id = $_SESSION['felhasznalo_id'];
+
+                // Ellenőrizzük, hogy van-e már étrendje
+                $query = "SELECT COUNT(*) FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id AND (magassag IS NULL OR testsuly IS NULL OR eletkor IS NULL OR cel = '' OR nem = '' OR aktivitas = '' OR cel = 'nincs cel' OR nem = 'valasszon' OR aktivitas = 'valasszon')";
+                $result = mysqli_query($conn, $query);
+                $row = mysqli_fetch_row($result);
+                $etrendVan = $row[0] == 0;
+
+                if ($etrendVan) {
+                    echo '
+                    <a href="../view/rolunk.php">Rólunk</a> |
+                    <a href="../view/profil.php">Profil</a> |
+                    <a href="../view/etrend.php">Étrend</a> |
+                    <a href="../logout.php">Kijelentkezés</a>
+                    ';
+                } else {
+                    echo '
+                    <a href="../view/rolunk.php">Rólunk</a> |
+                    <a href="../view/profil.php">Profil</a> |
+                    <a href="../view/etrendkeszitese.php">Étrendkészítés</a> |
+                    <a href="../logout.php">Kijelentkezés</a>
+                    ';
+                }
             }
         }
         ?>
     </nav>
 </header>
+
 
 
 
@@ -146,11 +165,9 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
         // Számoljuk ki a reggelihez szükséges kalóriát (25%-át a fogyasztandónak)
         $reggeli_kaloria = $fogyasztando * 0.25;
 
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            // Ellenőrizzük, hogy a felhasználó kiválasztott-e ételeket
-            if(isset($_POST["selected_images"]) && is_array($_POST["selected_images"])) {
+        
                 // Összegyűjtjük a kiválasztott ételek azonosítóit
-                $selected_images = $_POST["selected_images"];
+                $selected_images = $_SESSION["selected_images"];
                 $total_selected_calories = 0;
 
                 // Lekérdezzük az reggeli ételek kalóriáját és összesítjük azokat
@@ -187,7 +204,6 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
                     // és vonjuk ki az reggeli_kaloria értékéből
                     $reggeli_kaloria -= ($legnagyobb_kaloria * $multiplication_factor);
                 }
-
             
     ?>
 
@@ -226,8 +242,7 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
                     // Bezárjuk a lekérdezést
                     $stmtQuery->close();
                 }
-            }
-        }
+            
         ?>
     </div>
 
@@ -239,12 +254,9 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
         // Számoljuk ki az ebédhez szükséges kalóriát (35%-át a fogyasztandónak)
         $ebed_kaloria = $fogyasztando * 0.35;
 
-        // Ellenőrizzük, hogy van-e POST kérés
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            // Ellenőrizzük, hogy a felhasználó kiválasztott-e ételeket
-            if(isset($_POST["selected_images"]) && is_array($_POST["selected_images"])) {
+        
                 // Összegyűjtjük a kiválasztott ételek azonosítóit
-                $selected_images = $_POST["selected_images"];
+                $selected_images = $_SESSION["selected_images"];
                 $total_selected_calories = 0;
 
                 //Ebéd:
@@ -368,8 +380,7 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
                     </div>
                     <?php
                 }
-            }
-        }
+            
         ?>
 
     </div>
@@ -381,12 +392,8 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
     // Számoljuk ki a vacsorahez szükséges kalóriát (25%-át a fogyasztandónak)
     $vacsora_kaloria = $fogyasztando * 0.25;
 
-    // Ellenőrizzük, hogy van-e POST kérés
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        // Ellenőrizzük, hogy a felhasználó kiválasztott-e ételeket
-        if(isset($_POST["selected_images"]) && is_array($_POST["selected_images"])) {
             // Összegyűjtjük a kiválasztott ételek azonosítóit
-            $selected_images = $_POST["selected_images"];
+            $selected_images = $_SESSION["selected_images"];
             $total_selected_calories = 0;
 
             //Vacsora:
@@ -520,8 +527,7 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
                 </div>
                 <?php
             }
-        }
-    }
+        
     ?>
 </div>
 
@@ -532,12 +538,8 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
     // Számoljuk ki az uzsonnához szükséges kalóriát (15%-át a fogyasztandónak)
     $uzsonna_kaloria = $fogyasztando * 0.15;
 
-    // Ellenőrizzük, hogy van-e POST kérés
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        // Ellenőrizzük, hogy a felhasználó kiválasztott-e ételeket
-        if(isset($_POST["selected_images"]) && is_array($_POST["selected_images"])) {
             // Összegyűjtjük a kiválasztott ételek azonosítóit
-            $selected_images = $_POST["selected_images"];
+            $selected_images = $_SESSION["selected_images"];
             $total_selected_calories = 0;
 
             // Lekérdezzük az uzsonna ételek kalóriáját és összesítjük azokat
@@ -615,65 +617,9 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
             }
             // Bezárjuk a lekérdezést
             $stmtQuery->close();
-        }
-    }
+        
     ?>
 </div>
-
-    <?php
-
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        if(isset($_POST["selected_images"]) && is_array($_POST["selected_images"])) {
-            echo '<div id="selected-images">';
-            echo "<h3>Kiválasztott ételek:</h3>";
-            foreach ($_POST["selected_images"] as $selected_image_id) {
-                // Lekérdezzük az étel nevét és kalóriáját az adatbázisból
-                $sqlQuery = "SELECT nev, kaloria FROM etelek WHERE etel_id = ?";
-                $stmtQuery = $conn->prepare($sqlQuery);
-                $stmtQuery->bind_param("i", $selected_image_id);
-                $stmtQuery->execute();
-                $stmtQuery->store_result();
-                $stmtQuery->bind_result($nev, $kaloria);
-
-                // Ellenőrizzük, hogy volt-e eredmény
-                if ($stmtQuery->fetch()) {
-                    // Ha volt eredmény, kiírjuk az étel nevét és kalóriáját
-                    echo "<p>Etel neve: " . htmlspecialchars($nev) . ", Kalória: " . htmlspecialchars($kaloria) . "</p>";
-                } else {
-                    // Ha nem volt eredmény, kiírjuk csak az étel ID-ját
-                    echo "<p>Etel ID: " . htmlspecialchars($selected_image_id) . "</p>";
-                }
-
-                // Bezárjuk a lekérdezést
-                $stmtQuery->close();
-            }
-            echo '</div>';
-        } else {
-            // Ha nincs kiválasztott étel, lekérdezzük az összes ételt az adatbázisból
-            echo '<div id="selected-images">';
-            echo "<h3>Kiválasztott ételek:</h3>";
-
-            // Lekérdezzük az összes étel nevét és kalóriáját az adatbázisból
-            $sqlQuery = "SELECT nev, kaloria FROM etelek";
-            $result = $conn->query($sqlQuery);
-
-            // Ellenőrizzük, hogy van-e eredmény
-            if ($result->num_rows > 0) {
-                // Ha van eredmény, kiírjuk az összes ételt és kalóriáját
-                while ($row = $result->fetch_assoc()) {
-                    echo "<p>Etel neve: " . htmlspecialchars($row["nev"]) . ", Kalória: " . htmlspecialchars($row["kaloria"]) . "</p>";
-                }
-            } 
-
-            // Bezárjuk az eredmény halmazt
-            $result->close();
-
-            echo '</div>';
-        }
-    }
-    ?>
-
-
 
     <script>
         // JavaScript kód a kijelölés megvalósításához
