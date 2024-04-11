@@ -37,33 +37,46 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
             <a href="../view/regisztracio.php">Regisztráció</a>
             ';
         } else { // Ha a felhasználó be van jelentkezve
-            require("../sql/sql.php");
-            $felhasznalo_id = $_SESSION['felhasznalo_id'];
-            // Ellenőrizzük, hogy van-e már étrendje
-            $query = "SELECT COUNT(*) FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id AND (magassag IS NULL OR testsuly IS NULL OR eletkor IS NULL OR cel = '' OR nem = '' OR aktivitas = '' OR cel = 'nincs cel' OR nem = 'valasszon' OR aktivitas = 'valasszon')";
-            $result = mysqli_query($conn, $query);
-            $row = mysqli_fetch_row($result);
-            $etrendVan = $row[0] == 0;
-
-            if ($etrendVan) {
+            // Ellenőrizzük, hogy vannak-e kiválasztott képek a SESSION-ben
+            if (isset($_SESSION['selected_images']) && !empty($_SESSION['selected_images'])) {
                 echo '
                 <a href="../view/rolunk.php">Rólunk</a> |
                 <a href="../view/profil.php">Profil</a> |
-                <a href="../view/etrend.php">Étrendem</a> |
+                <a href="../view/etrendem.php">Étrendem</a> |
                 <a href="../logout.php">Kijelentkezés</a>
                 ';
             } else {
-                echo '
-                <a href="../view/rolunk.php">Rólunk</a> |
-                <a href="../view/profil.php">Profil</a> |
-                <a href="../view/etrendkeszitese.php">Étrendkészítés</a> |
-                <a href="../logout.php">Kijelentkezés</a>
-                ';
+                require("../sql/sql.php");
+                $felhasznalo_id = $_SESSION['felhasznalo_id'];
+
+                // Ellenőrizzük, hogy van-e már étrendje
+                $query = "SELECT COUNT(*) FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id AND (magassag IS NULL OR testsuly IS NULL OR eletkor IS NULL OR cel = '' OR nem = '' OR aktivitas = '' OR cel = 'nincs cel' OR nem = 'valasszon' OR aktivitas = 'valasszon')";
+                $result = mysqli_query($conn, $query);
+                $row = mysqli_fetch_row($result);
+                $etrendVan = $row[0] == 0;
+
+                if ($etrendVan) {
+                    echo '
+                    <a href="../view/rolunk.php">Rólunk</a> |
+                    <a href="../view/profil.php">Profil</a> |
+                    <a href="../view/etrend.php">Étrend</a> |
+                    <a href="../logout.php">Kijelentkezés</a>
+                    ';
+                } else {
+                    echo '
+                    <a href="../view/rolunk.php">Rólunk</a> |
+                    <a href="../view/profil.php">Profil</a> |
+                    <a href="../view/etrendkeszitese.php">Étrendkészítés</a> |
+                    <a href="../logout.php">Kijelentkezés</a>
+                    ';
+                }
             }
         }
         ?>
     </nav>
 </header>
+
+
 
 
 
@@ -253,10 +266,10 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
             <div class="kivalaszt_gomb">
                 <input type="submit" class="button" value="Kiválasztottam az ételeket" id="submitButton">
             </div>
-                            
+
             <script>
                 document.getElementById('submitButton').disabled = true; // Gomb alapértelmezett letiltása
-                            
+
                 // Ellenőrzi, hogy minden sorban pontosan két kép van-e kiválasztva
                 function checkSelection() {
                     var rows = document.querySelectorAll('.image-container');
