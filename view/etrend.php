@@ -251,9 +251,40 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
             </div>
 
             <div class="kivalaszt_gomb">
-            <input type="submit" class="button" value="Kiválasztottam az ételeket">
+                <input type="submit" class="button" value="Kiválasztottam az ételeket" id="submitButton">
             </div>
+                            
+            <script>
+                document.getElementById('submitButton').disabled = true; // Gomb alapértelmezett letiltása
+                            
+                // Ellenőrzi, hogy minden sorban pontosan két kép van-e kiválasztva
+                function checkSelection() {
+                    var rows = document.querySelectorAll('.image-container');
+                    var allRowsHaveTwoSelected = true;
+                    rows.forEach(function(row) {
+                        var selectedImages = row.querySelectorAll('input[type="checkbox"]:checked');
+                        if (selectedImages.length !== 2) {
+                            allRowsHaveTwoSelected = false;
+                        }
+                    });
+                    // Ha minden sorban pontosan két kép van kiválasztva, engedélyezi a gombot, különben letiltja
+                    if (allRowsHaveTwoSelected) {
+                        document.getElementById('submitButton').disabled = false;
+                    } else {
+                        document.getElementById('submitButton').disabled = true;
+                    }
+                }
             
+                // Ellenőrzés minden egyes jelölés módosításakor
+                var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+                checkboxes.forEach(function(checkbox) {
+                    checkbox.addEventListener('change', function() {
+                        checkSelection();
+                    });
+                });
+            </script>
+
+
             </form>
             <?php
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
