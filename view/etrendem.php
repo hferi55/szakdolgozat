@@ -127,7 +127,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["selected_images"]) && 
     <header>Étrendem</header>
     
     <div class="adatok">
-      <form action="" method="post">
+      <form action="" method="post" id="etrendmodositas_form">
       <?php
         // Lekérdezés az adatok megjelenítéséhez
         $felhasznalo_id = $_SESSION['felhasznalo_id'];
@@ -189,6 +189,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["selected_images"]) && 
         <p><b>Fogyasztandó kalória száma: </b> <?php echo htmlspecialchars($fogyasztando); ?> kcal</p>
 
         <input type="submit" class="button" value="Adatok módosítása" name="adatmodositas">
+
+        <input type="submit" class="button" value="Étrend módosítása" name="etrendmodositas">
+
+        <script>
+            document.getElementById("etrendmodositas_form").onsubmit = function() {
+                window.location = "etrend.php";
+                return false; // prevent actual form submission
+            }
+        </script>
 
         </form>
     </div>
