@@ -169,7 +169,7 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
         }
     ?>
         
-        <form  id="image-selection-form"> <!-- action="etrendem.php" method="post" -->
+        <form action="etrendem.php" method="post" id="image-selection-form"> 
             <!-- Reggeli -->
             <h3>Reggeli:</h3>
 
@@ -301,32 +301,6 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
             </form>
 
             <script>
-                document.getElementById('submitButton').addEventListener('click', function() {
-                    var selectedImages = document.querySelectorAll('input[type="checkbox"]:checked');
-                    var imageIds = [];
-                    selectedImages.forEach(function(image) {
-                        imageIds.push(image.value);
-                    });
-                
-                    // AJAX kérés küldése a feltoltes.php fájlra
-                    var xhr = new XMLHttpRequest();
-                    xhr.open("POST", "feltoltes.php", true);
-                    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                                    
-                    xhr.onreadystatechange = function() {
-                        if (xhr.readyState === 4 && xhr.status === 200) {
-                            // Sikeres válasz esetén, itt kezeld a választ
-                            console.log(xhr.responseText);
-                            // Ide írd be a további műveleteket, pl. az átirányítást
-                            window.location.href = "etrendem.php";
-                        }
-                    };
-                    
-                    xhr.send("selected_images=" + JSON.stringify(selectedImages));
-                    
-                });
-
-
                 // JavaScript kód a kijelölés megvalósításához
                 var checkboxes = document.querySelectorAll('input[type="checkbox"]');
                 checkboxes.forEach(function(checkbox) {
