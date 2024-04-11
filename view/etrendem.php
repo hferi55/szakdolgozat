@@ -15,6 +15,24 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["selected_images"]) && is_array($_POST["selected_images"])) {
     // Tároljuk el az étrendet a POST kérésben küldött adatokban
     $_SESSION["selected_images"] = $_POST["selected_images"];
+
+
+    // Frissítjük a felhasználó kiválasztott képeit az adatbázisban
+    if (isset($_SESSION['felhasznalo_id']) && isset($_SESSION['selected_images'])) {
+        $felhasznalo_id = $_SESSION['felhasznalo_id'];
+        $selected_images = $_SESSION['selected_images'];
+
+        // Átalakítjuk a kiválasztott képek tömböt stringgé, hogy felhasználhassuk az SQL lekérdezésben
+        $selected_images_str = implode(',', $selected_images);
+
+        // Frissítjük a felhasználó kiválasztott képeit az adatbázisban
+        $updateQuery = "UPDATE felhasznalo SET kivalasztott_kepek = ? WHERE felhasznalo_id = ?";
+        $stmtUpdate = $conn->prepare($updateQuery);
+        $stmtUpdate->bind_param("si", $selected_images_str, $felhasznalo_id);
+        $stmtUpdate->execute();
+        $stmtUpdate->close();
+
+    }
 }
 
 ?>
