@@ -35,7 +35,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["selected_images"]) && 
     }
 }
 
+//if ($_SERVER["REQUEST_METHOD"] != "POST"){
+
+    $felhasznalo_id = $_SESSION['felhasznalo_id'];
+
+    // Kérjük le az adatbázisból az adatokat és mentsük el a SESSION-be
+    $sqlQuery = "SELECT kivalasztott_kepek FROM felhasznalo WHERE felhasznalo_id = ?";
+    $stmtSelect = $conn->prepare($sqlQuery);
+    $stmtSelect->bind_param("i", $felhasznalo_id);
+    $stmtSelect->execute();
+    $stmtSelect->bind_result($selected_images_str);
+    $stmtSelect->fetch();
+    $stmtSelect->close();
+    
+    // Az adatokat elmentjük a SESSION-be
+    $_SESSION["selected_images"] = explode(',', $selected_images_str);
+    
+//}
+
 ?>
+
 
 <!DOCTYPE html>
 <html lang="hu">
