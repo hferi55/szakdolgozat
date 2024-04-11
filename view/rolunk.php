@@ -28,8 +28,17 @@ session_start(); // Session inicializálása
             <a href="../view/regisztracio.php">Regisztráció</a>
             ';
         } else { // Ha a felhasználó be van jelentkezve
-            // Ellenőrizzük, hogy vannak-e kiválasztott képek a SESSION-ben
-            if (isset($_SESSION['selected_images']) && !empty($_SESSION['selected_images'])) {
+            require("../sql/sql.php");
+            $felhasznalo_id = $_SESSION['felhasznalo_id'];
+
+            // Ellenőrizzük az adatbázisban, hogy van-e kiválasztott kép
+            $query = "SELECT kivalasztott_kepek FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id";
+            $result = mysqli_query($conn, $query);
+            $row = mysqli_fetch_assoc($result);
+            $kivalasztott_kepek = $row['kivalasztott_kepek'];
+
+            if (!empty($kivalasztott_kepek)) {
+                // Ha van kiválasztott kép, megjelenítjük az "Étrendem" linket
                 echo '
                 <a href="../view/rolunk.php">Rólunk</a> |
                 <a href="../view/profil.php">Profil</a> |
@@ -37,9 +46,7 @@ session_start(); // Session inicializálása
                 <a href="../logout.php">Kijelentkezés</a>
                 ';
             } else {
-                require("../sql/sql.php");
-                $felhasznalo_id = $_SESSION['felhasznalo_id'];
-
+                // Ha nincs kiválasztott kép, a korábbi logikához hasonlóan jelenítjük meg a linkeket
                 // Ellenőrizzük, hogy van-e már étrendje
                 $query = "SELECT COUNT(*) FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id AND (magassag IS NULL OR testsuly IS NULL OR eletkor IS NULL OR cel = '' OR nem = '' OR aktivitas = '' OR cel = 'nincs cel' OR nem = 'valasszon' OR aktivitas = 'valasszon')";
                 $result = mysqli_query($conn, $query);
