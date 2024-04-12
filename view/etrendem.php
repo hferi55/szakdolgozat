@@ -561,9 +561,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["selected_images"]) && 
         if ($stmtQuery->fetch()) {
             // Tároljuk az összes "hús" és "köret" ételt
             if ($milyenetel === "hús") {
-                $selected_hus[] = ["nev" => $nev, "kep" => $kep];
+                $selected_hus[] = ["nev" => $nev, "kep" => $kep, "id" => $selected_image_id];
             } elseif ($milyenetel === "köret") {
-                $selected_koret[] = ["nev" => $nev, "kep" => $kep];
+                $selected_koret[] = ["nev" => $nev, "kep" => $kep, "id" => $selected_image_id];
             }
         }
     }
@@ -577,7 +577,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["selected_images"]) && 
         <div class="image-item">
             <div>
                 <!-- Adjunk egy egyedi azonosítót a képnek és a névnek -->
-                <img id="img_hus2" src="<?php echo htmlspecialchars($hus['kep']); ?>" alt="<?php echo htmlspecialchars($hus['nev']); ?>"><br>
+                <img id="img_hus2" src="<?php echo htmlspecialchars($hus['kep']); ?>" alt="<?php echo htmlspecialchars($hus['nev']); ?>" data-etel-id="<?php echo $hus['id']; ?>"><br>
                 <label id="label_hus2">
                     <?php echo htmlspecialchars($hus['nev']); ?> <br>
                     <?php echo number_format($multiplication_factor, 2); ?> <!-- Hozzáadva egy szóköz a HTML formázáshoz -->
@@ -586,12 +586,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["selected_images"]) && 
             </div>
         </div>
         <script>
-            // Adjunk hozzá eseményfigyelőt a képre és a névre, hogy átirányítsuk az etel.php oldalra
+            // Adjunk hozzá eseményfigyelőt az img és label elemekhez
             document.getElementById('img_hus2').addEventListener('click', function() {
-                window.location.href = 'etel.php';
+                const etelId = this.getAttribute('data-etel-id');
+                window.location.href = `etel.php?etel_id=${etelId}`;
             });
             document.getElementById('label_hus2').addEventListener('click', function() {
-                window.location.href = 'etel.php';
+                const etelId = document.getElementById('img_hus2').getAttribute('data-etel-id');
+                window.location.href = `etel.php?etel_id=${etelId}`;
             });
         </script>
         <?php
@@ -604,7 +606,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["selected_images"]) && 
         <div class="image-item">
             <div>
                 <!-- Adjunk egy egyedi azonosítót a képnek és a névnek -->
-                <img id="img_koret2" src="<?php echo htmlspecialchars($koret['kep']); ?>" alt="<?php echo htmlspecialchars($koret['nev']); ?>"><br>
+                <img id="img_koret2" src="<?php echo htmlspecialchars($koret['kep']); ?>" alt="<?php echo htmlspecialchars($koret['nev']); ?>" data-etel-id="<?php echo $koret['id']; ?>"><br>
                 <label id="label_koret2">
                     <?php echo htmlspecialchars($koret['nev']); ?> <br>
                     <?php echo number_format($multiplication_factor, 2); ?> <!-- Hozzáadva egy szóköz a HTML formázáshoz -->
@@ -613,12 +615,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["selected_images"]) && 
             </div>
         </div>
         <script>
-            // Adjunk hozzá eseményfigyelőt a képre és a névre, hogy átirányítsuk az etel.php oldalra
+            // Adjunk hozzá eseményfigyelőt az img és label elemekhez
             document.getElementById('img_koret2').addEventListener('click', function() {
-                window.location.href = 'etel.php';
+                const etelId = this.getAttribute('data-etel-id');
+                window.location.href = `etel.php?etel_id=${etelId}`;
             });
             document.getElementById('label_koret2').addEventListener('click', function() {
-                window.location.href = 'etel.php';
+                const etelId = document.getElementById('img_koret2').getAttribute('data-etel-id');
+                window.location.href = `etel.php?etel_id=${etelId}`;
             });
         </script>
         <?php
