@@ -679,8 +679,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["selected_images"]) && 
     ?>
 <div class="image-container">
     <?php
-    // Lekérdezzük a kiválasztott uzsonna ételek képeit és címeiket az adatbázisból
     foreach ($selected_images as $selected_image_id) {
+        // Létrehozzuk az üres tömböket minden iteráció előtt
+        $_SESSION['selected_food_nev'] = '';
+        $_SESSION['selected_food_kep'] = '';
+        
         $sqlQuery = "SELECT nev, kep FROM etelek WHERE etel_id = ? AND uzsonna = 1";
         $stmtQuery = $conn->prepare($sqlQuery);
         $stmtQuery->bind_param("i", $selected_image_id);
@@ -690,6 +693,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["selected_images"]) && 
         
         // Ellenőrizzük, hogy van-e eredmény
         if ($stmtQuery->fetch()) {
+            // Elmentjük az étel nevét és képét a SESSION változókba
+            $_SESSION['selected_food_nev'] = $nev;
+            $_SESSION['selected_food_kep'] = $kep;
+
             // Megjelenítjük az étel nevét és képét
             ?>
             <div class="image-item">
@@ -708,12 +715,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["selected_images"]) && 
                 </div>
             </div>
             <script>
-                // Adjunk hozzá eseményfigyelőt a képre és a névre, hogy átirányítsuk az etel.php oldalra
+                // Adjunk hozzá eseményfigyelőt a képekre és a névre, hogy átirányítsuk az etel.php oldalra
                 document.getElementById('img_<?php echo $selected_image_id; ?>').addEventListener('click', function() {
-                    window.location.href = 'etel.php';
+                    window.location.href = `etel.php?etel_id=<?php echo $selected_image_id; ?>`; // Az étel azonosítójának átadása az URL-ben
                 });
                 document.getElementById('label_<?php echo $selected_image_id; ?>').addEventListener('click', function() {
-                    window.location.href = 'etel.php';
+                    window.location.href = `etel.php?etel_id=<?php echo $selected_image_id; ?>`; // Az étel azonosítójának átadása az URL-ben
                 });
             </script>
             <?php
