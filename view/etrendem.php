@@ -253,44 +253,53 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["selected_images"]) && 
             
     ?>
 
-    <div class="image-container">
-        <?php
+<div class="image-container">
+    <?php
+    // Lekérdezzük a kiválasztott reggeli ételek képeit és címeiket az adatbázisból
+    foreach ($selected_images as $selected_image_id) {
+        $sqlQuery = "SELECT nev, kep FROM etelek WHERE etel_id = ? AND reggeli = 1";
+        $stmtQuery = $conn->prepare($sqlQuery);
+        $stmtQuery->bind_param("i", $selected_image_id);
+        $stmtQuery->execute();
+        $stmtQuery->store_result();
+        $stmtQuery->bind_result($nev, $kep);
 
-                // Lekérdezzük a kiválasztott reggeli ételek képeit és címeiket az adatbázisból
-                foreach ($selected_images as $selected_image_id) {
-                    $sqlQuery = "SELECT nev, kep FROM etelek WHERE etel_id = ? AND reggeli = 1";
-                    $stmtQuery = $conn->prepare($sqlQuery);
-                    $stmtQuery->bind_param("i", $selected_image_id);
-                    $stmtQuery->execute();
-                    $stmtQuery->store_result();
-                    $stmtQuery->bind_result($nev, $kep);
+        // Ellenőrizzük, hogy van-e eredmény
+        if ($stmtQuery->fetch()) {
+            // Megjelenítjük az étel nevét és képét
+            ?>
+            <div class="image-item">
+                <div>
+                    <!-- Adjunk egy egyedi azonosítót a képnek és a névnek -->
+                    <img id="img_<?php echo $selected_image_id; ?>" src="<?php echo htmlspecialchars($kep); ?>" alt="<?php echo htmlspecialchars($nev); ?>"><br>
+                    <label id="label_<?php echo $selected_image_id; ?>">
+                        <?php echo htmlspecialchars($nev); ?><br>
+                        <?php if($nev == $legnagyobb_kaloria_nev){?>
+                            <?php echo number_format($multiplication_factor + 1, 2); ?> <!-- Hozzáadva egy szóköz a HTML formázáshoz -->
+                        <?php } else { ?>
+                            1
+                        <?php } ?>
+                        Adag
+                    </label>
+                </div>
+            </div>
+            <script>
+                // Adjunk hozzá eseményfigyelőt a képre és a névre, hogy átirányítsuk az etel.php oldalra
+                document.getElementById('img_<?php echo $selected_image_id; ?>').addEventListener('click', function() {
+                    window.location.href = 'etel.php';
+                });
+                document.getElementById('label_<?php echo $selected_image_id; ?>').addEventListener('click', function() {
+                    window.location.href = 'etel.php';
+                });
+            </script>
+            <?php
+        }
+        // Bezárjuk a lekérdezést
+        $stmtQuery->close();
+    }
+    ?>
+</div>
 
-                    // Ellenőrizzük, hogy van-e eredmény
-                    if ($stmtQuery->fetch()) {
-                        // Megjelenítjük az étel nevét és képét
-                        ?>
-                        <div class="image-item">
-                            <div>
-                                <img src="<?php echo htmlspecialchars($kep); ?>" alt="<?php echo htmlspecialchars($nev); ?>"><br>
-                                <label>
-                                    <?php echo htmlspecialchars($nev); ?><br>
-                                    <?php if($nev == $legnagyobb_kaloria_nev){?>
-                                        <?php echo number_format($multiplication_factor + 1, 2); ?> <!-- Hozzáadva egy szóköz a HTML formázáshoz -->
-                                    <?php } else { ?>
-                                        1
-                                    <?php } ?>
-                                        Adag
-                                </label>
-                            </div>
-                        </div>
-                        <?php
-                    }
-                    // Bezárjuk a lekérdezést
-                    $stmtQuery->close();
-                }
-            
-        ?>
-    </div>
 
 
     <!-- Ebéd -->
@@ -365,71 +374,92 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["selected_images"]) && 
 
     ?>
 
-    <div class="image-container">
-        <?php
-        
-                $selected_hus = [];
-                $selected_koret = [];
+<div class="image-container">
+    <?php
+    
+    $selected_hus = [];
+    $selected_koret = [];
 
-                // Lekérdezzük a kiválasztott ebéd ételek képeit és címeiket az adatbázisból
-                foreach ($selected_images as $selected_image_id) {
-                    $sqlQuery = "SELECT nev, kep, milyenetel FROM etelek WHERE etel_id = ? AND ebed = 1";
-                    $stmtQuery = $conn->prepare($sqlQuery);
-                    $stmtQuery->bind_param("i", $selected_image_id);
-                    $stmtQuery->execute();
-                    $stmtQuery->store_result();
-                    $stmtQuery->bind_result($nev, $kep, $milyenetel);
+    // Lekérdezzük a kiválasztott ebéd ételek képeit és címeiket az adatbázisból
+    foreach ($selected_images as $selected_image_id) {
+        $sqlQuery = "SELECT nev, kep, milyenetel FROM etelek WHERE etel_id = ? AND ebed = 1";
+        $stmtQuery = $conn->prepare($sqlQuery);
+        $stmtQuery->bind_param("i", $selected_image_id);
+        $stmtQuery->execute();
+        $stmtQuery->store_result();
+        $stmtQuery->bind_result($nev, $kep, $milyenetel);
 
-                    // Ellenőrizzük, hogy van-e eredmény
-                    if ($stmtQuery->fetch()) {
-                        // Tároljuk az összes "hús" és "köret" ételt
-                        if ($milyenetel === "hús") {
-                            $selected_hus[] = ["nev" => $nev, "kep" => $kep];
-                        } elseif ($milyenetel === "köret") {
-                            $selected_koret[] = ["nev" => $nev, "kep" => $kep];
-                        }
-                    }
-                }
-                // Bezárjuk a lekérdezést
-                $stmtQuery->close();
+        // Ellenőrizzük, hogy van-e eredmény
+        if ($stmtQuery->fetch()) {
+            // Tároljuk az összes "hús" és "köret" ételt
+            if ($milyenetel === "hús") {
+                $selected_hus[] = ["nev" => $nev, "kep" => $kep];
+            } elseif ($milyenetel === "köret") {
+                $selected_koret[] = ["nev" => $nev, "kep" => $kep];
+            }
+        }
+    }
+    // Bezárjuk a lekérdezést
+    $stmtQuery->close();
 
-                // Megjelenítjük az első talált "hús" ételt
-                if (!empty($selected_hus)) {
-                    $hus = $selected_hus[0];
-                    ?>
-                    <div class="image-item">
-                        <div>
-                            <img src="<?php echo htmlspecialchars($hus['kep']); ?>" alt="<?php echo htmlspecialchars($hus['nev']); ?>"><br>
-                            <label>
-                                <?php echo htmlspecialchars($hus['nev']); ?> <br>
-                                <?php echo number_format($multiplication_factor, 2); ?> <!-- Hozzáadva egy szóköz a HTML formázáshoz -->
-                                    Adag
-                            </label>
-                        </div>
-                    </div>
-                    <?php
-                }
-
-                // Megjelenítjük az első talált "köret" ételt
-                if (!empty($selected_koret)) {
-                    $koret = $selected_koret[0];
-                    ?>
-                    <div class="image-item">
-                        <div>
-                            <img src="<?php echo htmlspecialchars($koret['kep']); ?>" alt="<?php echo htmlspecialchars($koret['nev']); ?>"><br>
-                            <label>
-                                <?php echo htmlspecialchars($koret['nev']); ?> <br>
-                                    <?php echo number_format($multiplication_factor, 2); ?> <!-- Hozzáadva egy szóköz a HTML formázáshoz -->
-                                    Adag
-                            </label>
-                        </div>
-                    </div>
-                    <?php
-                }
-            
+    // Megjelenítjük az első talált "hús" ételt
+    if (!empty($selected_hus)) {
+        $hus = $selected_hus[0];
         ?>
+        <div class="image-item">
+            <div>
+                <!-- Adjunk egy egyedi azonosítót a képnek és a névnek -->
+                <img id="img_hus" src="<?php echo htmlspecialchars($hus['kep']); ?>" alt="<?php echo htmlspecialchars($hus['nev']); ?>"><br>
+                <label id="label_hus">
+                    <?php echo htmlspecialchars($hus['nev']); ?> <br>
+                    <?php echo number_format($multiplication_factor, 2); ?> <!-- Hozzáadva egy szóköz a HTML formázáshoz -->
+                        Adag
+                </label>
+            </div>
+        </div>
+        <script>
+            // Adjunk hozzá eseményfigyelőt a képre és a névre, hogy átirányítsuk az etel.php oldalra
+            document.getElementById('img_hus').addEventListener('click', function() {
+                window.location.href = 'etel.php';
+            });
+            document.getElementById('label_hus').addEventListener('click', function() {
+                window.location.href = 'etel.php';
+            });
+        </script>
+        <?php
+    }
 
-    </div>
+    // Megjelenítjük az első talált "köret" ételt
+    if (!empty($selected_koret)) {
+        $koret = $selected_koret[0];
+        ?>
+        <div class="image-item">
+            <div>
+                <!-- Adjunk egy egyedi azonosítót a képnek és a névnek -->
+                <img id="img_koret" src="<?php echo htmlspecialchars($koret['kep']); ?>" alt="<?php echo htmlspecialchars($koret['nev']); ?>"><br>
+                <label id="label_koret">
+                    <?php echo htmlspecialchars($koret['nev']); ?> <br>
+                    <?php echo number_format($multiplication_factor, 2); ?> <!-- Hozzáadva egy szóköz a HTML formázáshoz -->
+                        Adag
+                </label>
+            </div>
+        </div>
+        <script>
+            // Adjunk hozzá eseményfigyelőt a képre és a névre, hogy átirányítsuk az etel.php oldalra
+            document.getElementById('img_koret').addEventListener('click', function() {
+                window.location.href = 'etel.php';
+            });
+            document.getElementById('label_koret').addEventListener('click', function() {
+                window.location.href = 'etel.php';
+            });
+        </script>
+        <?php
+    }
+    
+    ?>
+
+</div>
+
 
 <!-- Vacsora -->
 <h3>Vacsora:</h3>
@@ -515,65 +545,85 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["selected_images"]) && 
 <div class="image-container">
     <?php
 
-            $selected_hus = [];
-            $selected_koret = [];
+    $selected_hus = [];
+    $selected_koret = [];
 
-            // Lekérdezzük a kiválasztott ebéd ételek képeit és címeiket az adatbázisból
-            foreach ($selected_images as $selected_image_id) {
-                $sqlQuery = "SELECT nev, kep, milyenetel FROM etelek WHERE etel_id = ? AND ebed = 1";
-                $stmtQuery = $conn->prepare($sqlQuery);
-                $stmtQuery->bind_param("i", $selected_image_id);
-                $stmtQuery->execute();
-                $stmtQuery->store_result();
-                $stmtQuery->bind_result($nev, $kep, $milyenetel);
+    // Lekérdezzük a kiválasztott ebéd ételek képeit és címeiket az adatbázisból
+    foreach ($selected_images as $selected_image_id) {
+        $sqlQuery = "SELECT nev, kep, milyenetel FROM etelek WHERE etel_id = ? AND vacsora = 1";
+        $stmtQuery = $conn->prepare($sqlQuery);
+        $stmtQuery->bind_param("i", $selected_image_id);
+        $stmtQuery->execute();
+        $stmtQuery->store_result();
+        $stmtQuery->bind_result($nev, $kep, $milyenetel);
 
-                // Ellenőrizzük, hogy van-e eredmény
-                if ($stmtQuery->fetch()) {
-                    // Tároljuk az összes "hús" és "köret" ételt
-                    if ($milyenetel === "hús") {
-                        $selected_hus[] = ["nev" => $nev, "kep" => $kep];
-                    } elseif ($milyenetel === "köret") {
-                        $selected_koret[] = ["nev" => $nev, "kep" => $kep];
-                    }
-                }
+        // Ellenőrizzük, hogy van-e eredmény
+        if ($stmtQuery->fetch()) {
+            // Tároljuk az összes "hús" és "köret" ételt
+            if ($milyenetel === "hús") {
+                $selected_hus[] = ["nev" => $nev, "kep" => $kep];
+            } elseif ($milyenetel === "köret") {
+                $selected_koret[] = ["nev" => $nev, "kep" => $kep];
             }
-            // Bezárjuk a lekérdezést
-            $stmtQuery->close();
+        }
+    }
+    // Bezárjuk a lekérdezést
+    $stmtQuery->close();
 
-            // Megjelenítjük a második talált "hús" ételt
-            if (!empty($selected_hus)) {
-                $hus = $selected_hus[1];
-                ?>
-                <div class="image-item">
-                    <div>
-                        <img src="<?php echo htmlspecialchars($hus['kep']); ?>" alt="<?php echo htmlspecialchars($hus['nev']); ?>"><br>
-                        <label>
-                            <?php echo htmlspecialchars($hus['nev']); ?> <br>
-                            <?php echo number_format($multiplication_factor, 2); ?> <!-- Hozzáadva egy szóköz a HTML formázáshoz -->
-                                Adag
-                        </label>
-                    </div>
-                </div>
-                <?php
-            }
+    // Megjelenítjük a második talált "hús" ételt
+    if (!empty($selected_hus)) {
+        $hus = $selected_hus[1];
+        ?>
+        <div class="image-item">
+            <div>
+                <!-- Adjunk egy egyedi azonosítót a képnek és a névnek -->
+                <img id="img_hus2" src="<?php echo htmlspecialchars($hus['kep']); ?>" alt="<?php echo htmlspecialchars($hus['nev']); ?>"><br>
+                <label id="label_hus2">
+                    <?php echo htmlspecialchars($hus['nev']); ?> <br>
+                    <?php echo number_format($multiplication_factor, 2); ?> <!-- Hozzáadva egy szóköz a HTML formázáshoz -->
+                        Adag
+                </label>
+            </div>
+        </div>
+        <script>
+            // Adjunk hozzá eseményfigyelőt a képre és a névre, hogy átirányítsuk az etel.php oldalra
+            document.getElementById('img_hus2').addEventListener('click', function() {
+                window.location.href = 'etel.php';
+            });
+            document.getElementById('label_hus2').addEventListener('click', function() {
+                window.location.href = 'etel.php';
+            });
+        </script>
+        <?php
+    }
 
-            // Megjelenítjük a második talált "köret" ételt
-            if (!empty($selected_koret)) {
-                $koret = $selected_koret[1];
-                ?>
-                <div class="image-item">
-                    <div>
-                        <img src="<?php echo htmlspecialchars($koret['kep']); ?>" alt="<?php echo htmlspecialchars($koret['nev']); ?>"><br>
-                        <label>
-                            <?php echo htmlspecialchars($koret['nev']); ?> <br>
-                            <?php echo number_format($multiplication_factor, 2); ?> <!-- Hozzáadva egy szóköz a HTML formázáshoz -->
-                                Adag
-                        </label>
-                    </div>
-                </div>
-                <?php
-            }
-        
+    // Megjelenítjük a második talált "köret" ételt
+    if (!empty($selected_koret)) {
+        $koret = $selected_koret[1];
+        ?>
+        <div class="image-item">
+            <div>
+                <!-- Adjunk egy egyedi azonosítót a képnek és a névnek -->
+                <img id="img_koret2" src="<?php echo htmlspecialchars($koret['kep']); ?>" alt="<?php echo htmlspecialchars($koret['nev']); ?>"><br>
+                <label id="label_koret2">
+                    <?php echo htmlspecialchars($koret['nev']); ?> <br>
+                    <?php echo number_format($multiplication_factor, 2); ?> <!-- Hozzáadva egy szóköz a HTML formázáshoz -->
+                        Adag
+                </label>
+            </div>
+        </div>
+        <script>
+            // Adjunk hozzá eseményfigyelőt a képre és a névre, hogy átirányítsuk az etel.php oldalra
+            document.getElementById('img_koret2').addEventListener('click', function() {
+                window.location.href = 'etel.php';
+            });
+            document.getElementById('label_koret2').addEventListener('click', function() {
+                window.location.href = 'etel.php';
+            });
+        </script>
+        <?php
+    }
+    
     ?>
 </div>
 
@@ -629,41 +679,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["selected_images"]) && 
     ?>
 <div class="image-container">
     <?php
-            // Lekérdezzük a kiválasztott uzsonna ételek képeit és címeiket az adatbázisból
-            foreach ($selected_images as $selected_image_id) {
-                $sqlQuery = "SELECT nev, kep FROM etelek WHERE etel_id = ? AND uzsonna = 1";
-                $stmtQuery = $conn->prepare($sqlQuery);
-                $stmtQuery->bind_param("i", $selected_image_id);
-                $stmtQuery->execute();
-                $stmtQuery->store_result();
-                $stmtQuery->bind_result($nev, $kep);
-                
-                // Ellenőrizzük, hogy van-e eredmény
-                if ($stmtQuery->fetch()) {
-                    // Megjelenítjük az étel nevét és képét
-                    ?>
-                    <div class="image-item">
-                        <div>
-                            <img src="<?php echo htmlspecialchars($kep); ?>" alt="<?php echo htmlspecialchars($nev); ?>"><br>
-                            <label>
-                                <?php echo htmlspecialchars($nev); ?><br>
-                                <?php if($nev == $legnagyobb_kaloria_nev){?>
-                                    <?php echo number_format($multiplication_factor + 1, 2); ?> <!-- Hozzáadva egy szóköz a HTML formázáshoz -->
-                                <?php } else { ?>
-                                    1
-                                <?php } ?>
-                                    Adag
-                            </label>
-
-                        </div>
-                    </div>
-                    <?php
-                }
-                
-            }
-            // Bezárjuk a lekérdezést
-            $stmtQuery->close();
+    // Lekérdezzük a kiválasztott uzsonna ételek képeit és címeiket az adatbázisból
+    foreach ($selected_images as $selected_image_id) {
+        $sqlQuery = "SELECT nev, kep FROM etelek WHERE etel_id = ? AND uzsonna = 1";
+        $stmtQuery = $conn->prepare($sqlQuery);
+        $stmtQuery->bind_param("i", $selected_image_id);
+        $stmtQuery->execute();
+        $stmtQuery->store_result();
+        $stmtQuery->bind_result($nev, $kep);
         
+        // Ellenőrizzük, hogy van-e eredmény
+        if ($stmtQuery->fetch()) {
+            // Megjelenítjük az étel nevét és képét
+            ?>
+            <div class="image-item">
+                <div>
+                    <!-- Adjunk egy egyedi azonosítót a képnek és a névnek -->
+                    <img id="img_<?php echo $selected_image_id; ?>" src="<?php echo htmlspecialchars($kep); ?>" alt="<?php echo htmlspecialchars($nev); ?>"><br>
+                    <label id="label_<?php echo $selected_image_id; ?>">
+                        <?php echo htmlspecialchars($nev); ?><br>
+                        <?php if($nev == $legnagyobb_kaloria_nev){?>
+                            <?php echo number_format($multiplication_factor + 1, 2); ?> <!-- Hozzáadva egy szóköz a HTML formázáshoz -->
+                        <?php } else { ?>
+                            1
+                        <?php } ?>
+                            Adag
+                    </label>
+                </div>
+            </div>
+            <script>
+                // Adjunk hozzá eseményfigyelőt a képre és a névre, hogy átirányítsuk az etel.php oldalra
+                document.getElementById('img_<?php echo $selected_image_id; ?>').addEventListener('click', function() {
+                    window.location.href = 'etel.php';
+                });
+                document.getElementById('label_<?php echo $selected_image_id; ?>').addEventListener('click', function() {
+                    window.location.href = 'etel.php';
+                });
+            </script>
+            <?php
+        }
+        
+    }
+    // Bezárjuk a lekérdezést
+    $stmtQuery->close();
     ?>
 </div>
 
