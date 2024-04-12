@@ -271,7 +271,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["selected_images"]) && 
             <div class="image-item">
                 <div>
                     <!-- Adjunk egy egyedi azonosítót a képnek és a névnek -->
-                    <img id="img_<?php echo $selected_image_id; ?>" src="<?php echo htmlspecialchars($kep); ?>" alt="<?php echo htmlspecialchars($nev); ?>"><br>
+                    <img id="img_<?php echo $selected_image_id; ?>" src="<?php echo htmlspecialchars($kep); ?>" alt="<?php echo htmlspecialchars($nev); ?>" data-etel-id="<?php echo $selected_image_id; ?>"><br>
                     <label id="label_<?php echo $selected_image_id; ?>">
                         <?php echo htmlspecialchars($nev); ?><br>
                         <?php if($nev == $legnagyobb_kaloria_nev){?>
@@ -284,12 +284,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["selected_images"]) && 
                 </div>
             </div>
             <script>
-                // Adjunk hozzá eseményfigyelőt a képre és a névre, hogy átirányítsuk az etel.php oldalra
+                // Adjunk hozzá eseményfigyelőt az img és label elemekhez
                 document.getElementById('img_<?php echo $selected_image_id; ?>').addEventListener('click', function() {
-                    window.location.href = 'etel.php';
+                    const etelId = this.getAttribute('data-etel-id');
+                    window.location.href = `etel.php?etel_id=${etelId}`;
                 });
                 document.getElementById('label_<?php echo $selected_image_id; ?>').addEventListener('click', function() {
-                    window.location.href = 'etel.php';
+                    const etelId = document.getElementById('img_<?php echo $selected_image_id; ?>').getAttribute('data-etel-id');
+                    window.location.href = `etel.php?etel_id=${etelId}`;
                 });
             </script>
             <?php
@@ -299,6 +301,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["selected_images"]) && 
     }
     ?>
 </div>
+
 
 
 
