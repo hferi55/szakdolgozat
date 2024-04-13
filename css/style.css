@@ -366,3 +366,18 @@ header {
 .kivalaszt_gomb input.button:focus{
   box-shadow: 0 1px 0 rgba(0,0,0,0.2);
 }
+
+.kep{
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  flex: 0 0 auto;
+  margin-right: 20px;
+  text-align: center;
+  padding: 10px;
+  margin-bottom: 10px;
+  float: left;
+  width: 500px; /* Állítsd be itt az általad kívánt méretet */
+  height: 500px;
+  background-color: transparent;
+}
