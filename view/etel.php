@@ -68,6 +68,22 @@ foreach ($allergen_ids as $allergen_id) {
     $stmtQuery->close();
 }
 
+$preferencia_erteke = ""; // Alapértelmezett preferencia-érték üres string
+// Ellenőrizzük, hogy van-e preferencia az adott felhasználóhoz és ételhez
+if (isset($_SESSION['felhasznalo_id']) && isset($_GET['etel_id'])) {
+    $felhasznalo_id = $_SESSION['felhasznalo_id'];
+    $etel_id = $_GET['etel_id'];
+
+    $sqlQuery = "SELECT kedveli FROM `preferencia` WHERE felhasznalo_id = $felhasznalo_id AND etel_id = $etel_id";
+    $stmtQuery = $conn->prepare($sqlQuery);
+    $stmtQuery->execute();
+    $stmtQuery->store_result();
+    $stmtQuery->bind_result($preferencia_erteke);
+    $stmtQuery->fetch(); // Fetch to get the results
+    $stmtQuery->close();
+
+}
+
 if(isset($_POST['submit'])) {
     // Ellenőrizzük, hogy a felhasználó be van-e jelentkezve
     if (isset($_SESSION['felhasznalo_id'])) {
@@ -189,6 +205,14 @@ if(isset($_POST['submit'])) {
                 <option value="2">nem kedveli</option>
             </select>
             <input type="submit" class="button" value="Válasz küldése" name="submit">
+
+            <?php
+            if ($preferencia_erteke !== "") {
+                echo "<h3>Ezt az ételt ";
+                echo ($preferencia_erteke);
+                echo "</h3>";
+            }
+            ?>
 
         </article>
 
