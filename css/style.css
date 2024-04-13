@@ -381,3 +381,67 @@ header {
   height: 500px;
   background-color: transparent;
 }
+
+.etel_lap{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: 70px;
+  transform: translate(-50%,-50%);
+  max-width: 1500px;
+  width: 100%;
+  background: #fff;
+  border-radius: 7px;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+  padding: 25px;
+}
+.etel_lap .kartya header{
+  font-size: 2rem;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+.etel_lap .kartya input{
+   height: 50px;
+   width: 160px;
+   padding: 0 15px;
+   font-size: 15px;
+   margin-bottom: 1.3rem;
+   border: 1px solid #ddd;
+   border-radius: 6px;
+   outline: none;
+ }
+ .etel_lap .kartya input:focus{
+   box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+ }
+ .etel_lap .kartya a{
+  font-size: 16px;
+  color: #009579;
+  text-decoration: none;
+}
+.etel_lap .kartya a:hover{
+  text-decoration: underline;
+}
+.etel_lap .kartya input.button{
+  color: #fff;
+  background: #009579;
+  font-size: 1.2 rem;
+  font-weight: 500;
+  letter-spacing: 1px;
+  margin-top: 1.7rem;
+  cursor: pointer;
+  transition: 0.4s;
+}
+.etel_lap .kartya input.button:hover{
+  background: #006653;
+}
+.etel_lap select{
+  height: 50px;
+  width: 160px;
+  font-size: 15px;
+  margin-bottom: 1.3rem;
+  border: 1px solid black; 
+  border-radius: 6px;
+  outline: none;
+  text-align: center;
+}
