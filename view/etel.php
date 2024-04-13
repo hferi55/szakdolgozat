@@ -188,7 +188,12 @@ if(isset($_POST['submit'])) {
         
         <article>
             <h2><?php echo htmlspecialchars($selected_food_nev); ?> allergénei: </h2>
-            <p><?php echo htmlspecialchars(implode(', ', $allergen_names)); ?></p>
+            <?php
+            if (!empty($allergen_names)) { ?>
+                <p><?php echo htmlspecialchars(implode(', ', $allergen_names)); ?></p>
+            <?php } else {?>
+            <p>Az ételnek nincsenek allergénei</p>
+            <?php } ?>
 
             <h2>1 adag étel elkészítéséhez való összetevők: </h2>
             <p><?php echo htmlspecialchars($kivalasztott_etel_osszetevok); ?></p>
