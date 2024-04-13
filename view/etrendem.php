@@ -202,7 +202,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["selected_images"]) && 
         </form>
     </div>
     
-    <header>Étrendem</header>
+    <header>Ételek</header>
         
     <!-- Reggeli -->
     <h3>Reggeli:</h3>
