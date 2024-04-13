@@ -77,10 +77,19 @@ if(isset($_POST['submit'])) {
 
         // Ellenőrizze, hogy minden mező kitöltve van-e
         if(!empty($kedveli)) {
-            // Az SQL lekérdezés összeállítása és végrehajtása
-            $query = "INSERT INTO `preferencia`(`felhasznalo_id`, `etel_id`, `kedveli`) VALUES ('$felhasznalo_id','$etel_id','$kedveli')";
+            // Ellenőrizzük, hogy már van-e preferencia az adott felhasználóhoz és ételhez
+            $query = "SELECT * FROM `preferencia` WHERE felhasznalo_id = $felhasznalo_id AND etel_id = $etel_id";
+            $result = mysqli_query($conn, $query);
+            if(mysqli_num_rows($result) > 0) {
+                // Ha már létezik preferencia, frissítjük az adatokat
+                $query = "UPDATE `preferencia` SET kedveli = $kedveli WHERE felhasznalo_id = $felhasznalo_id AND etel_id = $etel_id";
+            } else {
+                // Ha még nem létezik preferencia, új rekordot szúrunk be
+                $query = "INSERT INTO `preferencia`(`felhasznalo_id`, `etel_id`, `kedveli`) VALUES ($felhasznalo_id,$etel_id,$kedveli)";
+            }
+
             if(mysqli_query($conn, $query)) {
-                // Sikeres beszúrás esetén átirányítás
+                // Sikeres beszúrás vagy frissítés esetén átirányítás
                 header("Location: ".$_SERVER['PHP_SELF']."?etel_id=".$etel_id);
                 exit();
             }
