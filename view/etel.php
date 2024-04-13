@@ -31,7 +31,63 @@ if(isset($_SESSION['selected_food_nev']) && isset($_SESSION['selected_food_kep']
     $selected_food_kep = $_SESSION['selected_food_kep'];
     unset($_SESSION['selected_food_nev']);
     unset($_SESSION['selected_food_kep']);
-} 
+}
+
+$sqlQuery = "SELECT osszetevok, kaloria, recept FROM etelek WHERE etel_id = ?";
+$stmtQuery = $conn->prepare($sqlQuery);
+$stmtQuery->bind_param("i", $selected_image_id);
+$stmtQuery->execute();
+$stmtQuery->store_result();
+$stmtQuery->bind_result($kivalasztott_etel_osszetevok, $kivalasztott_etel_kaloria, $kivalasztott_etel_recept);
+$stmtQuery->fetch(); // Fetch to get the results
+$stmtQuery->close();
+
+$sqlQuery = "SELECT allergenek_id FROM `etelek allergenei` WHERE etel_id = ?";
+$stmtQuery = $conn->prepare($sqlQuery);
+$stmtQuery->bind_param("i", $selected_image_id);
+$stmtQuery->execute();
+$stmtQuery->store_result();
+$stmtQuery->bind_result($kivalasztott_etel_allergenei);
+
+$allergen_ids = array();
+while ($stmtQuery->fetch()) {
+    $allergen_ids[] = $kivalasztott_etel_allergenei;
+}
+$stmtQuery->close();
+
+$allergen_names = array();
+foreach ($allergen_ids as $allergen_id) {
+    $sqlQuery = "SELECT nev FROM allergenek WHERE allergenek_id = ?";
+    $stmtQuery = $conn->prepare($sqlQuery);
+    $stmtQuery->bind_param("i", $allergen_id);
+    $stmtQuery->execute();
+    $stmtQuery->store_result();
+    $stmtQuery->bind_result($allergen_name);
+    $stmtQuery->fetch();
+    $allergen_names[] = $allergen_name;
+    $stmtQuery->close();
+}
+
+if(isset($_POST['submit'])) {
+    // Ellenőrizzük, hogy a felhasználó be van-e jelentkezve
+    if (isset($_SESSION['felhasznalo_id'])) {
+        $felhasznalo_id = $_SESSION['felhasznalo_id'];
+        $etel_id = $_GET['etel_id'];
+        $kedveli = $_POST['kedveli'];
+
+        // Ellenőrizze, hogy minden mező kitöltve van-e
+        if(!empty($kedveli)) {
+            // Az SQL lekérdezés összeállítása és végrehajtása
+            $query = "INSERT INTO `preferencia`(`felhasznalo_id`, `etel_id`, `kedveli`) VALUES ('$felhasznalo_id','$etel_id','$kedveli')";
+            if(mysqli_query($conn, $query)) {
+                // Sikeres beszúrás esetén átirányítás
+                header("Location: ".$_SERVER['PHP_SELF']."?etel_id=".$etel_id);
+                exit();
+            }
+        }
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -97,13 +153,36 @@ if(isset($_SESSION['selected_food_nev']) && isset($_SESSION['selected_food_kep']
     </nav>
 </header>
 
-<div class="lap">
+<div class="etel_lap">
     <div class="kartya">
     <header><b><?php echo htmlspecialchars($selected_food_nev); ?> </b></header>
       <form action="" method="post">
-        <div class="image-item">
+        <div class="kep">
             <img src="<?php echo isset($selected_food_kep) ? htmlspecialchars($selected_food_kep) : 'Nincs kép'; ?>" alt="<?php echo isset($selected_food_nev) ? htmlspecialchars($selected_food_nev) : 'Nincs adat'; ?>"><br>
         </div>
+        
+        <article>
+            <h2><?php echo htmlspecialchars($selected_food_nev); ?> allergénei: </h2>
+            <p><?php echo htmlspecialchars(implode(', ', $allergen_names)); ?></p>
+
+            <h2>1 adag étel elkészítéséhez való összetevők: </h2>
+            <p><?php echo htmlspecialchars($kivalasztott_etel_osszetevok); ?></p>
+
+            <h2>1 adag kalória tartalma: </h2>
+            <p><?php echo htmlspecialchars($kivalasztott_etel_kaloria); ?> kalória</p>
+
+            <h2>Recept: </h2>
+            <p><?php echo htmlspecialchars($kivalasztott_etel_recept); ?></p>
+        
+            <h2>Kedveli ezt az ételt?</h2>
+            <select name="kedveli" id="kedveli">
+                <option value="1">kedveli</option>
+                <option value="2">nem kedveli</option>
+            </select>
+            <input type="submit" class="button" value="Válasz küldése" name="submit">
+
+        </article>
+
       </form>
     </div>
 </div>
