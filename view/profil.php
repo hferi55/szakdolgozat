@@ -184,6 +184,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             echo "Adataid sikeresen frissítve.";
         echo '</div>';
     }
+
+    try {
+        $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    } catch(PDOException $e) {
+        echo "Hiba: " . $e->getMessage();
+    }
+
+    $felhasznalo_id = $_SESSION['felhasznalo_id'];
+    // SQL lekérdezés
+    $sql = "SELECT * FROM etkezes WHERE felhasznalo_id = :felhasznalo_id LIMIT 1"; // Ellenőrizzük, hogy van-e bármilyen rekord a felhasználóhoz tartozó étkezések között
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':felhasznalo_id', $felhasznalo_id);
+    $stmt->execute();
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $count = $stmt->rowCount(); // Ellenőrizzük, hogy van-e találat
+
     ?>
 
     <form action="" method="post">
@@ -217,6 +234,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <input type="password" placeholder="Jelszó megerősítése" name="jelszo_megerosit" value="">
 
         <input type="submit" value="Adatok módosítása" class="button">
+
+        <?php
+        if ($count > 0) {
+            // Van adat az étkezések között, tehát megjelenítjük a gombot
+            echo '<input type="submit" value="Régebbi étrendeim megtekintése" class="button">';
+        }
+        ?>
+
     </form>
     </div>
 </div>
