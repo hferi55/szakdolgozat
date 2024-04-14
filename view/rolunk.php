@@ -81,8 +81,8 @@ session_start(); // Session inicializálása
     <header>Rólunk</header>
       <form action="" method="post">
             <article>
-                <h2>Üdvözöllek az ÉtrendKészítő Weboldalon!</h2>
-                <p>Az ÉtrendKészítő Weboldal egy innovatív és egészséges életmódra összpontosító platform, amely segít felhasználóinak tudatos és kiegyensúlyozott táplálkozás elérésében. 
+                <h2>Üdvözöllek az Étrend Készítő Weboldalon!</h2>
+                <p>Az Étrend Készítő Weboldal egy innovatív és egészséges életmódra összpontosító platform, amely segít felhasználóinak tudatos és kiegyensúlyozott táplálkozás elérésében. 
                     Ezen az oldalon célunk, hogy könnyen elérhetővé tegyük a személyre szabott étrendtervezést, így mindenki megtalálhatja az igényeinek és céljainak megfelelő étrendet.</p>
             </article>
             <article>
@@ -91,16 +91,12 @@ session_start(); // Session inicializálása
                     Legyen szó fogyásról, izomépítésről vagy egyszerűen az egészséges életmód megtartásáról, nálunk megtalálhatod a megfelelő táplálkozási tervet.</p>
                 <p>2. Receptek és ételajánlatok: Gazdag receptgyűjteményünkben változatos és egészséges ételajánlatokat találhatsz. 
                     Könnyen követhető receptekkel és táplálkozási információkkal segítünk abban, hogy finom és tápláló ételeket készíts otthon.</p>
-                <p>3. Étkezési napló vezetése: Az étkezési napló vezetése segít nyomon követni a bevitt kalóriákat, tápanyagokat és a folyadékfogyasztást. 
-                    Ezáltal könnyebben megtervezheted és ellenőrizheted az étkezéseidet.</p>
-                <p>4. Egészséges életmód támogatás: Információkkal és tippekkel látunk el a helyes táplálkozásról, a testmozgás fontosságáról és az általános egészséges életmódról. 
-                    Cikkeink és tanácsaink segítenek abban, hogy megtaláld a számodra legmegfelelőbb életmódot.</p>
-                <p>5. Közösségi tér: Csatlakozz a közösséghez, ahol megoszthatod tapasztalataidat, receptjeidet, és inspirálódhatsz másoktól. 
-                    A közösség segítséget nyújt és motivációt ad az egészséges életmódhoz vezető úton.</p>
+                <p>3. Étkezési napló vezetése: Az étkezési napló vezetése segít nyomon követni hogy melyik nap milyen ételeket fogyasztott reggelire, ebédre , vacsorára, és uszonnára. 
+                    Ezáltal könnyebben nyomonkövetheted és ellenőrizheted az étkezéseidet.</p>
             </article>
+            <br>
             <article>
-                <h2>Az ÉtrendKészítő Weboldal még...</h2>
-                <p>Az ÉtrendKészítő Weboldal elkötelezett abban, hogy támogassa a felhasználókat az egészséges életmód elérésében, és egy egyszerű, interaktív felülettel segítse őket az étrendjük optimalizálásában. 
+                <p>Az Étrend Készítő Weboldal elkötelezett abban, hogy támogassa a felhasználókat az egészséges életmód elérésében, és egy egyszerű, interaktív felülettel segítse őket az étrendjük optimalizálásában. 
                     Legyen szó fittség eléréséről, súlyvesztésről vagy csak az egészséges életmód fenntartásáról, nálunk mindenki megtalálhatja a számára ideális megoldást. 
                     Csatlakozz hozzánk és indulj el az egészséges és boldog élet felé!</p>
             </article>
