@@ -190,6 +190,58 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["selected_images"]) && 
 
         <input type="submit" class="button" value="Adatok módosítása" name="adatmodositas">
 
+        <article>
+            <p>
+                A reggeli az egész napi kalória bevitel 25%-a.
+            </p>
+            <p>
+                Az ebéd az egész napi kalória bevitel 35%-a.
+            </p>
+            <p>
+                A vacsora az egész napi kalória bevitel 25%-a.
+            </p>
+            <p>
+                Az uzsonna az egész napi kalória bevitel 15%-a.
+            </p>
+            <br>
+            <p>
+                Az adagok úgy vannak kiszámolva hogy az adott étel
+            </p>
+            <p>
+                adag száma meg van szorozva úgy hogy az adott étel
+            </p>
+            <p>
+                kalória száma egyenlő legyen az étkezés beviteli kalóriájával.
+            </p>
+            <br>
+            <p>
+                A jobb oldalon található ételekre rá lehet kattintani,
+            </p>
+            <p>
+                és akkor át ugrunk az adott étel adatlapjára.
+            </p>
+            <p>
+                Az étel adatlapjain minden egység 1 adag ételhez van kiszámítva.
+            </p>
+            <br>
+            <p>
+                Ha más ételeket szeretnénk az étrendünkbe rakni
+            </p>
+            <p>
+                akkor azt megtehetjük az Étrend módosítása gommbal.
+            </p>
+            <br>
+            <p>
+                Ha rá kattintunk az Étrend módosítása gombra
+            </p>
+            <p>
+                akkor vissza tudunk ugrani az ételek kiválasztása oldalra,
+            </p>
+            <p>
+                ahol akár más vagy ugyan azokat ételeket tudjuk kiválasztani.
+            </p>
+        </article>
+
         <input type="submit" class="button" value="Étrend módosítása" name="etrendmodositas">
 
         <script>
