@@ -167,7 +167,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <?php
     // Hibaüzenetek megjelenítése
-    if (!empty($errors)) {
+    if (!empty($errors) && isset($_POST["adatokmodositasa"])) {
         echo '<div class="hiba-uzenetek">';
         echo '<ul>';
         foreach ($errors as $error) {
@@ -178,11 +178,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Megjelenítés csak akkor, ha nincsenek hibaüzenetek és POST kérésből érkezett adatok
-    if(empty($errors) && $_SERVER["REQUEST_METHOD"] == "POST"){
+    if(empty($errors) && $_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["adatokmodositasa"])) {
         // Sikeres adatmódosítás esetén üzenet
         echo '<div class="sikeres-uzenet">';
             echo "Adataid sikeresen frissítve.";
         echo '</div>';
+    }
+
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['regebbietrendek'])) {
+        header("Location: regebbietrendek.php");
+        exit();
     }
 
     try {
@@ -233,13 +238,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <h3>Jelszó megerősítése</h3>
         <input type="password" placeholder="Jelszó megerősítése" name="jelszo_megerosit" value="">
 
-        <input type="submit" value="Adatok módosítása" class="button">
+        <input type="submit" value="Adatok módosítása" class="button" name="adatokmodositasa">
 
         <?php
         if ($count > 0) {
             // Van adat az étkezések között, tehát megjelenítjük a gombot
-            echo '<input type="submit" value="Régebbi étrendeim megtekintése" class="button">';
+            echo '<input type="submit" value="Régebbi étrendeim megtekintése" class="button" name="regebbietrendek">';
         }
+    
         ?>
 
     </form>
