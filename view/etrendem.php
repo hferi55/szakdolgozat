@@ -53,6 +53,102 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["selected_images"]) && 
     
 //}
 
+
+// Kezdetben üres üzenet
+$message = "";
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST["etrendmentese"])) {
+        if (isset($_SESSION["selected_images"])) {
+
+            // Definiáljuk a reggelihez, ebédhez és uzsonnához tartozó számokat
+            $reggeli_szamok = array(1, 2, 3, 4, 8, 9, 29);
+            $uzsonna_szamok = array(5, 6, 7, 10, 26, 27, 28, 30);
+        
+            // Frissítjük a felhasználó kiválasztott képeit az adatbázisban
+            if (isset($_SESSION['felhasznalo_id']) && isset($_SESSION['selected_images'])) {
+                $felhasznalo_id = $_SESSION['felhasznalo_id'];
+                $selected_images = $_SESSION['selected_images'];
+        
+                // Tömb létrehozása a $selected_images-ből
+                $selected_images_array = array_values($selected_images);
+        
+                // Ellenőrizzük, hogy melyik kép melyik étkezéshez tartozik, és létrehozzuk az adott stringet
+                $reggeli_images = array_intersect($selected_images_array, $reggeli_szamok);
+                $uzsonna_images = array_intersect($selected_images_array, $uzsonna_szamok);
+        
+                $reggeli_id_str = implode(',', $reggeli_images);
+                $uzsonna_id_str = implode(',', $uzsonna_images);
+        
+                // Ebéd id-jei
+                $ebed_id_str = "";
+                if (isset($selected_images_array[2]) && isset($selected_images_array[4])) {
+                    $ebed_id_str = $selected_images_array[2] . ',' . $selected_images_array[4];
+                } elseif (isset($selected_images_array[2])) {
+                    $ebed_id_str = $selected_images_array[2];
+                } elseif (isset($selected_images_array[4])) {
+                    $ebed_id_str = $selected_images_array[4];
+                }
+        
+                // Vacsora id-jei
+                $vacsora_id_str = "";
+                if (isset($selected_images_array[3]) && isset($selected_images_array[5])) {
+                    $vacsora_id_str = $selected_images_array[3] . ',' . $selected_images_array[5];
+                } elseif (isset($selected_images_array[3])) {
+                    $vacsora_id_str = $selected_images_array[3];
+                } elseif (isset($selected_images_array[5])) {
+                    $vacsora_id_str = $selected_images_array[5];
+                }
+        
+                // Az aktuális dátum
+                $etkezes_datuma = date("Y-m-d");
+        
+                // Ellenőrizzük, hogy van-e már bejegyzés az adott felhasználóhoz és dátumhoz az adatbázisban
+                $checkQuery = "SELECT COUNT(*) FROM etkezes WHERE felhasznalo_id = ? AND etkezes_datuma = ?";
+                $stmtCheck = $conn->prepare($checkQuery);
+                $stmtCheck->bind_param("is", $felhasznalo_id, $etkezes_datuma);
+                $stmtCheck->execute();
+                $stmtCheck->bind_result($count);
+                $stmtCheck->fetch();
+                $stmtCheck->close();
+        
+                // Ha van már bejegyzés, akkor frissítjük az adatokat
+                if ($count > 0) {
+                    $updateQuery = "UPDATE etkezes SET reggeli_id = ?, ebed_id = ?, vacsora_id = ?, uzsonna_id = ? WHERE felhasznalo_id = ? AND etkezes_datuma = ?";
+                    $stmtUpdate = $conn->prepare($updateQuery);
+                    $stmtUpdate->bind_param("ssssis", $reggeli_id_str, $ebed_id_str, $vacsora_id_str, $uzsonna_id_str, $felhasznalo_id, $etkezes_datuma);
+                    if ($stmtUpdate->execute()) {
+                        $message = "Sikeresen frissítette az étrendet.";
+                    } else {
+                        $message = "Nem sikerült frissíteni az étrendet.";
+                    }
+                    $stmtUpdate->close();
+                } else {
+                    // Ha nincs még bejegyzés, akkor újat hozunk létre
+                    $insertQuery = "INSERT INTO etkezes (felhasznalo_id, reggeli_id, ebed_id, vacsora_id, uzsonna_id, etkezes_datuma) VALUES (?, ?, ?, ?, ?, ?)";
+                    $stmtInsert = $conn->prepare($insertQuery);
+                    $stmtInsert->bind_param("isssss", $felhasznalo_id, $reggeli_id_str, $ebed_id_str, $vacsora_id_str, $uzsonna_id_str, $etkezes_datuma);
+                    if ($stmtInsert->execute()) {
+                        $message = "Sikeresen mentette az étrendet.";
+                    } else {
+                        $message = "Nem sikerült menteni az étrendet.";
+                    }
+                    $stmtInsert->close();
+                }
+            }
+        } else {
+            // Ha nincsenek kiválasztott képek, akkor üzenetet küldünk
+            $message = "Nincsenek kiválasztva ételek az étrendhez.";
+        }
+    } elseif (isset($_POST['adatmodositas'])) {
+        header("Location: etrendkeszitese.php");
+        exit();
+    } elseif (isset($_POST['etrendmodositas'])) {
+        header("Location: etrend.php");
+        exit();
+    }
+}
+
 ?>
 
 
@@ -127,7 +223,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["selected_images"]) && 
     <header>Étrendem</header>
     
     <div class="adatok">
-      <form action="" method="post" id="etrendmodositas_form">
+      <form action="" method="post">
       <?php
         // Lekérdezés az adatok megjelenítéséhez
         $felhasznalo_id = $_SESSION['felhasznalo_id'];
@@ -168,12 +264,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["selected_images"]) && 
             $fogyasztando = $fogyasztando-500;
         } elseif ($cel == 'Tömegelés'){
             $fogyasztando = $fogyasztando+500;
-        }
-
-
-        if(isset($_POST['adatmodositas'])) {
-            header("Location: etrendkeszitese.php");
-            exit();
         }
 
     ?>
@@ -244,12 +334,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["selected_images"]) && 
 
         <input type="submit" class="button" value="Étrend módosítása" name="etrendmodositas">
 
-        <script>
-            document.getElementById("etrendmodositas_form").onsubmit = function() {
-                window.location = "etrend.php";
-                return false; // prevent actual form submission
-            }
-        </script>
+        <input type="submit" class="button" value="Étrend mentése" name="etrendmentese">
+
+        <?php if (isset($_POST["etrendmentese"])) { ?>
+            <p><b> <?php echo $message; ?> </b></p> 
+        <?php } ?>
 
         </form>
     </div>
