@@ -83,7 +83,7 @@
 
 <div class="lap">
     <div class="kartya">
-      <header>Főoldal</header>
+    <header>Üdvözöljük az Étrend Készítő Weboldalon</header>
       <form action="" method="post">
           <label>Főoldal</label>
          
