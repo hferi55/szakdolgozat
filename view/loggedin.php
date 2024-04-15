@@ -81,15 +81,57 @@
 
 
 
-<div class="lap">
+<div class="fooldal_lap">
     <div class="kartya">
-    <header>Üdvözöljük az Étrend Készítő Weboldalon</header>
-      <form action="" method="post">
-          <label>Főoldal</label>
-         
-      </form>
+    <div class="slideshow-container">
+        <div class="slide fade">
+            <img src="../kepek/fooldalkep1.jpg" alt="Főoldalkép 1">
+        </div>
+        <div class="slide fade">
+            <img src="../kepek/fooldalkep2.jpg" alt="Főoldalkép 2">
+        </div>
+        <div class="slide fade">
+            <img src="../kepek/fooldalkep3.jpg" alt="Főoldalkép 3">
+        </div>
+        <div class="slide fade">
+            <img src="../kepek/fooldalkep4.jpg" alt="Főoldalkép 4">
+        </div>
+        <div class="slide fade">
+            <img src="../kepek/fooldalkep5.jpg" alt="Főoldalkép 5">
+        </div>
+    </div>
+        
+        <div class="szoveg">
+            <header>Üdvözöljük az Étrend Készítő Weboldalon!</header>
+            <form action="" method="post">
+                <label>
+                    Itt mindenki megtalálhatja a számára legmegfelelőbb étrendet a tudatos és egészséges táplálkozás érdekében. 
+                    Személyre szabott étrendtervezésünkkel könnyen elérheti céljait, legyen szó fittség eléréséről, súlyvesztésről vagy egyszerűen az egészséges életmód fenntartásáról.
+                    Fedezze fel változatos receptjeinket és kezdje el most az egészséges és boldog élet útját velünk!
+                    A bal oldalon az oldal funkcióiról láthat képeket.
+                </label>
+            </form>
+        </div>
     </div>
 </div>
+
+<script>
+  var slideIndex = 0;
+  showSlides();
+
+  function showSlides() {
+    var i;
+    var slides = document.getElementsByClassName("slide");
+    if (slideIndex >= slides.length) {slideIndex = 0} // Az ellenőrzés ide került
+    for (i = 0; i < slides.length; i++) {
+      slides[i].style.display = "none";  
+    }
+    slides[slideIndex].style.display = "block";  
+    slideIndex++;
+    setTimeout(showSlides, 5000); // Váltás 5 másodpercenként
+  }
+</script>
+
 
 </body>
 </html>

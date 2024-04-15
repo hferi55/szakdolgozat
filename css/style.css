@@ -463,3 +463,49 @@ table th {
   background-color: #f2f2f2;
   color: #333;
 }
+
+.fooldal_lap{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: 70px;
+  transform: translate(-50%,-50%);
+  max-width: 1400px;
+  width: 100%;
+  background: #fff;
+  border-radius: 7px;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+  padding: 25px;
+}
+.kartya header{
+  font-size: 2rem;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.slideshow-container {
+  max-width: 50%;
+  float: left;
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  margin-right: 40px; /* Új: 20px margó a jobb oldalon */
+}
+
+.slide {
+  display: none;
+}
+
+.slide img {
+  width: 640px;
+  height: 320px;
+}
+
+.szöveg {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 10%;
+  width: 40%;
+}
