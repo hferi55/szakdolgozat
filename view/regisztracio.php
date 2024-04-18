@@ -1,7 +1,7 @@
 <?php
 require('../sql/sql.php'); // Adatbázis kapcsolódás
 
-$errorMessage = ''; // Hibaüzenet inicializálása
+$hibaUzenet = ''; // Hibaüzenet inicializálása
 $testsuly = $magassag = $cel = $nem = $eletkor = $aktivitas = 0; // Alapértelmezett értékek
 $kivalasztott_kepek = NULL;
 
@@ -23,35 +23,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $email = mysqli_real_escape_string($conn, $email);
 
                 // Ellenőrzés, hogy az email cím már létezik-e az adatbázisban
-                $ellenorzoQuery = "SELECT * FROM felhasznalo WHERE email_cim='$email'";
-                $ellenorzoResult = mysqli_query($conn, $ellenorzoQuery);
+                $ellenorzoKeres = "SELECT * FROM felhasznalo WHERE email_cim='$email'";
+                $ellenorzoValasz = mysqli_query($conn, $ellenorzoKeres);
 
-                if ($ellenorzoResult && mysqli_num_rows($ellenorzoResult) > 0) {
+                if ($ellenorzoValasz && mysqli_num_rows($ellenorzoValasz) > 0) {
                     // Sikertelen regisztráció - az email cím már foglalt
-                    $errorMessage = "Ez az email cím már regisztrálva van!";
+                    $hibaUzenet = "Ez az email cím már regisztrálva van!";
                 } else {
                     // Jelszó titkosítása
                     $titkositottJelszo = password_hash($jelszo, PASSWORD_DEFAULT);
 
                     // Regisztráció az adatbázisba
-                    $query = "INSERT INTO `felhasznalo`(`nev`, `email_cim`, `jelszo`, `testsuly`, `magassag`, `cel`, `nem`, `eletkor`, `aktivitas`, `kivalasztott_kepek`) VALUES ('$nev','$email','$titkositottJelszo','$testsuly','$magassag','$cel', '$nem', '$eletkor', '$aktivitas', '$kivalasztott_kepek')";
-                    $result = mysqli_query($conn, $query);
+                    $keres = "INSERT INTO `felhasznalo`(`nev`, `email_cim`, `jelszo`, `testsuly`, `magassag`, `cel`, `nem`, `eletkor`, `aktivitas`, `kivalasztott_kepek`) VALUES ('$nev','$email','$titkositottJelszo','$testsuly','$magassag','$cel', '$nem', '$eletkor', '$aktivitas', '$kivalasztott_kepek')";
+                    $valasz = mysqli_query($conn, $keres);
 
-                    if ($result) {
+                    if ($valasz) {
                         header("Location: bejelentkezes.php");
                         exit();
                     } else {
                         // Sikertelen regisztráció
-                        $errorMessage = "Hiba a regisztráció során: " . mysqli_error($conn);
+                        $hibaUzenet = "Hiba a regisztráció során: " . mysqli_error($conn);
                     }
                 }
             } else {
                 // Sikertelen regisztráció - a jelszó nem felel meg a követelményeknek
-                $errorMessage = "A jelszónak legalább 4 karakter hosszúnak kell lennie, tartalmaznia kell egy nagybetűt, és nem tartalmazhat speciális karaktereket!";
+                $hibaUzenet = "A jelszónak legalább 4 karakter hosszúnak kell lennie, tartalmaznia kell egy nagybetűt, és nem tartalmazhat speciális karaktereket!";
             }
         } else {
             // Sikertelen regisztráció - a név nem felel meg a követelményeknek
-            $errorMessage = "A névnek legalább 3 karakter hosszúnak kell lennie!";
+            $hibaUzenet = "A névnek legalább 3 karakter hosszúnak kell lennie!";
         }
     }
 
@@ -79,12 +79,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </nav>
 </header>
 
-    <div class="regisztracio_container">
+    <div class="regisztracio_kontener">
         <div class="regisztracio kartya">
             <header>Regisztráció</header>
             
-            <?php if ($errorMessage): ?>
-                <p><?php echo $errorMessage; ?></p>
+            <?php if ($hibaUzenet): ?>
+                <p><?php echo $hibaUzenet; ?></p>
             <?php endif; ?>
 
             <form action="" method="post">
@@ -98,10 +98,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <br>
                 <br>
                 <input type="password" placeholder="Erősítse meg a jelszavát" name="jelszo_megerosit" required>
-                <input type="submit" class="button" value="Regisztráció" name="submit" required>
+                <input type="submit" class="button" value="Regisztráció" name="kuldes" required>
             </form>
-            <div class="signup">
-                <span class="signup">Már van fiókja?
+            <div class="regisztralas">
+                <span class="regisztralas">Már van fiókja?
                     <a href="../view/bejelentkezes.php">Bejelentkezés</a>
                 </span>
             </div>

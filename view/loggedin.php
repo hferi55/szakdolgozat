@@ -37,10 +37,10 @@
             $felhasznalo_id = $_SESSION['felhasznalo_id'];
 
             // Ellenőrizzük az adatbázisban, hogy van-e kiválasztott kép
-            $query = "SELECT kivalasztott_kepek FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id";
-            $result = mysqli_query($conn, $query);
-            $row = mysqli_fetch_assoc($result);
-            $kivalasztott_kepek = $row['kivalasztott_kepek'];
+            $keres = "SELECT kivalasztott_kepek FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id";
+            $valasz = mysqli_query($conn, $keres);
+            $sor = mysqli_fetch_assoc($valasz);
+            $kivalasztott_kepek = $sor['kivalasztott_kepek'];
 
             if (!empty($kivalasztott_kepek)) {
                 // Ha van kiválasztott kép, megjelenítjük az "Étrendem" linket
@@ -53,10 +53,10 @@
             } else {
                 // Ha nincs kiválasztott kép, a korábbi logikához hasonlóan jelenítjük meg a linkeket
                 // Ellenőrizzük, hogy van-e már étrendje
-                $query = "SELECT COUNT(*) FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id AND (magassag IS NULL OR testsuly IS NULL OR eletkor IS NULL OR cel = '' OR nem = '' OR aktivitas = '' OR cel = 'nincs cel' OR nem = 'valasszon' OR aktivitas = 'valasszon')";
-                $result = mysqli_query($conn, $query);
-                $row = mysqli_fetch_row($result);
-                $etrendVan = $row[0] == 0;
+                $keres = "SELECT COUNT(*) FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id AND (magassag IS NULL OR testsuly IS NULL OR eletkor IS NULL OR cel = '' OR nem = '' OR aktivitas = '' OR cel = 'nincs cel' OR nem = 'valasszon' OR aktivitas = 'valasszon')";
+                $valasz = mysqli_query($conn, $keres);
+                $sor = mysqli_fetch_row($valasz);
+                $etrendVan = $sor[0] == 0;
 
                 if ($etrendVan) {
                     echo '
@@ -83,20 +83,20 @@
 
 <div class="fooldal_lap">
     <div class="kartya">
-    <div class="slideshow-container">
-        <div class="slide fade">
+    <div class="diavetites-kontener">
+        <div class="oldal">
             <img src="../kepek/fooldalkep1.jpg" alt="Főoldalkép 1">
         </div>
-        <div class="slide fade">
+        <div class="oldal">
             <img src="../kepek/fooldalkep2.jpg" alt="Főoldalkép 2">
         </div>
-        <div class="slide fade">
+        <div class="oldal">
             <img src="../kepek/fooldalkep3.jpg" alt="Főoldalkép 3">
         </div>
-        <div class="slide fade">
+        <div class="oldal">
             <img src="../kepek/fooldalkep4.jpg" alt="Főoldalkép 4">
         </div>
-        <div class="slide fade">
+        <div class="oldal">
             <img src="../kepek/fooldalkep5.jpg" alt="Főoldalkép 5">
         </div>
     </div>
@@ -116,19 +116,19 @@
 </div>
 
 <script>
-  var slideIndex = 0;
-  showSlides();
+  var oldalIndex = 0;
+  oldalMutatas();
 
-  function showSlides() {
+  function oldalMutatas() {
     var i;
-    var slides = document.getElementsByClassName("slide");
-    if (slideIndex >= slides.length) {slideIndex = 0} // Az ellenőrzés ide került
-    for (i = 0; i < slides.length; i++) {
-      slides[i].style.display = "none";  
+    var oldalak = document.getElementsByClassName("oldal");
+    if (oldalIndex >= oldalak.length) {oldalIndex = 0} // Az ellenőrzés ide került
+    for (i = 0; i < oldalak.length; i++) {
+      oldalak[i].style.display = "none";  
     }
-    slides[slideIndex].style.display = "block";  
-    slideIndex++;
-    setTimeout(showSlides, 5000); // Váltás 5 másodpercenként
+    oldalak[oldalIndex].style.display = "block";  
+    oldalIndex++;
+    setTimeout(oldalMutatas, 5000); // Váltás 5 másodpercenként
   }
 </script>
 

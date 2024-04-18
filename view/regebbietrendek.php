@@ -29,7 +29,7 @@ session_start();
             ';
         } else { // Ha a felhasználó be van jelentkezve
             // Ellenőrizzük, hogy vannak-e kiválasztott képek a SESSION-ben
-            if (isset($_SESSION['selected_images']) && !empty($_SESSION['selected_images'])) {
+            if (isset($_SESSION['kivalasztott_kepek']) && !empty($_SESSION['kivalasztott_kepek'])) {
                 echo '
                 <a href="../view/rolunk.php">Rólunk</a> |
                 <a href="../view/profil.php">Profil</a> |
@@ -41,10 +41,10 @@ session_start();
                 $felhasznalo_id = $_SESSION['felhasznalo_id'];
 
                 // Ellenőrizzük, hogy van-e már étrendje
-                $query = "SELECT COUNT(*) FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id AND (magassag IS NULL OR testsuly IS NULL OR eletkor IS NULL OR cel = '' OR nem = '' OR aktivitas = '' OR cel = 'nincs cel' OR nem = 'valasszon' OR aktivitas = 'valasszon')";
-                $result = mysqli_query($conn, $query);
-                $row = mysqli_fetch_row($result);
-                $etrendVan = $row[0] == 0;
+                $keres = "SELECT COUNT(*) FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id AND (magassag IS NULL OR testsuly IS NULL OR eletkor IS NULL OR cel = '' OR nem = '' OR aktivitas = '' OR cel = 'nincs cel' OR nem = 'valasszon' OR aktivitas = 'valasszon')";
+                $valasz = mysqli_query($conn, $keres);
+                $sor = mysqli_fetch_row($valasz);
+                $etrendVan = $sor[0] == 0;
 
                 if ($etrendVan) {
                     echo '
@@ -85,71 +85,71 @@ session_start();
                     <?php
                     $felhasznalo_id = $_SESSION['felhasznalo_id'];
 
-                    $sqlQuery = "SELECT `reggeli_id`, `ebed_id`, `vacsora_id`, `uzsonna_id`, `etkezes_datuma` FROM `etkezes` WHERE felhasznalo_id=?";
-                    $stmtQuery = $conn->prepare($sqlQuery);
-                    $stmtQuery->bind_param("i", $felhasznalo_id);
-                    $stmtQuery->execute();
-                    $stmtQuery->store_result();
-                    $stmtQuery->bind_result($reggeli_ids, $ebed_ids, $vacsora_ids, $uzsonna_ids, $etkezes_datuma);
-                    while ($stmtQuery->fetch()) {
+                    $sqlKeres = "SELECT `reggeli_id`, `ebed_id`, `vacsora_id`, `uzsonna_id`, `etkezes_datuma` FROM `etkezes` WHERE felhasznalo_id=?";
+                    $stmtKeres = $conn->prepare($sqlKeres);
+                    $stmtKeres->bind_param("i", $felhasznalo_id);
+                    $stmtKeres->execute();
+                    $stmtKeres->store_result();
+                    $stmtKeres->bind_result($reggeli_idk, $ebed_idk, $vacsora_idk, $uzsonna_idk, $etkezes_datuma);
+                    while ($stmtKeres->fetch()) {
                         // Szétválasztjuk a reggeli_id-ket
-                        $reggeli_id_arr = explode(",", $reggeli_ids);
+                        $reggeli_id_tomb = explode(",", $reggeli_idk);
                         $reggeli_nevek = array();
-                        foreach ($reggeli_id_arr as $reggeli_id) {
-                            $sqlQuery = "SELECT nev FROM etelek WHERE etel_id = ?";
-                            $stmtQueryInner = $conn->prepare($sqlQuery);
-                            $stmtQueryInner->bind_param("i", $reggeli_id);
-                            $stmtQueryInner->execute();
-                            $stmtQueryInner->store_result();
-                            $stmtQueryInner->bind_result($reggeli_nev);
-                            $stmtQueryInner->fetch();
+                        foreach ($reggeli_id_tomb as $reggeli_id) {
+                            $sqlKeres = "SELECT nev FROM etelek WHERE etel_id = ?";
+                            $stmtKeresBelso = $conn->prepare($sqlKeres);
+                            $stmtKeresBelso->bind_param("i", $reggeli_id);
+                            $stmtKeresBelso->execute();
+                            $stmtKeresBelso->store_result();
+                            $stmtKeresBelso->bind_result($reggeli_nev);
+                            $stmtKeresBelso->fetch();
                             $reggeli_nevek[] = $reggeli_nev;
-                            $stmtQueryInner->close();
+                            $stmtKeresBelso->close();
                         }
 
                         // Szétválasztjuk az ebed_id-ket
-                        $ebed_id_arr = explode(",", $ebed_ids);
+                        $ebed_id_tomb = explode(",", $ebed_idk);
                         $ebed_nevek = array();
-                        foreach ($ebed_id_arr as $ebed_id) {
-                            $sqlQuery = "SELECT nev FROM etelek WHERE etel_id = ?";
-                            $stmtQueryInner = $conn->prepare($sqlQuery);
-                            $stmtQueryInner->bind_param("i", $ebed_id);
-                            $stmtQueryInner->execute();
-                            $stmtQueryInner->store_result();
-                            $stmtQueryInner->bind_result($ebed_nev);
-                            $stmtQueryInner->fetch();
+                        foreach ($ebed_id_tomb as $ebed_id) {
+                            $sqlKeres = "SELECT nev FROM etelek WHERE etel_id = ?";
+                            $stmtKeresBelso = $conn->prepare($sqlKeres);
+                            $stmtKeresBelso->bind_param("i", $ebed_id);
+                            $stmtKeresBelso->execute();
+                            $stmtKeresBelso->store_result();
+                            $stmtKeresBelso->bind_result($ebed_nev);
+                            $stmtKeresBelso->fetch();
                             $ebed_nevek[] = $ebed_nev;
-                            $stmtQueryInner->close();
+                            $stmtKeresBelso->close();
                         }
 
                         // Szétválasztjuk a vacsora_id-ket
-                        $vacsora_id_arr = explode(",", $vacsora_ids);
+                        $vacsora_id_tomb = explode(",", $vacsora_idk);
                         $vacsora_nevek = array();
-                        foreach ($vacsora_id_arr as $vacsora_id) {
-                            $sqlQuery = "SELECT nev FROM etelek WHERE etel_id = ?";
-                            $stmtQueryInner = $conn->prepare($sqlQuery);
-                            $stmtQueryInner->bind_param("i", $vacsora_id);
-                            $stmtQueryInner->execute();
-                            $stmtQueryInner->store_result();
-                            $stmtQueryInner->bind_result($vacsora_nev);
-                            $stmtQueryInner->fetch();
+                        foreach ($vacsora_id_tomb as $vacsora_id) {
+                            $sqlKeres = "SELECT nev FROM etelek WHERE etel_id = ?";
+                            $stmtKeresBelso = $conn->prepare($sqlKeres);
+                            $stmtKeresBelso->bind_param("i", $vacsora_id);
+                            $stmtKeresBelso->execute();
+                            $stmtKeresBelso->store_result();
+                            $stmtKeresBelso->bind_result($vacsora_nev);
+                            $stmtKeresBelso->fetch();
                             $vacsora_nevek[] = $vacsora_nev;
-                            $stmtQueryInner->close();
+                            $stmtKeresBelso->close();
                         }
 
                         // Szétválasztjuk az uzsonna_id-ket
-                        $uzsonna_id_arr = explode(",", $uzsonna_ids);
+                        $uzsonna_id_tomb = explode(",", $uzsonna_idk);
                         $uzsonna_nevek = array();
-                        foreach ($uzsonna_id_arr as $uzsonna_id) {
-                            $sqlQuery = "SELECT nev FROM etelek WHERE etel_id = ?";
-                            $stmtQueryInner = $conn->prepare($sqlQuery);
-                            $stmtQueryInner->bind_param("i", $uzsonna_id);
-                            $stmtQueryInner->execute();
-                            $stmtQueryInner->store_result();
-                            $stmtQueryInner->bind_result($uzsonna_nev);
-                            $stmtQueryInner->fetch();
+                        foreach ($uzsonna_id_tomb as $uzsonna_id) {
+                            $sqlKeres = "SELECT nev FROM etelek WHERE etel_id = ?";
+                            $stmtKeresBelso = $conn->prepare($sqlKeres);
+                            $stmtKeresBelso->bind_param("i", $uzsonna_id);
+                            $stmtKeresBelso->execute();
+                            $stmtKeresBelso->store_result();
+                            $stmtKeresBelso->bind_result($uzsonna_nev);
+                            $stmtKeresBelso->fetch();
                             $uzsonna_nevek[] = $uzsonna_nev;
-                            $stmtQueryInner->close();
+                            $stmtKeresBelso->close();
                         }
 
                         // Kiírás a táblázatba
@@ -161,7 +161,7 @@ session_start();
                         echo "<td>" . implode(", ", $uzsonna_nevek) . "</td>";
                         echo "</tr>";
                     }
-                    $stmtQuery->close();
+                    $stmtKeres->close();
                     ?>
                 </tbody>
             </table>

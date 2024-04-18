@@ -41,10 +41,10 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
             $felhasznalo_id = $_SESSION['felhasznalo_id'];
 
             // Ellenőrizzük az adatbázisban, hogy van-e kiválasztott kép
-            $query = "SELECT kivalasztott_kepek FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id";
-            $result = mysqli_query($conn, $query);
-            $row = mysqli_fetch_assoc($result);
-            $kivalasztott_kepek = $row['kivalasztott_kepek'];
+            $keres = "SELECT kivalasztott_kepek FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id";
+            $valasz = mysqli_query($conn, $keres);
+            $sor = mysqli_fetch_assoc($valasz);
+            $kivalasztott_kepek = $sor['kivalasztott_kepek'];
 
             if (!empty($kivalasztott_kepek)) {
                 // Ha van kiválasztott kép, megjelenítjük az "Étrendem" linket
@@ -57,10 +57,10 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
             } else {
                 // Ha nincs kiválasztott kép, a korábbi logikához hasonlóan jelenítjük meg a linkeket
                 // Ellenőrizzük, hogy van-e már étrendje
-                $query = "SELECT COUNT(*) FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id AND (magassag IS NULL OR testsuly IS NULL OR eletkor IS NULL OR cel = '' OR nem = '' OR aktivitas = '' OR cel = 'nincs cel' OR nem = 'valasszon' OR aktivitas = 'valasszon')";
-                $result = mysqli_query($conn, $query);
-                $row = mysqli_fetch_row($result);
-                $etrendVan = $row[0] == 0;
+                $keres = "SELECT COUNT(*) FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id AND (magassag IS NULL OR testsuly IS NULL OR eletkor IS NULL OR cel = '' OR nem = '' OR aktivitas = '' OR cel = 'nincs cel' OR nem = 'valasszon' OR aktivitas = 'valasszon')";
+                $valasz = mysqli_query($conn, $keres);
+                $sor = mysqli_fetch_row($valasz);
+                $etrendVan = $sor[0] == 0;
 
                 if ($etrendVan) {
                     echo '
@@ -98,18 +98,18 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
       <?php
         // Lekérdezés az adatok megjelenítéséhez
         $felhasznalo_id = $_SESSION['felhasznalo_id'];
-        $sqlQuery = "SELECT `testsuly`, `magassag`, `cel`, `nem`, `eletkor`, `aktivitas` FROM felhasznalo WHERE felhasznalo_id=?";
-        $stmtQuery = $conn->prepare($sqlQuery);
-        $stmtQuery->bind_param("i", $felhasznalo_id);
-        $stmtQuery->execute();
-        $stmtQuery->store_result();
-        $stmtQuery->bind_result($testsuly, $magassag, $cel, $nem, $eletkor, $aktivitas);
+        $sqlKeres = "SELECT `testsuly`, `magassag`, `cel`, `nem`, `eletkor`, `aktivitas` FROM felhasznalo WHERE felhasznalo_id=?";
+        $stmtKeres = $conn->prepare($sqlKeres);
+        $stmtKeres->bind_param("i", $felhasznalo_id);
+        $stmtKeres->execute();
+        $stmtKeres->store_result();
+        $stmtKeres->bind_result($testsuly, $magassag, $cel, $nem, $eletkor, $aktivitas);
 
-        if (!$stmtQuery->fetch()) {
-            $errors[] = "Hiba történt az adatok lekérdezése során.";
+        if (!$stmtKeres->fetch()) {
+            $hibak[] = "Hiba történt az adatok lekérdezése során.";
         }
 
-        $stmtQuery->close();
+        $stmtKeres->close();
 
         if($nem == 'Férfi'){
         $bmr = 10 * $testsuly + 6.25 * $magassag - 5 * $eletkor + 5; //Férfi BMR kiszámítás Mifflin-St. Jeor képlettel
@@ -170,7 +170,7 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
 
     <?php
         try {
-            $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+            $conn = new PDO("mysql:host=$szervernev;dbname=$dbnev", $felhasznalonev, $jelszo);
             $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch(PDOException $e) {
             echo "Hiba: " . $e->getMessage();
@@ -181,20 +181,20 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
             <!-- Reggeli -->
             <h3>Reggeli:</h3>
 
-            <div class="image-container">
+            <div class="kep-kontener">
                 <?php
                 // Reggeli képek és címek lekérdezése
                 $stmt1 = $conn->prepare("SELECT nev, kep, etel_id FROM etelek WHERE reggeli = 1");
                 $stmt1->execute();
-                $images1 = $stmt1->fetchAll();
+                $kepek1 = $stmt1->fetchAll();
                 ?>
-                <?php foreach ($images1 as $image): ?>
-                    <div class="image-item <?php if(isset($_POST['selected_images']) && in_array($image['etel_id'], $_POST['selected_images'])) echo 'selected'; ?>">
+                <?php foreach ($kepek1 as $kep): ?>
+                    <div class="kep-targy <?php if(isset($_POST['kivalasztott_kepek']) && in_array($kep['etel_id'], $_POST['kivalasztott_kepek'])) echo 'selected'; ?>">
                         <div>
-                            <img src="<?php echo $image['kep']; ?>" alt="<?php echo $image['nev']; ?>"><br>
+                            <img src="<?php echo $kep['kep']; ?>" alt="<?php echo $kep['nev']; ?>"><br>
                             <label>
-                                <input type="checkbox" name="selected_images[]" value="<?php echo $image['etel_id']; ?>" <?php if(isset($_POST['selected_images']) && in_array($image['etel_id'], $_POST['selected_images'])) echo 'checked="checked"'; ?>>
-                                <?php echo $image['nev']; ?>
+                                <input type="checkbox" name="kivalasztott_kepek[]" value="<?php echo $kep['etel_id']; ?>" <?php if(isset($_POST['kivalasztott_kepek']) && in_array($kep['etel_id'], $_POST['kivalasztott_kepek'])) echo 'checked="checked"'; ?>>
+                                <?php echo $kep['nev']; ?>
                             </label>
                         </div>
                     </div>
@@ -204,20 +204,20 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
             <!-- Hús -->
             <h3>Hús:</h3>
             
-            <div class="image-container">
+            <div class="kep-kontener">
                 <?php
                 // Hús képek és címek lekérdezése
                 $stmt2 = $conn->prepare("SELECT nev, kep, etel_id FROM etelek WHERE milyenetel = 'hús'");
                 $stmt2->execute();
-                $images2 = $stmt2->fetchAll();
+                $kepek2 = $stmt2->fetchAll();
                 ?>
-                <?php foreach ($images2 as $image): ?>
-                    <div class="image-item <?php if(isset($_POST['selected_images']) && in_array($image['etel_id'], $_POST['selected_images'])) echo 'selected'; ?>">
+                <?php foreach ($kepek2 as $kep): ?>
+                    <div class="kep-targy <?php if(isset($_POST['kivalasztott_kepek']) && in_array($kep['etel_id'], $_POST['kivalasztott_kepek'])) echo 'selected'; ?>">
                         <div>
-                            <img src="<?php echo $image['kep']; ?>" alt="<?php echo $image['nev']; ?>"><br>
+                            <img src="<?php echo $kep['kep']; ?>" alt="<?php echo $kep['nev']; ?>"><br>
                             <label>
-                                <input type="checkbox" name="selected_images[]" value="<?php echo $image['etel_id']; ?>" <?php if(isset($_POST['selected_images']) && in_array($image['etel_id'], $_POST['selected_images'])) echo 'checked="checked"'; ?>>
-                                <?php echo $image['nev']; ?>
+                                <input type="checkbox" name="kivalasztott_kepek[]" value="<?php echo $kep['etel_id']; ?>" <?php if(isset($_POST['kivalasztott_kepek']) && in_array($kep['etel_id'], $_POST['kivalasztott_kepek'])) echo 'checked="checked"'; ?>>
+                                <?php echo $kep['nev']; ?>
                             </label>
                         </div>
                     </div>
@@ -228,20 +228,20 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
             <!-- Köret -->
             <h3>Köret:</h3>
 
-            <div class="image-container">
+            <div class="kep-kontener">
                 <?php
                 // Köret képek és címek lekérdezése
                 $stmt3 = $conn->prepare("SELECT nev, kep, etel_id FROM etelek WHERE milyenetel = 'köret'");
                 $stmt3->execute();
-                $images3 = $stmt3->fetchAll();
+                $kepek3 = $stmt3->fetchAll();
                 ?>
-                <?php foreach ($images3 as $image): ?>
-                    <div class="image-item <?php if(isset($_POST['selected_images']) && in_array($image['etel_id'], $_POST['selected_images'])) echo 'selected'; ?>">
+                <?php foreach ($kepek3 as $kep): ?>
+                    <div class="kep-targy <?php if(isset($_POST['kivalasztott_kepek']) && in_array($kep['etel_id'], $_POST['kivalasztott_kepek'])) echo 'selected'; ?>">
                         <div>
-                            <img src="<?php echo $image['kep']; ?>" alt="<?php echo $image['nev']; ?>"><br>
+                            <img src="<?php echo $kep['kep']; ?>" alt="<?php echo $kep['nev']; ?>"><br>
                             <label>
-                                <input type="checkbox" name="selected_images[]" value="<?php echo $image['etel_id']; ?>" <?php if(isset($_POST['selected_images']) && in_array($image['etel_id'], $_POST['selected_images'])) echo 'checked="checked"'; ?>>
-                                <?php echo $image['nev']; ?>
+                                <input type="checkbox" name="kivalasztott_kepek[]" value="<?php echo $kep['etel_id']; ?>" <?php if(isset($_POST['kivalasztott_kepek']) && in_array($kep['etel_id'], $_POST['kivalasztott_kepek'])) echo 'checked="checked"'; ?>>
+                                <?php echo $kep['nev']; ?>
                             </label>
                         </div>
                     </div>
@@ -251,20 +251,20 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
             <!-- Uzsonna -->
             <h3>Uzsonna:</h3>
             
-            <div class="image-container">
+            <div class="kep-kontener">
                 <?php
                 // Uzsonna képek és címek lekérdezése
                 $stmt4 = $conn->prepare("SELECT nev, kep, etel_id FROM etelek WHERE uzsonna = 1");
                 $stmt4->execute();
-                $images4 = $stmt4->fetchAll();
+                $kepek4 = $stmt4->fetchAll();
                 ?>
-                <?php foreach ($images4 as $image): ?>
-                    <div class="image-item <?php if(isset($_POST['selected_images']) && in_array($image['etel_id'], $_POST['selected_images'])) echo 'selected'; ?>">
+                <?php foreach ($kepek4 as $kep): ?>
+                    <div class="kep-targy <?php if(isset($_POST['kivalasztott_kepek']) && in_array($kep['etel_id'], $_POST['kivalasztott_kepek'])) echo 'selected'; ?>">
                         <div>
-                            <img src="<?php echo $image['kep']; ?>" alt="<?php echo $image['nev']; ?>"><br>
+                            <img src="<?php echo $kep['kep']; ?>" alt="<?php echo $kep['nev']; ?>"><br>
                             <label>
-                                <input type="checkbox" name="selected_images[]" value="<?php echo $image['etel_id']; ?>" <?php if(isset($_POST['selected_images']) && in_array($image['etel_id'], $_POST['selected_images'])) echo 'checked="checked"'; ?>>
-                                <?php echo $image['nev']; ?>
+                                <input type="checkbox" name="kivalasztott_kepek[]" value="<?php echo $kep['etel_id']; ?>" <?php if(isset($_POST['kivalasztott_kepek']) && in_array($kep['etel_id'], $_POST['kivalasztott_kepek'])) echo 'checked="checked"'; ?>>
+                                <?php echo $kep['nev']; ?>
                             </label>
                         </div>
                     </div>
@@ -272,27 +272,27 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
             </div>
 
             <div class="kivalaszt_gomb">
-                <input type="submit" class="button" value="Kiválasztottam az ételeket" id="submitButton">
+                <input type="submit" class="button" value="Kiválasztottam az ételeket" id="kivalasztGomb">
             </div>
 
             <script>
-                document.getElementById('submitButton').disabled = true; // Gomb alapértelmezett letiltása
+                document.getElementById('kivalasztGomb').disabled = true; // Gomb alapértelmezett letiltása
 
                 // Ellenőrzi, hogy minden sorban pontosan két kép van-e kiválasztva
                 function checkSelection() {
-                    var rows = document.querySelectorAll('.image-container');
-                    var allRowsHaveTwoSelected = true;
-                    rows.forEach(function(row) {
-                        var selectedImages = row.querySelectorAll('input[type="checkbox"]:checked');
-                        if (selectedImages.length !== 2) {
-                            allRowsHaveTwoSelected = false;
+                    var sorok = document.querySelectorAll('.kep-kontener');
+                    var osszesSorokKettoKivalasztva = true;
+                    sorok.forEach(function(sor) {
+                        var kivalasztottKepek = sor.querySelectorAll('input[type="checkbox"]:checked');
+                        if (kivalasztottKepek.length !== 2) {
+                            osszesSorokKettoKivalasztva = false;
                         }
                     });
                     // Ha minden sorban pontosan két kép van kiválasztva, engedélyezi a gombot, különben letiltja
-                    if (allRowsHaveTwoSelected) {
-                        document.getElementById('submitButton').disabled = false;
+                    if (osszesSorokKettoKivalasztva) {
+                        document.getElementById('kivalasztGomb').disabled = false;
                     } else {
-                        document.getElementById('submitButton').disabled = true;
+                        document.getElementById('kivalasztGomb').disabled = true;
                     }
                 }
             
@@ -313,7 +313,7 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
                 var checkboxes = document.querySelectorAll('input[type="checkbox"]');
                 checkboxes.forEach(function(checkbox) {
                     checkbox.addEventListener('change', function() {
-                        var parentDiv = checkbox.closest('.image-item');
+                        var parentDiv = checkbox.closest('.kep-targy');
                         if (checkbox.checked) {
                             parentDiv.classList.add('selected');
                         } else {

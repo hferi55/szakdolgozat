@@ -12,7 +12,7 @@ if (!isset($_SESSION['felhasznalo_id'])) {
 $nev = $email = $jelszo = $jelszoMegerosit = ""; // Alapértelmezett értékek
 
 // Hibaüzenetek tárolására használt tömb
-$errors = array();
+$hibak = array();
 
 // Ellenőrzés, hogy a form elküldésre került-e
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Név ellenőrzése
     if (empty($nev) || strlen($nev) < 3 || strlen($nev) > 8 || preg_match("/[^a-zA-Z0-9]/", $nev)) {
-        $errors[] = "A névnek legalább 3 karakter hosszúnak, maximum 8 karakter lehet, és nem tartalmazhat speciális karaktert.";
+        $hibak[] = "A névnek legalább 3 karakter hosszúnak, maximum 8 karakter lehet, és nem tartalmazhat speciális karaktert.";
     }
 
     // Email-cím
@@ -31,7 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Email-cím ellenőrzése
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors[] = "Érvénytelen email cím formátum.";
+        $hibak[] = "Érvénytelen email cím formátum.";
     }
 
     // Jelszó
@@ -42,16 +42,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Jelszó erősítés ellenőrzése
     if ($jelszo !== $jelszoMegerosit) {
-        $errors[] = "A jelszó és a jelszó megerősítése nem egyezik meg.";
+        $hibak[] = "A jelszó és a jelszó megerősítése nem egyezik meg.";
     }
 
     // Jelszó erősségének ellenőrzése 
     if (empty($jelszo) || strlen($jelszo) < 4 || !preg_match("/[A-Z]/", $jelszo) || preg_match("/[^a-zA-Z0-9]/", $jelszo)) {
-        $errors[] = "A jelszónak legalább 4 karakter hosszúnak, tartalmaznia kell legalább 1 nagybetűt, és nem tartalmazhat speciális karaktert.";
+        $hibak[] = "A jelszónak legalább 4 karakter hosszúnak, tartalmaznia kell legalább 1 nagybetűt, és nem tartalmazhat speciális karaktert.";
     }
 
     // Csak akkor frissítjük az adatokat, ha nincsenek hibaüzenetek
-    if (empty($errors)) {
+    if (empty($hibak)) {
         // Jelszó hashelése
         $hashelt_jelszo = password_hash($jelszo, PASSWORD_DEFAULT);
 
@@ -61,31 +61,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Az adatok frissítése az adatbázisban
         $felhasznalo_id = $_SESSION['felhasznalo_id']; // Hozzuk létre a felhasználó azonosítóját  
-        $sqlUpdate = "UPDATE felhasznalo SET nev=?, email_cim=?, jelszo=? WHERE felhasznalo_id=?";
-        $stmtUpdate = $conn->prepare($sqlUpdate);
-        $stmtUpdate->bind_param("sssi", $nev, $email, $hashelt_jelszo, $felhasznalo_id);
+        $sqlFrissit = "UPDATE felhasznalo SET nev=?, email_cim=?, jelszo=? WHERE felhasznalo_id=?";
+        $stmtFrissit = $conn->prepare($sqlFrissit);
+        $stmtFrissit->bind_param("sssi", $nev, $email, $hashelt_jelszo, $felhasznalo_id);
 
-        if ($stmtUpdate->execute()) {
+        if ($stmtFrissit->execute()) {
             // Sikeres adatmódosítás esetén egyéb teendők
         } else {
-            $errors[] = "Hiba történt az adatok frissítése során.";
+            $hibak[] = "Hiba történt az adatok frissítése során.";
         }
     }
 } else {
     // Lekérdezés a jelenlegi név és email-cím megjelenítéséhez
     $felhasznalo_id = $_SESSION['felhasznalo_id'];
-    $sqlQuery = "SELECT nev, email_cim FROM felhasznalo WHERE felhasznalo_id=?";
-    $stmtQuery = $conn->prepare($sqlQuery);
-    $stmtQuery->bind_param("i", $felhasznalo_id);
-    $stmtQuery->execute();
-    $stmtQuery->store_result();
-    $stmtQuery->bind_result($nev, $email);
+    $sqlKeres = "SELECT nev, email_cim FROM felhasznalo WHERE felhasznalo_id=?";
+    $stmtKeres = $conn->prepare($sqlKeres);
+    $stmtKeres->bind_param("i", $felhasznalo_id);
+    $stmtKeres->execute();
+    $stmtKeres->store_result();
+    $stmtKeres->bind_result($nev, $email);
 
-    if (!$stmtQuery->fetch()) {
-        $errors[] = "Hiba történt az adatok lekérdezése során.";
+    if (!$stmtKeres->fetch()) {
+        $hibak[] = "Hiba történt az adatok lekérdezése során.";
     }
 
-    $stmtQuery->close();
+    $stmtKeres->close();
 }
 
 ?>
@@ -117,10 +117,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $felhasznalo_id = $_SESSION['felhasznalo_id'];
 
             // Ellenőrizzük az adatbázisban, hogy van-e kiválasztott kép
-            $query = "SELECT kivalasztott_kepek FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id";
-            $result = mysqli_query($conn, $query);
-            $row = mysqli_fetch_assoc($result);
-            $kivalasztott_kepek = $row['kivalasztott_kepek'];
+            $keres = "SELECT kivalasztott_kepek FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id";
+            $valasz = mysqli_query($conn, $keres);
+            $sor = mysqli_fetch_assoc($valasz);
+            $kivalasztott_kepek = $sor['kivalasztott_kepek'];
 
             if (!empty($kivalasztott_kepek)) {
                 // Ha van kiválasztott kép, megjelenítjük az "Étrendem" linket
@@ -133,10 +133,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             } else {
                 // Ha nincs kiválasztott kép, a korábbi logikához hasonlóan jelenítjük meg a linkeket
                 // Ellenőrizzük, hogy van-e már étrendje
-                $query = "SELECT COUNT(*) FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id AND (magassag IS NULL OR testsuly IS NULL OR eletkor IS NULL OR cel = '' OR nem = '' OR aktivitas = '' OR cel = 'nincs cel' OR nem = 'valasszon' OR aktivitas = 'valasszon')";
-                $result = mysqli_query($conn, $query);
-                $row = mysqli_fetch_row($result);
-                $etrendVan = $row[0] == 0;
+                $keres = "SELECT COUNT(*) FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id AND (magassag IS NULL OR testsuly IS NULL OR eletkor IS NULL OR cel = '' OR nem = '' OR aktivitas = '' OR cel = 'nincs cel' OR nem = 'valasszon' OR aktivitas = 'valasszon')";
+                $valasz = mysqli_query($conn, $keres);
+                $sor = mysqli_fetch_row($valasz);
+                $etrendVan = $sor[0] == 0;
 
                 if ($etrendVan) {
                     echo '
@@ -167,18 +167,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <?php
     // Hibaüzenetek megjelenítése
-    if (!empty($errors) && isset($_POST["adatokmodositasa"])) {
+    if (!empty($hibak) && isset($_POST["adatokmodositasa"])) {
         echo '<div class="hiba-uzenetek">';
         echo '<ul>';
-        foreach ($errors as $error) {
-            echo '<li>' . $error . '</li>';
+        foreach ($hibak as $hiba) {
+            echo '<li>' . $hiba . '</li>';
         }
         echo '</ul>';
         echo '</div>';
     }
 
     // Megjelenítés csak akkor, ha nincsenek hibaüzenetek és POST kérésből érkezett adatok
-    if(empty($errors) && $_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["adatokmodositasa"])) {
+    if(empty($hibak) && $_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["adatokmodositasa"])) {
         // Sikeres adatmódosítás esetén üzenet
         echo '<div class="sikeres-uzenet">';
             echo "Adataid sikeresen frissítve.";
@@ -191,7 +191,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     try {
-        $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+        $conn = new PDO("mysql:host=$szervernev;dbname=$dbnev", $felhasznalonev, $jelszo);
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     } catch(PDOException $e) {
         echo "Hiba: " . $e->getMessage();
@@ -203,8 +203,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':felhasznalo_id', $felhasznalo_id);
     $stmt->execute();
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    $count = $stmt->rowCount(); // Ellenőrizzük, hogy van-e találat
+    $sor = $stmt->fetch(PDO::FETCH_ASSOC);
+    $szamol = $stmt->rowCount(); // Ellenőrizzük, hogy van-e találat
 
     ?>
 
@@ -241,7 +241,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <input type="submit" value="Adatok módosítása" class="button" name="adatokmodositasa">
 
         <?php
-        if ($count > 0) {
+        if ($szamol > 0) {
             // Van adat az étkezések között, tehát megjelenítjük a gombot
             echo '<input type="submit" value="Régebbi étrendeim megtekintése" class="button" name="regebbietrendek">';
         }

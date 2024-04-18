@@ -134,7 +134,7 @@ header {
   background: #006653;
 }
 
-.regisztracio_container{
+.regisztracio_kontener{
     position: absolute;
     top: 50%;
     left: 50%;
@@ -148,7 +148,7 @@ header {
     padding: 2rem;
 }
 
-.container{
+.kontener{
     position: absolute;
     top: 50%;
     left: 50%;
@@ -159,7 +159,7 @@ header {
     border-radius: 7px;
     box-shadow: 0 5px 10px rgba(0,0,0,0.3);
   }
-.container .kartya{
+.kontener .kartya{
   padding: 2rem;
 }
 .kartya header{
@@ -202,15 +202,15 @@ header {
 .kartya input.button:hover{
   background: #006653;
 }
-.signup{
+.regisztralas{
   font-size: 17px;
   text-align: center;
 }
-.signup label{
+.regisztralas label{
   color: #009579;
   cursor: pointer;
 }
-.signup label:hover{
+.regisztralas label:hover{
   text-decoration: underline;
 }
 
@@ -301,12 +301,12 @@ header {
   box-shadow: 0 1px 0 rgba(0,0,0,0.2);
 }
 
-.image-container {
+.kep-kontener {
   display: flex;
   flex-wrap: nowrap;
   overflow-x: auto;
 }
-.image-item {
+.kep-targy {
   flex: 0 0 auto;
   margin-right: 20px;
   text-align: center;
@@ -314,30 +314,30 @@ header {
   border: 1px solid #ccc;
   margin-bottom: 10px;
 }
-.image-item img {
+.kep-targy img {
   width: 200px; /* Állítsd be itt az általad kívánt méretet */
   height: 200px;
   border-radius: 100px; /* A kép sarkainak lekerekítése */
   margin-bottom: 5px; /* Képek közötti tér */
 }
-.image-title-container {
+.kep-cim-kontener {
   display: flex;
   justify-content: center;
   max-width: 200px; /* Minimális szélesség a több soros elrendezéshez */
 }
-.image-title {
+.kep-cim {
   word-wrap: break-word; /* A hosszú szavak tördelése */
 }
 
-.image-item > div {
+.kep-targy > div {
   background-color: transparent;
 }
 
-.image-item.selected {
+.kep-targy.selected {
   background-color: #006653;
 }
 
-.image-item.selected > div {
+.kep-targy.selected > div {
   color: white;
 }
 
@@ -484,7 +484,7 @@ table th {
   margin-bottom: 1.5rem;
 }
 
-.slideshow-container {
+.diavetites-kontener {
   max-width: 50%;
   float: left;
   position: relative;
@@ -493,11 +493,11 @@ table th {
   margin-right: 40px; /* Új: 20px margó a jobb oldalon */
 }
 
-.slide {
+.oldal {
   display: none;
 }
 
-.slide img {
+.oldal img {
   width: 640px;
   height: 320px;
 }

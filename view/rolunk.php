@@ -32,10 +32,10 @@ session_start(); // Session inicializálása
             $felhasznalo_id = $_SESSION['felhasznalo_id'];
 
             // Ellenőrizzük az adatbázisban, hogy van-e kiválasztott kép
-            $query = "SELECT kivalasztott_kepek FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id";
-            $result = mysqli_query($conn, $query);
-            $row = mysqli_fetch_assoc($result);
-            $kivalasztott_kepek = $row['kivalasztott_kepek'];
+            $keres = "SELECT kivalasztott_kepek FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id";
+            $valasz = mysqli_query($conn, $keres);
+            $sor = mysqli_fetch_assoc($valasz);
+            $kivalasztott_kepek = $sor['kivalasztott_kepek'];
 
             if (!empty($kivalasztott_kepek)) {
                 // Ha van kiválasztott kép, megjelenítjük az "Étrendem" linket
@@ -48,10 +48,10 @@ session_start(); // Session inicializálása
             } else {
                 // Ha nincs kiválasztott kép, a korábbi logikához hasonlóan jelenítjük meg a linkeket
                 // Ellenőrizzük, hogy van-e már étrendje
-                $query = "SELECT COUNT(*) FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id AND (magassag IS NULL OR testsuly IS NULL OR eletkor IS NULL OR cel = '' OR nem = '' OR aktivitas = '' OR cel = 'nincs cel' OR nem = 'valasszon' OR aktivitas = 'valasszon')";
-                $result = mysqli_query($conn, $query);
-                $row = mysqli_fetch_row($result);
-                $etrendVan = $row[0] == 0;
+                $keres = "SELECT COUNT(*) FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id AND (magassag IS NULL OR testsuly IS NULL OR eletkor IS NULL OR cel = '' OR nem = '' OR aktivitas = '' OR cel = 'nincs cel' OR nem = 'valasszon' OR aktivitas = 'valasszon')";
+                $valasz = mysqli_query($conn, $keres);
+                $sor = mysqli_fetch_row($valasz);
+                $etrendVan = $sor[0] == 0;
 
                 if ($etrendVan) {
                     echo '

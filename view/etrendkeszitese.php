@@ -4,7 +4,7 @@ session_start(); // Munkamenet inicializálása
 require("../sql/sql.php");
 
 // Hibaüzenet
-$error_message = '';
+$hiba_uzenet = '';
 
 if(isset($_POST['submit'])) {
     // Ellenőrizzük, hogy a felhasználó be van-e jelentkezve
@@ -19,11 +19,11 @@ if(isset($_POST['submit'])) {
 
         // Ellenőrizze, hogy minden mező kitöltve van-e
         if(empty($eletkor) || empty($testsuly) || empty($magassag) || empty($nem) || empty($aktivitas) || empty($cel)) {
-            $error_message = 'Kérjük, töltse ki az összes mezőt!';
+            $hiba_uzenet = 'Kérjük, töltse ki az összes mezőt!';
         } else {
             // Az SQL lekérdezés összeállítása és végrehajtása
-            $query = "UPDATE `felhasznalo` SET `eletkor`='$eletkor', `testsuly`='$testsuly', `magassag`='$magassag', `nem`='$nem', `aktivitas`='$aktivitas', `cel`='$cel' WHERE `felhasznalo_id`='$felhasznalo_id'";                  
-            mysqli_query($conn, $query);
+            $keres = "UPDATE `felhasznalo` SET `eletkor`='$eletkor', `testsuly`='$testsuly', `magassag`='$magassag', `nem`='$nem', `aktivitas`='$aktivitas', `cel`='$cel' WHERE `felhasznalo_id`='$felhasznalo_id'";                  
+            mysqli_query($conn, $keres);
 
             // Ellenőrizzük, hogy sikeresen frissítettük-e az adatokat
             if(mysqli_affected_rows($conn) > 0) {
@@ -32,7 +32,7 @@ if(isset($_POST['submit'])) {
                 header("Location: etrend.php");
                 exit();
             } else {
-                $error_message = 'Hiba történt az adatok frissítése közben. Kérjük, próbálja újra.';
+                $hiba_uzenet = 'Hiba történt az adatok frissítése közben. Kérjük, próbálja újra.';
             }
         }
     } else {
@@ -71,10 +71,10 @@ if(isset($_POST['submit'])) {
             $felhasznalo_id = $_SESSION['felhasznalo_id'];
 
             // Ellenőrizzük az adatbázisban, hogy van-e kiválasztott kép
-            $query = "SELECT kivalasztott_kepek FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id";
-            $result = mysqli_query($conn, $query);
-            $row = mysqli_fetch_assoc($result);
-            $kivalasztott_kepek = $row['kivalasztott_kepek'];
+            $keres = "SELECT kivalasztott_kepek FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id";
+            $valasz = mysqli_query($conn, $keres);
+            $sor = mysqli_fetch_assoc($valasz);
+            $kivalasztott_kepek = $sor['kivalasztott_kepek'];
 
             if (!empty($kivalasztott_kepek)) {
                 // Ha van kiválasztott kép, megjelenítjük az "Étrendem" linket
@@ -87,10 +87,10 @@ if(isset($_POST['submit'])) {
             } else {
                 // Ha nincs kiválasztott kép, a korábbi logikához hasonlóan jelenítjük meg a linkeket
                 // Ellenőrizzük, hogy van-e már étrendje
-                $query = "SELECT COUNT(*) FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id AND (magassag IS NULL OR testsuly IS NULL OR eletkor IS NULL OR cel = '' OR nem = '' OR aktivitas = '' OR cel = 'nincs cel' OR nem = 'valasszon' OR aktivitas = 'valasszon')";
-                $result = mysqli_query($conn, $query);
-                $row = mysqli_fetch_row($result);
-                $etrendVan = $row[0] == 0;
+                $keres = "SELECT COUNT(*) FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id AND (magassag IS NULL OR testsuly IS NULL OR eletkor IS NULL OR cel = '' OR nem = '' OR aktivitas = '' OR cel = 'nincs cel' OR nem = 'valasszon' OR aktivitas = 'valasszon')";
+                $valasz = mysqli_query($conn, $keres);
+                $sor = mysqli_fetch_row($valasz);
+                $etrendVan = $sor[0] == 0;
 
                 if ($etrendVan) {
                     echo '
@@ -121,10 +121,10 @@ if(isset($_POST['submit'])) {
 
         <?php
             // Hibaüzenet megjelenítése
-            if (!empty($error_message)) {
+            if (!empty($hiba_uzenet)) {
                 echo '<div class="hiba-uzenetek">';
                 echo '<ul>';
-                echo '<li>' . $error_message . '</li>';
+                echo '<li>' . $hiba_uzenet . '</li>';
                 echo '</ul>';
                 echo '</div>';
             }

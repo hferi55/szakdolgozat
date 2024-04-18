@@ -2,13 +2,13 @@
 require("../sql/sql.php");
 session_start();
 
-$errorMessage = ""; // Itt inicializáljuk a változót
+$hibaUzenet = ""; // Itt inicializáljuk a változót
 
 // Felhasználó bejelentkezése
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST["email"]; 
-    $password = $_POST["jelszo"]; 
+    $jelszo = $_POST["jelszo"]; 
 
     // Ellenőrzés a felhasználónév és jelszó alapján az adatbázisban
     $sql = "SELECT felhasznalo_id, jelszo FROM felhasznalo WHERE email_cim=?";
@@ -20,26 +20,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt->store_result();
             
             if ($stmt->num_rows > 0) {
-                $stmt->bind_result($felhasznalo_id, $hashed_password);
+                $stmt->bind_result($felhasznalo_id, $hashed_jelszo);
                 $stmt->fetch();
 
                 // Ellenőrzés a hashelt jelszó alapján
-                if (password_verify($password, $hashed_password)) {
+                if (password_verify($jelszo, $hashed_jelszo)) {
                     // Sikeres bejelentkezés
                     $_SESSION['felhasznalo_id'] = $felhasznalo_id; // Felhasználó azonosítója a session-be
                     header("Location: loggedin.php"); 
                     exit();
                 } else {
-                    $errorMessage = "Hibás email cím vagy jelszó.";
+                    $hibaUzenet = "Hibás email cím vagy jelszó.";
                 }
             } else {
-                $errorMessage = "Hibás email cím vagy jelszó.";
+                $hibaUzenet = "Hibás email cím vagy jelszó.";
             }
         } else {
-            $errorMessage = "Hiba történt a bejelentkezés során.";
+            $hibaUzenet = "Hiba történt a bejelentkezés során.";
         }
     } catch (Exception $e) {
-        $errorMessage = "Hiba: " . $e->getMessage();
+        $hibaUzenet = "Hiba: " . $e->getMessage();
     }
 
     $stmt->close();
@@ -65,21 +65,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </nav>
 </header>
 
-    <div class="container">
+    <div class="kontener">
         <div class="bejelentkezes kartya">
             <header>Bejelentkezés</header>
             
-            <?php if ($errorMessage): ?>
-                <p><?php echo $errorMessage; ?></p>
+            <?php if ($hibaUzenet): ?>
+                <p><?php echo $hibaUzenet; ?></p>
             <?php endif; ?>
 
             <form action="" method="post">
                 <input type="text" placeholder="Adja meg az email címét" name="email" required>
                 <input type="password" placeholder="Adja meg a jelszavát" name="jelszo" required>
-                <input type="submit" class="button" value="Bejelentkezés" name="submit">
+                <input type="submit" class="button" value="Bejelentkezés" name="kuldes">
             </form>
-            <div class="signup">
-                <span class="signup">Még nincs fiókja?
+            <div class="regisztralas">
+                <span class="regisztralas">Még nincs fiókja?
                     <a href="../view/regisztracio.php">Regisztráció</a>
                 </span>
             </div>
