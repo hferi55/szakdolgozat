@@ -182,7 +182,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <a href="../view/rolunk.php">Rólunk</a> |
                 <a href="../view/profil.php">Profil</a> |
                 <a href="../view/etrendem.php">Étrendem</a> |
-                <a href="../logout.php">Kijelentkezés</a>
+                <a href="../kijelentkezes.php">Kijelentkezés</a>
                 ';
             } else {
                 require("../sql/sql.php");
@@ -199,14 +199,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <a href="../view/rolunk.php">Rólunk</a> |
                     <a href="../view/profil.php">Profil</a> |
                     <a href="../view/etrend.php">Étrend</a> |
-                    <a href="../logout.php">Kijelentkezés</a>
+                    <a href="../kijelentkezes.php">Kijelentkezés</a>
                     ';
                 } else {
                     echo '
                     <a href="../view/rolunk.php">Rólunk</a> |
                     <a href="../view/profil.php">Profil</a> |
                     <a href="../view/etrendkeszitese.php">Étrendkészítés</a> |
-                    <a href="../logout.php">Kijelentkezés</a>
+                    <a href="../kijelentkezes.php">Kijelentkezés</a>
                     ';
                 }
             }

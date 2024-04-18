@@ -27,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 if (password_verify($jelszo, $hashed_jelszo)) {
                     
                     $_SESSION['felhasznalo_id'] = $felhasznalo_id; 
-                    header("Location: loggedin.php"); 
+                    header("Location: bejelentkezve.php"); 
                     exit();
                 } else {
                     $hibaUzenet = "Hibás email cím vagy jelszó.";
