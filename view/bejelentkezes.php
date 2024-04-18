@@ -2,15 +2,15 @@
 require("../sql/sql.php");
 session_start();
 
-$hibaUzenet = ""; // Itt inicializáljuk a változót
+$hibaUzenet = ""; 
 
-// Felhasználó bejelentkezése
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST["email"]; 
     $jelszo = $_POST["jelszo"]; 
 
-    // Ellenőrzés a felhasználónév és jelszó alapján az adatbázisban
+    
     $sql = "SELECT felhasznalo_id, jelszo FROM felhasznalo WHERE email_cim=?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $email);
@@ -23,10 +23,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $stmt->bind_result($felhasznalo_id, $hashed_jelszo);
                 $stmt->fetch();
 
-                // Ellenőrzés a hashelt jelszó alapján
+                
                 if (password_verify($jelszo, $hashed_jelszo)) {
-                    // Sikeres bejelentkezés
-                    $_SESSION['felhasznalo_id'] = $felhasznalo_id; // Felhasználó azonosítója a session-be
+                    
+                    $_SESSION['felhasznalo_id'] = $felhasznalo_id; 
                     header("Location: loggedin.php"); 
                     exit();
                 } else {
@@ -53,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta http-equiv="X-UA-Compatible" content="IE-edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Étrend Készítő Weboldal</title>
-    <!-- CSS -->
+    
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
@@ -88,6 +88,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </body>
 </html>
 <?php
-// Adatbázis kapcsolat lezárása
+
 mysqli_close($conn);
 ?>

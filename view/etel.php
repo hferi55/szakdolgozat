@@ -39,7 +39,7 @@ $stmtKeres->bind_param("i", $kivalasztott_kepek_id);
 $stmtKeres->execute();
 $stmtKeres->store_result();
 $stmtKeres->bind_result($kivalasztott_etel_osszetevok, $kivalasztott_etel_kaloria, $kivalasztott_etel_recept);
-$stmtKeres->fetch(); // Fetch to get the results
+$stmtKeres->fetch(); 
 $stmtKeres->close();
 
 $sqlKeres = "SELECT allergenek_id FROM `etelek allergenei` WHERE etel_id = ?";
@@ -68,8 +68,8 @@ foreach ($allergen_idk as $allergen_id) {
     $stmtKeres->close();
 }
 
-$preferencia_erteke = ""; // Alapértelmezett preferencia-érték üres string
-// Ellenőrizzük, hogy van-e preferencia az adott felhasználóhoz és ételhez
+$preferencia_erteke = ""; 
+
 if (isset($_SESSION['felhasznalo_id']) && isset($_GET['etel_id'])) {
     $felhasznalo_id = $_SESSION['felhasznalo_id'];
     $etel_id = $_GET['etel_id'];
@@ -79,33 +79,33 @@ if (isset($_SESSION['felhasznalo_id']) && isset($_GET['etel_id'])) {
     $stmtKeres->execute();
     $stmtKeres->store_result();
     $stmtKeres->bind_result($preferencia_erteke);
-    $stmtKeres->fetch(); // Fetch to get the results
+    $stmtKeres->fetch(); 
     $stmtKeres->close();
 
 }
 
 if(isset($_POST['valaszkuldese'])) {
-    // Ellenőrizzük, hogy a felhasználó be van-e jelentkezve
+    
     if (isset($_SESSION['felhasznalo_id'])) {
         $felhasznalo_id = $_SESSION['felhasznalo_id'];
         $etel_id = $_GET['etel_id'];
         $kedveli = $_POST['kedveli'];
 
-        // Ellenőrizze, hogy minden mező kitöltve van-e
+        
         if(!empty($kedveli)) {
-            // Ellenőrizzük, hogy már van-e preferencia az adott felhasználóhoz és ételhez
+            
             $keres = "SELECT * FROM `preferencia` WHERE felhasznalo_id = $felhasznalo_id AND etel_id = $etel_id";
             $valasz = mysqli_query($conn, $keres);
             if(mysqli_num_rows($valasz) > 0) {
-                // Ha már létezik preferencia, frissítjük az adatokat
+                
                 $keres = "UPDATE `preferencia` SET kedveli = $kedveli WHERE felhasznalo_id = $felhasznalo_id AND etel_id = $etel_id";
             } else {
-                // Ha még nem létezik preferencia, új rekordot szúrunk be
+                
                 $keres = "INSERT INTO `preferencia`(`felhasznalo_id`, `etel_id`, `kedveli`) VALUES ($felhasznalo_id,$etel_id,$kedveli)";
             }
 
             if(mysqli_query($conn, $keres)) {
-                // Sikeres beszúrás vagy frissítés esetén átirányítás
+                
                 header("Location: ".$_SERVER['PHP_SELF']."?etel_id=".$etel_id);
                 exit();
             }
@@ -122,7 +122,7 @@ if(isset($_POST['valaszkuldese'])) {
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Étrend Készítő Weboldal</title>
-  <!-- CSS -->
+  
   <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
@@ -131,15 +131,15 @@ if(isset($_POST['valaszkuldese'])) {
     <h1 class="cim">ÉKW</h1>
     <nav class="navbar">
         <?php
-        // Ha a felhasználó nincs bejelentkezve
+        
         if (!isset($_SESSION['felhasznalo_id'])) {
             echo '
             <a href="../view/rolunk.php">Rólunk</a> |
             <a href="../view/bejelentkezes.php">Bejelentkezés</a> |
             <a href="../view/regisztracio.php">Regisztráció</a>
             ';
-        } else { // Ha a felhasználó be van jelentkezve
-            // Ellenőrizzük, hogy vannak-e kiválasztott képek a SESSION-ben
+        } else { 
+            
             if (isset($_SESSION['kivalasztott_kepek']) && !empty($_SESSION['kivalasztott_kepek'])) {
                 echo '
                 <a href="../view/rolunk.php">Rólunk</a> |
@@ -151,7 +151,7 @@ if(isset($_POST['valaszkuldese'])) {
                 require("../sql/sql.php");
                 $felhasznalo_id = $_SESSION['felhasznalo_id'];
 
-                // Ellenőrizzük, hogy van-e már étrendje
+                
                 $keres = "SELECT COUNT(*) FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id AND (magassag IS NULL OR testsuly IS NULL OR eletkor IS NULL OR cel = '' OR nem = '' OR aktivitas = '' OR cel = 'nincs cel' OR nem = 'valasszon' OR aktivitas = 'valasszon')";
                 $valasz = mysqli_query($conn, $keres);
                 $sor = mysqli_fetch_row($valasz);

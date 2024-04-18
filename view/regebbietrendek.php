@@ -11,7 +11,7 @@ session_start();
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Étrend Készítő Weboldal</title>
-  <!-- CSS -->
+  
   <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
@@ -20,15 +20,15 @@ session_start();
     <h1 class="cim">ÉKW</h1>
     <nav class="navbar">
         <?php
-        // Ha a felhasználó nincs bejelentkezve
+        
         if (!isset($_SESSION['felhasznalo_id'])) {
             echo '
             <a href="../view/rolunk.php">Rólunk</a> |
             <a href="../view/bejelentkezes.php">Bejelentkezés</a> |
             <a href="../view/regisztracio.php">Regisztráció</a>
             ';
-        } else { // Ha a felhasználó be van jelentkezve
-            // Ellenőrizzük, hogy vannak-e kiválasztott képek a SESSION-ben
+        } else { 
+            
             if (isset($_SESSION['kivalasztott_kepek']) && !empty($_SESSION['kivalasztott_kepek'])) {
                 echo '
                 <a href="../view/rolunk.php">Rólunk</a> |
@@ -40,7 +40,7 @@ session_start();
                 require("../sql/sql.php");
                 $felhasznalo_id = $_SESSION['felhasznalo_id'];
 
-                // Ellenőrizzük, hogy van-e már étrendje
+                
                 $keres = "SELECT COUNT(*) FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id AND (magassag IS NULL OR testsuly IS NULL OR eletkor IS NULL OR cel = '' OR nem = '' OR aktivitas = '' OR cel = 'nincs cel' OR nem = 'valasszon' OR aktivitas = 'valasszon')";
                 $valasz = mysqli_query($conn, $keres);
                 $sor = mysqli_fetch_row($valasz);
@@ -92,7 +92,7 @@ session_start();
                     $stmtKeres->store_result();
                     $stmtKeres->bind_result($reggeli_idk, $ebed_idk, $vacsora_idk, $uzsonna_idk, $etkezes_datuma);
                     while ($stmtKeres->fetch()) {
-                        // Szétválasztjuk a reggeli_id-ket
+                        
                         $reggeli_id_tomb = explode(",", $reggeli_idk);
                         $reggeli_nevek = array();
                         foreach ($reggeli_id_tomb as $reggeli_id) {
@@ -107,7 +107,7 @@ session_start();
                             $stmtKeresBelso->close();
                         }
 
-                        // Szétválasztjuk az ebed_id-ket
+                        
                         $ebed_id_tomb = explode(",", $ebed_idk);
                         $ebed_nevek = array();
                         foreach ($ebed_id_tomb as $ebed_id) {
@@ -122,7 +122,7 @@ session_start();
                             $stmtKeresBelso->close();
                         }
 
-                        // Szétválasztjuk a vacsora_id-ket
+                        
                         $vacsora_id_tomb = explode(",", $vacsora_idk);
                         $vacsora_nevek = array();
                         foreach ($vacsora_id_tomb as $vacsora_id) {
@@ -137,7 +137,7 @@ session_start();
                             $stmtKeresBelso->close();
                         }
 
-                        // Szétválasztjuk az uzsonna_id-ket
+                        
                         $uzsonna_id_tomb = explode(",", $uzsonna_idk);
                         $uzsonna_nevek = array();
                         foreach ($uzsonna_id_tomb as $uzsonna_id) {
@@ -152,7 +152,7 @@ session_start();
                             $stmtKeresBelso->close();
                         }
 
-                        // Kiírás a táblázatba
+                        
                         echo "<tr>";
                         echo "<td>$etkezes_datuma</td>";
                         echo "<td>" . implode(", ", $reggeli_nevek) . "</td>";

@@ -5,9 +5,9 @@ require("../sql/sql.php");
 
 if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_sikeres'] === true) {
     
-    // További műveletek az étrend sikeres elkészítése esetén
+    
 
-    // Ne felejtsük el törölni a munkamenet változót, hogy ne jelenjen meg újra az üzenet frissítéskor
+    
     unset($_SESSION['etrend_keszites_sikeres']);
 }
 ?>
@@ -19,7 +19,7 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
   <meta http-equiv="X-UA-Compatible" content="IE-edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Étrend Készítő Weboldal</title>
-  <!-- CSS -->
+  
   <link rel="stylesheet" href="../css/style.css">
 
 </head>
@@ -29,25 +29,25 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
     <h1 class="cim">ÉKW</h1>
     <nav class="navbar">
         <?php
-        // Ha a felhasználó nincs bejelentkezve
+        
         if (!isset($_SESSION['felhasznalo_id'])) {
             echo '
             <a href="../view/rolunk.php">Rólunk</a> |
             <a href="../view/bejelentkezes.php">Bejelentkezés</a> |
             <a href="../view/regisztracio.php">Regisztráció</a>
             ';
-        } else { // Ha a felhasználó be van jelentkezve
+        } else { 
             require("../sql/sql.php");
             $felhasznalo_id = $_SESSION['felhasznalo_id'];
 
-            // Ellenőrizzük az adatbázisban, hogy van-e kiválasztott kép
+            
             $keres = "SELECT kivalasztott_kepek FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id";
             $valasz = mysqli_query($conn, $keres);
             $sor = mysqli_fetch_assoc($valasz);
             $kivalasztott_kepek = $sor['kivalasztott_kepek'];
 
             if (!empty($kivalasztott_kepek)) {
-                // Ha van kiválasztott kép, megjelenítjük az "Étrendem" linket
+                
                 echo '
                 <a href="../view/rolunk.php">Rólunk</a> |
                 <a href="../view/profil.php">Profil</a> |
@@ -55,8 +55,8 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
                 <a href="../logout.php">Kijelentkezés</a>
                 ';
             } else {
-                // Ha nincs kiválasztott kép, a korábbi logikához hasonlóan jelenítjük meg a linkeket
-                // Ellenőrizzük, hogy van-e már étrendje
+                
+                
                 $keres = "SELECT COUNT(*) FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id AND (magassag IS NULL OR testsuly IS NULL OR eletkor IS NULL OR cel = '' OR nem = '' OR aktivitas = '' OR cel = 'nincs cel' OR nem = 'valasszon' OR aktivitas = 'valasszon')";
                 $valasz = mysqli_query($conn, $keres);
                 $sor = mysqli_fetch_row($valasz);
@@ -96,7 +96,7 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
     <div class="adatok">
       <form action="" method="post">
       <?php
-        // Lekérdezés az adatok megjelenítéséhez
+        
         $felhasznalo_id = $_SESSION['felhasznalo_id'];
         $sqlKeres = "SELECT `testsuly`, `magassag`, `cel`, `nem`, `eletkor`, `aktivitas` FROM felhasznalo WHERE felhasznalo_id=?";
         $stmtKeres = $conn->prepare($sqlKeres);
@@ -112,9 +112,9 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
         $stmtKeres->close();
 
         if($nem == 'Férfi'){
-        $bmr = 10 * $testsuly + 6.25 * $magassag - 5 * $eletkor + 5; //Férfi BMR kiszámítás Mifflin-St. Jeor képlettel
+        $bmr = 10 * $testsuly + 6.25 * $magassag - 5 * $eletkor + 5; 
         } elseif($nem == 'Nő'){
-        $bmr = 10 * $testsuly + 6.25 * $magassag - 5 * $eletkor - 161; //Női BMR kiszámítás Mifflin-St. Jeor képlettel
+        $bmr = 10 * $testsuly + 6.25 * $magassag - 5 * $eletkor - 161; 
         }
 
         if($aktivitas == 'Inaktív'){
@@ -178,12 +178,12 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
     ?>
         
         <form action="etrendem.php" method="post" id="image-selection-form"> 
-            <!-- Reggeli -->
+            
             <h3>Reggeli:</h3>
 
             <div class="kep-kontener">
                 <?php
-                // Reggeli képek és címek lekérdezése
+                
                 $stmt1 = $conn->prepare("SELECT nev, kep, etel_id FROM etelek WHERE reggeli = 1");
                 $stmt1->execute();
                 $kepek1 = $stmt1->fetchAll();
@@ -201,12 +201,12 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
                 <?php endforeach; ?>
             </div>
 
-            <!-- Hús -->
+            
             <h3>Hús:</h3>
             
             <div class="kep-kontener">
                 <?php
-                // Hús képek és címek lekérdezése
+                
                 $stmt2 = $conn->prepare("SELECT nev, kep, etel_id FROM etelek WHERE milyenetel = 'hús'");
                 $stmt2->execute();
                 $kepek2 = $stmt2->fetchAll();
@@ -225,12 +225,12 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
             </div>
 
 
-            <!-- Köret -->
+            
             <h3>Köret:</h3>
 
             <div class="kep-kontener">
                 <?php
-                // Köret képek és címek lekérdezése
+                
                 $stmt3 = $conn->prepare("SELECT nev, kep, etel_id FROM etelek WHERE milyenetel = 'köret'");
                 $stmt3->execute();
                 $kepek3 = $stmt3->fetchAll();
@@ -248,12 +248,12 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
                 <?php endforeach; ?>
             </div>
 
-            <!-- Uzsonna -->
+            
             <h3>Uzsonna:</h3>
             
             <div class="kep-kontener">
                 <?php
-                // Uzsonna képek és címek lekérdezése
+                
                 $stmt4 = $conn->prepare("SELECT nev, kep, etel_id FROM etelek WHERE uzsonna = 1");
                 $stmt4->execute();
                 $kepek4 = $stmt4->fetchAll();
@@ -276,9 +276,9 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
             </div>
 
             <script>
-                document.getElementById('kivalasztGomb').disabled = true; // Gomb alapértelmezett letiltása
+                document.getElementById('kivalasztGomb').disabled = true; 
 
-                // Ellenőrzi, hogy minden sorban pontosan két kép van-e kiválasztva
+                
                 function checkSelection() {
                     var sorok = document.querySelectorAll('.kep-kontener');
                     var osszesSorokKettoKivalasztva = true;
@@ -288,7 +288,7 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
                             osszesSorokKettoKivalasztva = false;
                         }
                     });
-                    // Ha minden sorban pontosan két kép van kiválasztva, engedélyezi a gombot, különben letiltja
+                    
                     if (osszesSorokKettoKivalasztva) {
                         document.getElementById('kivalasztGomb').disabled = false;
                     } else {
@@ -296,7 +296,7 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
                     }
                 }
             
-                // Ellenőrzés minden egyes jelölés módosításakor
+                
                 var checkboxes = document.querySelectorAll('input[type="checkbox"]');
                 checkboxes.forEach(function(checkbox) {
                     checkbox.addEventListener('change', function() {
@@ -309,7 +309,7 @@ if (isset($_SESSION['etrend_keszites_sikeres']) && $_SESSION['etrend_keszites_si
             </form>
 
             <script>
-                // JavaScript kód a kijelölés megvalósításához
+                
                 var checkboxes = document.querySelectorAll('input[type="checkbox"]');
                 checkboxes.forEach(function(checkbox) {
                     checkbox.addEventListener('change', function() {

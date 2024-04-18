@@ -2,77 +2,77 @@
 require("../sql/sql.php");
 session_start();
 
-// Ellenőrzés, hogy a felhasználó be van-e jelentkezve
+
 if (!isset($_SESSION['felhasznalo_id'])) {
     header("Location: ../view/bejelentkezes.php");
     exit();
 }
 
-// Változók inicializálása
-$nev = $email = $jelszo = $jelszoMegerosit = ""; // Alapértelmezett értékek
 
-// Hibaüzenetek tárolására használt tömb
+$nev = $email = $jelszo = $jelszoMegerosit = ""; 
+
+
 $hibak = array();
 
-// Ellenőrzés, hogy a form elküldésre került-e
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Az űrlap adatainak feldolgozása
 
-    // Név
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    
+
+    
     $nev = $_POST["nev"];
 
-    // Név ellenőrzése
+    
     if (empty($nev) || strlen($nev) < 3 || strlen($nev) > 8 || preg_match("/[^a-zA-Z0-9]/", $nev)) {
         $hibak[] = "A névnek legalább 3 karakter hosszúnak, maximum 8 karakter lehet, és nem tartalmazhat speciális karaktert.";
     }
 
-    // Email-cím
+    
     $email = $_POST["email"];
 
-    // Email-cím ellenőrzése
+    
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $hibak[] = "Érvénytelen email cím formátum.";
     }
 
-    // Jelszó
+    
     $jelszo = isset($_POST["jelszo"]) ? $_POST["jelszo"] : "";
 
-    // Jelszó megerősítése
+    
     $jelszoMegerosit = isset($_POST['jelszo_megerosit']) ? $_POST['jelszo_megerosit'] : '';
 
-    // Jelszó erősítés ellenőrzése
+    
     if ($jelszo !== $jelszoMegerosit) {
         $hibak[] = "A jelszó és a jelszó megerősítése nem egyezik meg.";
     }
 
-    // Jelszó erősségének ellenőrzése 
+    
     if (empty($jelszo) || strlen($jelszo) < 4 || !preg_match("/[A-Z]/", $jelszo) || preg_match("/[^a-zA-Z0-9]/", $jelszo)) {
         $hibak[] = "A jelszónak legalább 4 karakter hosszúnak, tartalmaznia kell legalább 1 nagybetűt, és nem tartalmazhat speciális karaktert.";
     }
 
-    // Csak akkor frissítjük az adatokat, ha nincsenek hibaüzenetek
+    
     if (empty($hibak)) {
-        // Jelszó hashelése
+        
         $hashelt_jelszo = password_hash($jelszo, PASSWORD_DEFAULT);
 
-        // Az adatok frissítése a session-ben
+        
         $_SESSION['nev'] = $nev;
         $_SESSION['email'] = $email;
 
-        // Az adatok frissítése az adatbázisban
-        $felhasznalo_id = $_SESSION['felhasznalo_id']; // Hozzuk létre a felhasználó azonosítóját  
+        
+        $felhasznalo_id = $_SESSION['felhasznalo_id']; 
         $sqlFrissit = "UPDATE felhasznalo SET nev=?, email_cim=?, jelszo=? WHERE felhasznalo_id=?";
         $stmtFrissit = $conn->prepare($sqlFrissit);
         $stmtFrissit->bind_param("sssi", $nev, $email, $hashelt_jelszo, $felhasznalo_id);
 
         if ($stmtFrissit->execute()) {
-            // Sikeres adatmódosítás esetén egyéb teendők
+            
         } else {
             $hibak[] = "Hiba történt az adatok frissítése során.";
         }
     }
 } else {
-    // Lekérdezés a jelenlegi név és email-cím megjelenítéséhez
+    
     $felhasznalo_id = $_SESSION['felhasznalo_id'];
     $sqlKeres = "SELECT nev, email_cim FROM felhasznalo WHERE felhasznalo_id=?";
     $stmtKeres = $conn->prepare($sqlKeres);
@@ -105,25 +105,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <h1 class="cim">ÉKW</h1>
     <nav class="navbar">
         <?php
-        // Ha a felhasználó nincs bejelentkezve
+        
         if (!isset($_SESSION['felhasznalo_id'])) {
             echo '
             <a href="../view/rolunk.php">Rólunk</a> |
             <a href="../view/bejelentkezes.php">Bejelentkezés</a> |
             <a href="../view/regisztracio.php">Regisztráció</a>
             ';
-        } else { // Ha a felhasználó be van jelentkezve
+        } else { 
             require("../sql/sql.php");
             $felhasznalo_id = $_SESSION['felhasznalo_id'];
 
-            // Ellenőrizzük az adatbázisban, hogy van-e kiválasztott kép
+            
             $keres = "SELECT kivalasztott_kepek FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id";
             $valasz = mysqli_query($conn, $keres);
             $sor = mysqli_fetch_assoc($valasz);
             $kivalasztott_kepek = $sor['kivalasztott_kepek'];
 
             if (!empty($kivalasztott_kepek)) {
-                // Ha van kiválasztott kép, megjelenítjük az "Étrendem" linket
+                
                 echo '
                 <a href="../view/rolunk.php">Rólunk</a> |
                 <a href="../view/profil.php">Profil</a> |
@@ -131,8 +131,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <a href="../logout.php">Kijelentkezés</a>
                 ';
             } else {
-                // Ha nincs kiválasztott kép, a korábbi logikához hasonlóan jelenítjük meg a linkeket
-                // Ellenőrizzük, hogy van-e már étrendje
+                
                 $keres = "SELECT COUNT(*) FROM felhasznalo WHERE felhasznalo_id = $felhasznalo_id AND (magassag IS NULL OR testsuly IS NULL OR eletkor IS NULL OR cel = '' OR nem = '' OR aktivitas = '' OR cel = 'nincs cel' OR nem = 'valasszon' OR aktivitas = 'valasszon')";
                 $valasz = mysqli_query($conn, $keres);
                 $sor = mysqli_fetch_row($valasz);
@@ -166,7 +165,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <header>Profil</header>
 
     <?php
-    // Hibaüzenetek megjelenítése
+    
     if (!empty($hibak) && isset($_POST["adatokmodositasa"])) {
         echo '<div class="hiba-uzenetek">';
         echo '<ul>';
@@ -177,9 +176,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo '</div>';
     }
 
-    // Megjelenítés csak akkor, ha nincsenek hibaüzenetek és POST kérésből érkezett adatok
+    
     if(empty($hibak) && $_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["adatokmodositasa"])) {
-        // Sikeres adatmódosítás esetén üzenet
+        
         echo '<div class="sikeres-uzenet">';
             echo "Adataid sikeresen frissítve.";
         echo '</div>';
@@ -198,19 +197,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     $felhasznalo_id = $_SESSION['felhasznalo_id'];
-    // SQL lekérdezés
-    $sql = "SELECT * FROM etkezes WHERE felhasznalo_id = :felhasznalo_id LIMIT 1"; // Ellenőrizzük, hogy van-e bármilyen rekord a felhasználóhoz tartozó étkezések között
+    
+    $sql = "SELECT * FROM etkezes WHERE felhasznalo_id = :felhasznalo_id LIMIT 1"; 
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':felhasznalo_id', $felhasznalo_id);
     $stmt->execute();
     $sor = $stmt->fetch(PDO::FETCH_ASSOC);
-    $szamol = $stmt->rowCount(); // Ellenőrizzük, hogy van-e találat
+    $szamol = $stmt->rowCount(); 
 
     ?>
 
     <form action="" method="post">
 
-        <!-- Név -->
+        
         <h3>Név:</h3>
         <label>Jelenlegi név: <?php echo htmlspecialchars($nev); ?></label>
         <br>
@@ -220,13 +219,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 nem tartalmazhat speciális karaktert.</label>
         <br>
 
-        <!-- Email-cím -->
+        
         <h3>Email-cím</h3>
         <label>Jelenlegi email-cím: <?php echo htmlspecialchars($email); ?></label>
         <br>
         <input type="text" placeholder="Email cím" name="email" value="">
 
-        <!-- Jelszó -->
+        
         <h3>Jelszó</h3>
         <input type="password" placeholder="Jelszó" name="jelszo" value="">
         <br>
@@ -234,7 +233,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 minimum 1 nagy karaktert kell tartalmaznia.</label>
         <br>
 
-        <!-- Jelszó Megerősítése-->
+        
         <h3>Jelszó megerősítése</h3>
         <input type="password" placeholder="Jelszó megerősítése" name="jelszo_megerosit" value="">
 
@@ -242,7 +241,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <?php
         if ($szamol > 0) {
-            // Van adat az étkezések között, tehát megjelenítjük a gombot
+            
             echo '<input type="submit" value="Régebbi étrendeim megtekintése" class="button" name="regebbietrendek">';
         }
     
